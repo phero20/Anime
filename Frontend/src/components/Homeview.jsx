@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useSelector } from "react-redux";
 
 export default function Homeview({AnimeData,loading}) {
   const [currentIndex, setCurrentIndex] = useState(0);
