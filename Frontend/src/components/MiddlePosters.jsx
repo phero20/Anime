@@ -14,6 +14,7 @@ export default function MiddlePosters({ data }) {
           src={posterData.poster || ""}
           alt={posterData.name || "Anime poster"}
           className="w-full h-auto rounded object-cover"
+          loading="lazy"
         />
         <div className="bg-gray-950/90 top-0 absolute w-full h-full flex items-center justify-center hover:opacity-100 opacity-0 transition-all duration-500">
           To Series

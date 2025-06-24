@@ -44,15 +44,16 @@ export default function AnimeCards({ data, name, scroll, fetchMoreData, hasMore 
     <div
       key={index}
       {...(!scroll ? { 'data-aos': 'zoom-out-up' } : {})}
-      className={`group cursor-pointer relative rounded-lg overflow-hidden snap-start flex-shrink-0 hover:shadow-xl transition-shadow ${
+      className={`group cursor-pointer relative overflow-hidden snap-start flex-shrink-0 hover:shadow-xl transition-shadow ${
         scroll ? "min-w-[160px] sm:min-w-[200px] lg:min-w-[240px] w-[260px]" : "w-full sm:w-[180px] md:w-[200px] lg:w-[220px] xl:w-[240px]"
       }`}
     >
-      <div className="relative rounded-md overflow-hidden">
+      <div className="relative overflow-hidden">
         <img
           src={item.poster}
           alt={item.name}
-          className="w-full h-[220px] sm:h-[300px] md:h-[340px] xl:h-[390px] rounded-md object-cover"
+          className="w-full sm:h-[340px] md:h-[380px] xl:h-[420px] rounded-lg object-cover"
+          loading="lazy"
         />
         <div className="px-3 py-2">
           <h3 className="text-sm font-semibold text-[#f47521] w-full">
@@ -72,7 +73,7 @@ export default function AnimeCards({ data, name, scroll, fetchMoreData, hasMore 
           </div>
         </div>
 
-        <div className="absolute inset-0 bg-gray-950/90 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col p-3 space-y-2">
+        <div className="absolute inset-0 bg-gray-950/85 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col p-3 space-y-2">
           <p className="text-[16px] text-[#f47521] font-semibold line-clamp-3 leading-snug">
             {item.type || item.name}
           </p>
@@ -81,10 +82,10 @@ export default function AnimeCards({ data, name, scroll, fetchMoreData, hasMore 
             {item.season && <span>Season {item.season}</span>}
 
             {item.episodes && (
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col justify-center gap-1">
                 {item.episodes.sub && (
-                  <span className="flex items-center gap-1">
-                    <MdLiveTv className="text-[#f47521]" /> {item.episodes.sub} Eps
+                  <span className="flex gap-1">
+                    <MdLiveTv className="text-[#f47521]" size={16} /> {item.episodes.sub} Eps
                   </span>
                 )}
                 <span className="text-gray-300">
@@ -106,7 +107,7 @@ export default function AnimeCards({ data, name, scroll, fetchMoreData, hasMore 
 
   return (
     <div className="max-w-screen-2xl mx-auto px-4 md:px-10 py-8 text-white font-['Crunchyroll_Atyp',_sans-serif] relative">
-      <Title name={name} />
+      <Title name={name} anime={scroll ? 'Animes' : ''} />
 
       {scroll && showLeft && (
         <button

@@ -21,7 +21,19 @@ const fetchCategoryData = async (req, res) => {
     }
 }
 
+const fetchGenreData = async (req, res) => {
+    try {
+      const name = req.params.name;
+      const page = req.params.page
+      const response = await axios.get(`https://anime-api-gilt-six.vercel.app/api/v2/hianime/genre/${name}?page=${page}`)
+      return res.json({success: true, data: response.data});
+    } catch (error) {
+        res.json({success: false, message: error.message});
+    }
+}
+
 export {
     fetchAnimeData,
-    fetchCategoryData
+    fetchCategoryData,
+    fetchGenreData
 };

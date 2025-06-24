@@ -57,6 +57,7 @@ export default function Homeview({AnimeData,loading}) {
           src={currentSlide.poster}
           alt={`${currentSlide.name} Poster`}
           className="absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-700 ease-in-out"
+          loading="lazy"
         />
 
       <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(0,0,0,0.85)_20%,rgba(0,0,0,0.5)_60%,transparent_100%),linear-gradient(to_top,rgba(0,0,0,0.9),transparent)]" />

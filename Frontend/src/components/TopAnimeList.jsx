@@ -19,7 +19,7 @@ export default function TopAnimeList({top10Animes}) {
 
     return (
         <div className="max-w-[90rem] mx-auto px-4 py-6 text-white font-['Crunchyroll_Atyp',_sans-serif] bg-[#030303]">
-            <Title name="Top 10" className="mb-6"/> {
+            <Title name="Top 10" anime={"Animes"} className="mb-6"/> {
             top10AnimesData.map((section, idx) => (
                 <div key={idx}
                     className="mb-10"
@@ -35,7 +35,7 @@ export default function TopAnimeList({top10Animes}) {
                             <div key={i}
                                 className="flex items-center w-full hover:scale-105 hover:bg-gray-900/90 transition-all duration-500 cursor-pointer  sm:w-[48%] lg:w-[32%] xl:w-[30%] bg-black rounded-md overflow-hidden p-2">
                                 {/* Image */}
-                                <img src={
+                                <img loading="lazy" src={
                                         anime.poster
                                     }
                                     alt={

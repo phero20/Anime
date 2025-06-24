@@ -21,9 +21,18 @@ export const fetchCategoryAnimeData = createAsyncThunk(
   }
 );
 
+export const fetchGenreAnimeData = createAsyncThunk(
+  'AnimeData/fetchGenreAnimeData',
+  async ({ name, page }) => {
+    const response = await axios.get(`${backendUrl}/api/anime/genre/${name}/${page}`);
+    return response.data;
+  }
+);
+
 const initialState = {
   AnimeData: null,
   CategoryAnimeData: null,
+  GenreAnimeData : null,
   loading: false,
   error: null,
 };
@@ -60,12 +69,9 @@ const GetanimeDataSlice = createSlice({
         const newAnimes = action.payload.data?.data?.animes || [];
 
         if (page === 1) {
-          // If it's the first page, replace the whole data
           state.CategoryAnimeData = action.payload;
         } else {
-          // If it's a subsequent page, append to existing data
           const existingAnimes = state.CategoryAnimeData?.data?.data?.animes || [];
-
           state.CategoryAnimeData = {
             ...action.payload,
             data: {
@@ -79,6 +85,42 @@ const GetanimeDataSlice = createSlice({
         }
       })
       .addCase(fetchCategoryAnimeData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+
+
+
+
+
+
+      .addCase(fetchGenreAnimeData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchGenreAnimeData.fulfilled, (state, action) => {
+        state.loading = false;
+        const { page } = action.meta.arg;
+        const newAnimes = action.payload.data?.data?.animes || [];
+
+        if (page === 1) {
+          state.GenreAnimeData = action.payload;
+        } else {
+          const existingAnimes = state.GenreAnimeData?.data?.data?.animes || [];
+          state.GenreAnimeData = {
+            ...action.payload,
+            data: {
+              ...action.payload.data,
+              data: {
+                ...action.payload.data.data,
+                animes: [...existingAnimes, ...newAnimes],
+              },
+            },
+          };
+        }
+      })
+      .addCase(fetchGenreAnimeData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

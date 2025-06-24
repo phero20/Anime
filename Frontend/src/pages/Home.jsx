@@ -18,9 +18,9 @@ const location = useLocation();
 
 
     const top10Animes = AnimeData ?. data ?. data ?. top10Animes;
-    const poster1Data = AnimeData ?. data ?. data ?. spotlightAnimes[5];
-    const poster2Data = AnimeData ?. data ?. data ?. spotlightAnimes[0];
-    const poster3Data = AnimeData ?. data ?. data ?. spotlightAnimes[1];
+    const poster1Data = AnimeData ?. data ?. data ?. spotlightAnimes[6];
+    const poster2Data = AnimeData ?. data ?. data ?. spotlightAnimes[1];
+    const poster3Data = AnimeData ?. data ?. data ?. spotlightAnimes[2];
 
 
     const sections = [
