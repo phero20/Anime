@@ -1,19 +1,19 @@
 import React from 'react';
 import Title from './Title';
-import { MdLiveTv } from "react-icons/md";
+import {MdLiveTv} from "react-icons/md";
 
 
 export default function TopAnimeList({top10Animes}) {
     const top10AnimesData = [
         {
             name: 'Today',
-            data: top10Animes?.today || []
+            data: top10Animes ?. today || []
         }, {
             name: 'Week',
-            data: top10Animes?.week || []
+            data: top10Animes ?. week || []
         }, {
             name: 'Month',
-            data: top10Animes?.month || []
+            data: top10Animes ?. month || []
         },
     ];
 
@@ -22,7 +22,8 @@ export default function TopAnimeList({top10Animes}) {
             <Title name="Top 10" className="mb-6"/> {
             top10AnimesData.map((section, idx) => (
                 <div key={idx}
-                    className="mb-10" data-aos="zoom-out-up">
+                    className="mb-10"
+                    data-aos="zoom-out-up">
                     <h2 className="text-[#f47521] text-xl font-semibold mb-4 border-b border-gray-700 pb-1">
                         {
                         section.name
@@ -48,7 +49,7 @@ export default function TopAnimeList({top10Animes}) {
                                         anime.name
                                     }</h3>
                                     <div className="text-xs flex gap-1 text-[#f47521]">
-                                        <MdLiveTv /> {
+                                        <MdLiveTv/> {
                                         anime.episodes ? `${
                                             anime.episodes.sub
                                         } Episodes` : ''
@@ -61,9 +62,6 @@ export default function TopAnimeList({top10Animes}) {
                                         anime.episodes.dub && ' | Dub'
                                     } </div>
                                 </div>
-
-
-                            
                             </div>
                         ))
                     } </div>
