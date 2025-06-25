@@ -13,6 +13,7 @@ import {fetchAnimeData} from './redux/apifetch/GetanimeDataSlice';
 import {useDispatch} from 'react-redux';
 import {AnimatePresence} from 'framer-motion';
 import PageWrapper from './components/PageWrapper';
+import Anime from './pages/Anime';
 
 function App() {
     const dispatch = useDispatch();
@@ -52,6 +53,10 @@ function App() {
                     <Route path="/genre/:name"
                         element={
                             <PageWrapper><Genre/></PageWrapper>
+                        }/>
+                          <Route path="/anime/:id"
+                        element={
+                            <PageWrapper><Anime /></PageWrapper>
                         }/>
 
                 </Routes>

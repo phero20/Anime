@@ -24,7 +24,16 @@ export const fetchCategoryAnimeData = createAsyncThunk(
 export const fetchGenreAnimeData = createAsyncThunk(
   'AnimeData/fetchGenreAnimeData',
   async ({ name, page }) => {
-    const response = await axios.get(`${backendUrl}/api/anime/genre/${name}/${page}`);
+    const genre = name.split(' ').join('-');
+    const response = await axios.get(`${backendUrl}/api/anime/genre/${genre}/${page}`);
+    return response.data;
+  }
+);
+
+export const fetchCardAnimeData = createAsyncThunk(
+  'CardAnimeData/fetchCardAnimeData',
+  async (id) => {
+    const response = await axios.get(`${backendUrl}/api/anime/animedata/${id}`);
     return response.data;
   }
 );
@@ -33,6 +42,7 @@ const initialState = {
   AnimeData: null,
   CategoryAnimeData: null,
   GenreAnimeData : null,
+  CardAnimeData:null,
   loading: false,
   error: null,
 };
@@ -91,6 +101,19 @@ const GetanimeDataSlice = createSlice({
 
 
 
+
+      .addCase(fetchCardAnimeData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCardAnimeData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.CardAnimeData = action.payload;
+      })
+      .addCase(fetchCardAnimeData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
 
 
 

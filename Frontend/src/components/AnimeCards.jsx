@@ -3,6 +3,7 @@ import Title from "./Title";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { MdLiveTv } from "react-icons/md";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { Link } from "react-router-dom";
 
 export default function AnimeCards({ data, name, scroll, fetchMoreData, hasMore }) {
   const scrollRef = useRef(null);
@@ -41,6 +42,7 @@ export default function AnimeCards({ data, name, scroll, fetchMoreData, hasMore 
   };
 
   const renderCard = (item, index) => (
+    <Link to={`/anime/${item.id}`}>
     <div
       key={index}
       {...(!scroll ? { 'data-aos': 'zoom-out-up' } : {})}
@@ -73,7 +75,7 @@ export default function AnimeCards({ data, name, scroll, fetchMoreData, hasMore 
           </div>
         </div>
 
-        <div className="absolute inset-0 bg-gray-950/85 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col p-3 space-y-2">
+        <div className="absolute inset-0 bg-gray-900/90 sm:h-[340px] md:h-[380px] xl:h-[420px] rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col p-3 space-y-2">
           <p className="text-[16px] text-[#f47521] font-semibold line-clamp-3 leading-snug">
             {item.type || item.name}
           </p>
@@ -103,6 +105,7 @@ export default function AnimeCards({ data, name, scroll, fetchMoreData, hasMore 
         </div>
       </div>
     </div>
+    </Link> 
   );
 
   return (

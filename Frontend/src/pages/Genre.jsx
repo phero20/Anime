@@ -15,7 +15,6 @@ const Category = () => {
     const {GenreAnimeData} = useSelector((state) => state.AnimeData);
     const animes = GenreAnimeData ?. data ?. data ?. animes || [];
     const hasMore = GenreAnimeData ?. data ?. data ?. hasNextPage !== false;
-    console.log(hasMore)
 
     useEffect(() => {
         setPage(1);
@@ -38,7 +37,7 @@ const Category = () => {
     };
 
     return (
-        <div className="mt-16 text-white">
+        <div className="mt-16">
             <AnimeCards data={animes}
                 name={
                     name.toUpperCase()
