@@ -56,8 +56,8 @@ export default function Season({data}) {
                         }>
                             {
                             showFullDescription ? description : `${
-                                description.slice(0, 300)
-                            }...`
+                                description.slice(0, 300)+'...'
+                            }`
                         } </p>
                         {
                         description.length > 300 && (
