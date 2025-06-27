@@ -56,11 +56,11 @@ export default function Season({data}) {
                         }>
                             {
                             showFullDescription ? description : `${
-                                description.slice(0, 310)+'...'
+                                description.slice(0, 300)+'...'
                             }`
                         } </p>
                         {
-                        description.length > 310 && (
+                        description.length > 300 && (
                             <button onClick={
                                     () => setShowFullDescription(!showFullDescription)
                                 }
