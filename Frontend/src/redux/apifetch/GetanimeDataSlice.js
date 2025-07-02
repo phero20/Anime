@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+console.log(backendUrl)
 
 // Async thunk to fetch all anime data
 export const fetchAnimeData = createAsyncThunk(
