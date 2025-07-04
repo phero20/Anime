@@ -51,7 +51,7 @@ export default function Homeview({AnimeData,loading}) {
   const currentSlide = slides[currentIndex];
 
   return (
-    <div className="w-screen min-h-screen bg-black text-white font-['Crunchyroll_Atyp',_sans-serif]">
+    <div className="min-h-screen bg-black text-white font-['Crunchyroll_Atyp',_sans-serif]">
       <div className="relative w-full h-screen overflow-hidden">
         <img
           src={currentSlide.poster}

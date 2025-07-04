@@ -86,7 +86,7 @@ export default function MoreInfo({ data }) {
 
               {/* scroll container */}
               <div ref={seasonRef}
-                className="flex overflow-x-auto space-x-4 snap-x snap-mandatory scrollbar-hide scroll-smooth pb-2">
+                className="flex overflow-x-auto gap-8 h-[180px] sm:h-[210px] md:h-[250px] lg:h-[270px] snap-x snap-mandatory scrollbar-hide scroll-smooth pb-2">
                 {
                   seasons.map((s, idx) => (
                     <Link to={
@@ -95,11 +95,12 @@ export default function MoreInfo({ data }) {
                     }
                       key={idx}
                       className={
-                        `relative group snap-start cursor-pointer ${
-                        /* fixed width per breakpoint */
-                        "w-[90px] sm:w-[120px] md:w-[140px] lg:w-[160px]"
-                        } ${s.isCurrent ? "border-4 rounded border-[#f47521] bg-[#f47521]" : ""
-                        }`
+                        `relative group snap-start cursor-pointer
+                         w-[100px] h-[150px]
+                         sm:w-[120px] sm:h-[180px]
+                         md:w-[140px] md:h-[210px]
+                         lg:w-[160px] lg:h-[240px]
+                         ${s.isCurrent ? "border-4 rounded border-[#f47521] bg-[#f47521]" : ""}`
                       }>
                       <img src={
                         s.poster
@@ -107,17 +108,16 @@ export default function MoreInfo({ data }) {
                         alt={
                           s.name
                         }
-                        /* fixed height matching width break-points */
-                        className="w-full h-[120px] sm:h-[150px] md:h-[170px] lg:h-[190px] object-cover rounded"
+                        className="w-full h-full object-cover rounded"
                       /> {/* hover overlay */}
-                      <div className="absolute inset-0 bg-gray-950/80 opacity-0 group-hover:opacity-100 h-[120px] sm:h-[150px] md:h-[170px] lg:h-[190px] rounded transition flex items-center justify-center p-2 text-center">
+                      <div className="absolute inset-0 w-full h-full bg-gray-950/80 opacity-0 group-hover:opacity-100 rounded transition flex items-center justify-center p-2 text-center">
                         <p className="text-xs text-[#f47521] leading-snug">
                           {
                             s.title || s.name
                           }</p>
                       </div>
 
-                      <p className="mt-2 text-xs font-medium px-0.5">
+                      <p className={`mt-2 text-xs font-medium px-0.5 truncate w-full text-center  ${s.isCurrent ? "text-[#f47521]" : ""} `}>
                         {
                           s.name
                         }</p>
@@ -133,8 +133,8 @@ export default function MoreInfo({ data }) {
         {
           promotionalVideos.length > 0 && (
             <div className="relative" data-aos="zoom-out-up">
-              <h2 className="text-xl md:text-2xl font-semibold mb-5 text-[#f47521]">
-                Promotional Videos
+              <h2 className="text-xl md:text-2xl font-semibold mb-5 text-[#f47521]">Promotional 
+               <span className="text-white">  Videos</span>
               </h2>
 
               {
@@ -202,7 +202,7 @@ export default function MoreInfo({ data }) {
           charactersVoiceActors.length > 0 && (
             <div data-aos="zoom-out-up">
               <h2 className="text-xl md:text-2xl font-semibold mb-5 text-[#f47521]">
-                Characters & Voice Actors
+              Characters & <span className="text-white">   Voice Actors</span>
               </h2>
               <div className="grid lg:grid-cols-2 gap-6">
                 {

@@ -2,10 +2,11 @@ import React from "react";
 import { FaPlay } from "react-icons/fa";
 import { RiBookmarkLine } from "react-icons/ri";
 import { MdLiveTv } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export default function MiddlePosters({ data }) {
   const posterData = data || {};
-
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col lg:flex-row items-center gap-6 bg-black text-white max-w-7xl mx-auto px-4 py-8 font-['Crunchyroll_Atyp',_sans-serif]">
       {/* Poster Image */}
@@ -15,8 +16,9 @@ export default function MiddlePosters({ data }) {
           alt={posterData.name || "Anime poster"}
           className="w-full h-auto rounded object-cover"
           loading="lazy"
+         onClick={() => navigate(`/anime/${posterData.id}`)}
         />
-        <div className="bg-gray-950/90 top-0 absolute w-full h-full flex items-center justify-center hover:opacity-100 opacity-0 transition-all duration-500">
+        <div onClick={() => navigate(`/anime/${posterData.id}`)} className="bg-gray-950/90 top-0 absolute w-full h-full flex items-center justify-center hover:opacity-100 opacity-0 transition-all duration-500">
           To Series
         </div>
       </div>

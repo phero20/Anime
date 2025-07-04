@@ -148,7 +148,7 @@ const location = useLocation();
       }, [location]);
 
     return (
-        <div className="text-white scroll-smooth">
+        <div className="text-white scroll-smooth ">
             <div id="home" data-aos="zoom-out-up">
                 <Homeview AnimeData={AnimeData}
                     loading={loading}/>

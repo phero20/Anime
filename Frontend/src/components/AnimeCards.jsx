@@ -42,7 +42,7 @@ export default function AnimeCards({ data, name, scroll, fetchMoreData, hasMore 
   };
 
   const renderCard = (item, index) => (
-    <Link to={`/anime/${item.id}`}>
+    <Link to={`/anime/${item.id}`} key={index}>
     <div
       key={index}
       {...(!scroll ? { 'data-aos': 'zoom-out-up' } : {})}

@@ -1,19 +1,19 @@
-import React, {useEffect} from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import React, { useEffect } from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
-import {Route, Routes, useLocation} from 'react-router-dom';
-import Home from './pages/Home';
 import Category from './pages/Category';
 import Genre from './pages/Genre';
+import Home from './pages/Home';
 
-import Navbar from './components/Navbar';
+import { AnimatePresence } from 'framer-motion';
+import { useDispatch } from 'react-redux';
 import Footer from './components/Footer';
-import {fetchAnimeData} from './redux/apifetch/GetanimeDataSlice';
-import {useDispatch} from 'react-redux';
-import {AnimatePresence} from 'framer-motion';
+import Navbar from './components/Navbar';
 import PageWrapper from './components/PageWrapper';
 import Anime from './pages/Anime';
+import { fetchAnimeData } from './redux/apifetch/GetanimeDataSlice';
 
 function App() {
     const dispatch = useDispatch();
