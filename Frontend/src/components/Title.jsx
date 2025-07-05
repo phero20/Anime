@@ -2,20 +2,20 @@ import React from 'react';
 
 export default function Title({name, anime}) {
     return (
-        <div className="w-full my-6">
-            <h2 className={
-                `font-bold flex tracking-tight gap-2 ${
-                    anime ? 'text-xl md:text-3xl lg:text-4xl' : 'justify-center pb-6 text-2xl md:text-4xl lg:text-5xl'
-                }`
-            }>
-                <span className={
-                    ` ${
-                        anime ? 'text-white' : 'text-[#f47521]'
-                    } `
-                }>
-                    {name}  </span>
-                <span className="text-[#f47521]">
-                     {anime}</span>
+        <div className="mb-4">
+            <h2 className={`font-bold flex items-center tracking-tight gap-2 ${
+                anime 
+                    ? 'text-xl md:text-xl lg:text-2xl xl:text-3xl' 
+                    : 'justify-center text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl'
+            }`}>
+                <span className={anime ? 'text-white' : 'text-[#f47521]'}>
+                    {name}
+                </span>
+                {anime && (
+                    <span className="text-[#f47521]">
+                        {anime}
+                    </span>
+                )}
             </h2>
         </div>
     );

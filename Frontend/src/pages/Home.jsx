@@ -8,56 +8,51 @@ import MiddlePosters from '../components/MiddlePosters';
 import { useLocation } from 'react-router-dom';
 import { scroller } from 'react-scroll';
 
-
 export default function Home() {
     const {AnimeData, loading} = useSelector((state) => state.AnimeData);
+    const location = useLocation();
+    const dispatch = useDispatch();
 
-const location = useLocation();
- 
-       const dispatch = useDispatch();
-
-
-    const top10Animes = AnimeData ?. data ?. data ?. top10Animes;
-    const poster1Data = AnimeData ?. data ?. data ?. spotlightAnimes[6];
-    const poster2Data = AnimeData ?. data ?. data ?. spotlightAnimes[1];
-    const poster3Data = AnimeData ?. data ?. data ?. spotlightAnimes[2];
-
+    const top10Animes = AnimeData?.data?.data?.top10Animes;
+    const poster1Data = AnimeData?.data?.data?.spotlightAnimes[6];
+    const poster2Data = AnimeData?.data?.data?.spotlightAnimes[1];
+    const poster3Data = AnimeData?.data?.data?.spotlightAnimes[2];
 
     const sections = [
         {
             id: "trending",
-            data: AnimeData ?. data ?. data ?. trendingAnimes,
+            data: AnimeData?.data?.data?.trendingAnimes,
             name: "Trending"
         },
         {
             id: "latests",
-            data: AnimeData ?. data ?. data ?. latestEpisodeAnimes,
+            data: AnimeData?.data?.data?.latestEpisodeAnimes,
             name: "Latest Episode"
         },
         {
             id: "upcomings",
-            data: AnimeData ?. data ?. data ?. topUpcomingAnimes,
+            data: AnimeData?.data?.data?.topUpcomingAnimes,
             name: "Top Upcoming"
         },
         {
             id: "top10",
-            data: AnimeData ?. data ?. data ?. topAiringAnimes,
+            data: AnimeData?.data?.data?.topAiringAnimes,
             name: "Top10"
         }, {
             id: "airing",
-            data: AnimeData ?. data ?. data ?. topAiringAnimes,
+            data: AnimeData?.data?.data?.topAiringAnimes,
             name: "Top Airing"
         }, {
             id: "popular",
-            data: AnimeData ?. data ?. data ?. mostPopularAnimes,
+            data: AnimeData?.data?.data?.mostPopularAnimes,
             name: "Most Popular"
         }, {
             id: "favorite",
-            data: AnimeData ?. data ?. data ?. mostFavoriteAnimes,
+            data: AnimeData?.data?.data?.mostFavoriteAnimes,
             name: "Most Favorite"
         }, {
             id: "completed",
-            data: AnimeData ?. data ?. data ?. latestCompletedAnimes,
+            data: AnimeData?.data?.data?.latestCompletedAnimes,
             name: "Latest Completed"
         },
     ];
@@ -65,15 +60,15 @@ const location = useLocation();
     const sections1 = [
         {
             id: "trending",
-            data: AnimeData ?. data ?. data ?. trendingAnimes,
+            data: AnimeData?.data?.data?.trendingAnimes,
             name: "Trending"
         }, {
             id: "latests",
-            data: AnimeData ?. data ?. data ?. latestEpisodeAnimes,
+            data: AnimeData?.data?.data?.latestEpisodeAnimes,
             name: "Latest Episode"
         }, {
             id: "upcomings",
-            data: AnimeData ?. data ?. data ?. topUpcomingAnimes,
+            data: AnimeData?.data?.data?.topUpcomingAnimes,
             name: "Top Upcoming"
         },
     ];
@@ -81,19 +76,19 @@ const location = useLocation();
     const sections2 = [
         {
             id: "airing",
-            data: AnimeData ?. data ?. data ?. topAiringAnimes,
+            data: AnimeData?.data?.data?.topAiringAnimes,
             name: "Top Airing"
         }, {
             id: "popular",
-            data: AnimeData ?. data ?. data ?. mostPopularAnimes,
+            data: AnimeData?.data?.data?.mostPopularAnimes,
             name: "Most Popular"
         }, {
             id: "favorite",
-            data: AnimeData ?. data ?. data ?. mostFavoriteAnimes,
+            data: AnimeData?.data?.data?.mostFavoriteAnimes,
             name: "Most Favorite"
         }, {
             id: "completed",
-            data: AnimeData ?. data ?. data ?. latestCompletedAnimes,
+            data: AnimeData?.data?.data?.latestCompletedAnimes,
             name: "Latest Completed"
         },
     ];
@@ -102,7 +97,7 @@ const location = useLocation();
         const handleScroll = () => {
             const ids = [
                 "home",
-                ... sections.map(s => s.id)
+                ...sections.map(s => s.id)
             ];
             let closestId = "home";
             let minDistance = Infinity;
@@ -122,15 +117,14 @@ const location = useLocation();
                         }
                     }
                 });
-            } dispatch(setActiveSection(closestId));
+            } 
+            dispatch(setActiveSection(closestId));
         };
 
         window.addEventListener("scroll", handleScroll, {passive: true});
         handleScroll();
         return() => window.removeEventListener("scroll", handleScroll);
     }, [dispatch, sections]);
-
-
 
     useEffect(() => {
         if (location.state?.scrollTo) {
@@ -145,33 +139,19 @@ const location = useLocation();
             });
           }, 150);
         }
-      }, [location]);
+    }, [location]);
 
     return (
-        <div className="text-white scroll-smooth ">
+        <div className="text-white scroll-smooth w-full overflow-hidden">
             <div id="home" data-aos="zoom-out-up">
-                <Homeview AnimeData={AnimeData}
-                    loading={loading}/>
+                <Homeview AnimeData={AnimeData} loading={loading}/>
             </div>
 
-            {
-            sections1.map((item, index) => (
-                <section key={index}
-                    data-aos="zoom-out-up"
-                    id={
-                        item.id
-                }>
-                    <AnimeCards data={
-                            item.data
-                        }
-                        name={
-                            item.name
-                        }
-                        scroll={true}
-                        />
+            {sections1.map((item, index) => (
+                <section key={index} data-aos="zoom-out-up" id={item.id}>
+                    <AnimeCards data={item.data} name={item.name} scroll={true}/>
                 </section>
-            ))
-        }
+            ))}
 
             <div data-aos="zoom-out-up">
                 <MiddlePosters data={poster1Data}/>
@@ -180,29 +160,17 @@ const location = useLocation();
             <section id="top10">
                 <TopAnimeList top10Animes={top10Animes}/>
             </section>
+            
             <div data-aos="zoom-out-up">
                 <MiddlePosters data={poster2Data}/>
             </div>
-            {
-            sections2.map((item, index) => (
-                <section key={index}
-                    data-aos="zoom-out-up"
-                    id={
-                        item.id
-                }>
-                    <AnimeCards data={
-                            item.data
-                        }
-                        name={
-                            item.name
-                        }
-                        scroll={true}
-                        />
+            
+            {sections2.map((item, index) => (
+                <section key={index} data-aos="zoom-out-up" id={item.id}>
+                    <AnimeCards data={item.data} name={item.name} scroll={true}/>
                 </section>
-
-
-            ))
-        }
+            ))}
+            
             <div data-aos="zoom-out-up">
                 <MiddlePosters data={poster3Data}/>
             </div>

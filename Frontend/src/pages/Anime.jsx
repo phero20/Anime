@@ -22,7 +22,7 @@ export default function Anime() {
     console.log(CardAnimeData)
 
     return (
-        <div className='mt-16'>
+        <div className='mt-16 w-full overflow-hidden'>
             <div data-aos="zoom-out-up">
                 <Season data={data}/>
 
