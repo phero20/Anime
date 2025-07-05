@@ -47,11 +47,32 @@ export const fetchProducerAnimeData = createAsyncThunk(
 );
 
 
+export const fetchEpisodesData = createAsyncThunk(
+  'AnimeData/fetchEpisodesData',
+  async (id) => {
+    const response = await axios.get(`${backendUrl}/api/anime/episodes/${id}`);
+    return response.data;
+  }
+);
+
+export const fetchEpisodesServerData = createAsyncThunk(
+  'AnimeData/fetchEpisodesServerData',
+  async (episodeId) => {
+    const response = await axios.post(`${backendUrl}/api/anime/episodes-server`, {
+      episodeId: episodeId
+    });
+    console.log('Episode server response:', response.data);
+    return response.data;
+  }
+);
+
 const initialState = {
   AnimeData: null,
   CategoryAnimeData: null,
   GenreAnimeData : null,
   ProducerAnimeData : null,
+  EpisodesData : null,
+  EpisodesServerData : null,
   CardAnimeData:null,
   loading: false,
   error: null,
@@ -74,6 +95,36 @@ const GetanimeDataSlice = createSlice({
         state.AnimeData = action.payload;
       })
       .addCase(fetchAnimeData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+// episdoes
+
+      .addCase(fetchEpisodesData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchEpisodesData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.EpisodesData = action.payload;
+      })
+      .addCase(fetchEpisodesData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+//episodes server data
+       
+      .addCase(fetchEpisodesServerData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchEpisodesServerData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.EpisodesServerData = action.payload;
+      })
+      .addCase(fetchEpisodesServerData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })

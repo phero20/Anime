@@ -1,20 +1,21 @@
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import React, { useEffect } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {Route, Routes, useLocation} from 'react-router-dom';
 import './App.css';
 import Category from './pages/Category';
 import Genre from './pages/Genre';
 import Home from './pages/Home';
 
-import { AnimatePresence } from 'framer-motion';
-import { useDispatch } from 'react-redux';
+import {AnimatePresence} from 'framer-motion';
+import {useDispatch} from 'react-redux';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import PageWrapper from './components/PageWrapper';
 import Anime from './pages/Anime';
 import Producer from './pages/Producer'
-import { fetchAnimeData } from './redux/apifetch/GetanimeDataSlice';
+import {fetchAnimeData} from './redux/apifetch/GetanimeDataSlice';
+import Episodes from './pages/Episodes';
 
 function App() {
     const dispatch = useDispatch();
@@ -55,15 +56,18 @@ function App() {
                         element={
                             <PageWrapper><Genre/></PageWrapper>
                         }/>
-                          <Route path="/anime/:id"
+                    <Route path="/anime/:id"
                         element={
-                            <PageWrapper><Anime /></PageWrapper>
+                            <PageWrapper><Anime/></PageWrapper>
                         }/>
-                         <Route path="/producer/:name"
+                    <Route path="/producer/:name"
                         element={
-                            <PageWrapper><Producer /></PageWrapper>
+                            <PageWrapper><Producer/></PageWrapper>
                         }/>
-
+                    <Route path="/episodes/:id"
+                        element={
+                            <PageWrapper><Episodes/></PageWrapper>
+                        }/>
                 </Routes>
             </AnimatePresence>
             <Footer/>

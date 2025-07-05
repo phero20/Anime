@@ -39,7 +39,7 @@ const Producer = () => {
         <div className="mt-16">
             <AnimeCards data={animes}
                 name={
-                    name.toUpperCase()
+                    ProducerAnimeData?.data?.data?.producerName.toUpperCase()
                 }
                 scroll={false}
                 fetchMoreData={fetchMoreData}
