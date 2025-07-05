@@ -15,7 +15,6 @@ const Category = () => {
     const {CategoryAnimeData} = useSelector((state) => state.AnimeData);
     const animes = CategoryAnimeData ?. data ?. data ?. animes || [];
     const hasMore = CategoryAnimeData ?. data ?. data ?. hasNextPage !== false;
-    console.log(hasMore)
 
     useEffect(() => {
         setPage(1);
@@ -32,7 +31,6 @@ const Category = () => {
 
     const fetchMoreData = () => {
         const nextPage = page + 1;
-        console.log("function call fetchmore")
         dispatch(fetchCategoryAnimeData({name, page: nextPage}));
         setPage(nextPage);
     };

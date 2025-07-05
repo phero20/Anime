@@ -86,11 +86,14 @@ export default function MoreInfo({ data }) {
                     w-[100px] h-[140px] sm:w-[120px] sm:h-[160px] md:w-[140px] md:h-[180px] lg:w-[160px] lg:h-[200px]
                     ${s.isCurrent ? "border-4 rounded-lg border-[#f47521] bg-[#f47521]" : ""}`}
                 >
+                  <div className="w-full h-full object-cover rounded-lg overflow-hidden">
                   <img 
                     src={s.poster}
                     alt={s.name}
-                    className="w-full h-full object-cover rounded-lg"
+                    className="w-full h-full transition-all duration-700  group-hover:scale-150"
                   />
+                  </div>
+                
                   
                   {/* Hover overlay */}
                   <div className="absolute inset-0 w-full h-full bg-gray-950/80 opacity-0 group-hover:opacity-100 rounded-lg transition-all duration-300 flex items-center justify-center p-2 text-center">
@@ -151,11 +154,14 @@ export default function MoreInfo({ data }) {
                 >
                   {/* Image container with hover effect */}
                   <div className="group relative rounded-lg overflow-hidden">
+                    <div className="w-full h-32 sm:h-36 md:h-40 lg:h-44 object-cover" >
                     <img 
                       src={vid.thumbnail}
                       alt={vid.title}
-                      className="w-full h-32 sm:h-36 md:h-40 lg:h-44 object-cover" 
+                      className="w-full h-full transition-all duration-700 group-hover:scale-150 object-cover" 
                     />
+                    </div>
+                    
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
                       <FaPlay className="text-[#f47521] text-xl sm:text-2xl" />
                     </div>

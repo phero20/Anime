@@ -11,15 +11,14 @@ export default function MiddlePosters({ data }) {
     <div className="w-full max-w-7xl mx-auto px-6 bg-black mb-12 text-white font-['Crunchyroll_Atyp',_sans-serif]">
       <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-6">
         {/* Poster Image */}
-        <div className="relative w-full lg:w-1/2 max-w-[600px] cursor-pointer">
+        <div className="relative w-full lg:w-1/2 max-w-[600px] cursor-pointer overflow-hidden rounded group">
           <img
             src={posterData.poster || ""}
             alt={posterData.name || "Anime poster"}
-            className="w-full h-auto rounded object-cover"
-            loading="lazy"
+            className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-150"
             onClick={() => navigate(`/anime/${posterData.id}`)}
           />
-          <div onClick={() => navigate(`/anime/${posterData.id}`)} className="bg-gray-950/90 top-0 absolute w-full h-full flex items-center justify-center hover:opacity-100 opacity-0 transition-all duration-500">
+          <div onClick={() => navigate(`/anime/${posterData.id}`)} className="bg-gray-950/90 top-0 absolute w-full h-full flex items-center justify-center group-hover:opacity-100 opacity-0 transition-all duration-500">
             To Series
           </div>
         </div>

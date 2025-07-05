@@ -1,8 +1,13 @@
 import React from 'react';
 import Title from './Title';
 import {MdLiveTv} from "react-icons/md";
+import { FaPlay } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
 
 export default function TopAnimeList({top10Animes}) {
+  const navigate = useNavigate();
+
     const top10AnimesData = [
         {
             name: 'Today',
@@ -29,15 +34,23 @@ export default function TopAnimeList({top10Animes}) {
                         {section.data.map((anime, i) => (
                             <div
                                 key={i}
-                                className="flex items-center w-full hover:scale-105 hover:bg-gray-900/90 transition-all duration-500 cursor-pointer bg-black rounded-md overflow-hidden p-2"
+                                onClick={() => navigate(`/anime/${anime.id}`)}
+                                className="flex items-center w-full hover:scale-105 hover:bg-gray-900/90 transition-all duration-500 cursor-pointer bg-black rounded-md overflow-hidden p-2 group"
                             >
                                 {/* Image */}
-                                <img
-                                    loading="lazy"
-                                    src={anime.poster}
-                                    alt={anime.name}
-                                    className="w-28 h-20 object-cover rounded-md shrink-0"
-                                />
+                                <div className="w-28 h-20 rounded-md overflow-hidden shrink-0 relative">
+                                    <img
+                                        src={anime.poster}
+                                        alt={anime.name}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-150"
+                                    />
+                                    {/* Play Button Overlay */}
+                                    <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+                                       
+                                            <FaPlay className="text-[#f47521]" size={20} />
+                                        
+                                    </div>
+                                </div>
                                 {/* Info */}
                                 <div className="ml-4 flex-grow">
                                     <h3 className="text-sm font-semibold break-words leading-snug">

@@ -20,3 +20,16 @@
   color: #f47521;
   border-bottom: 2px solid #f47521;
 }
+
+@keyframes progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.animate-progress {
+  animation: progress linear forwards;
+}

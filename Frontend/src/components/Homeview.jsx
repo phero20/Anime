@@ -27,14 +27,20 @@ export default function Homeview({AnimeData, loading}) {
 
   const resetTimeout = () => {
     clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(nextSlide, 5000); // Increased to 5 seconds
+    
+    // Use CSS animation for smooth progress
+    const duration = 5000; // 9 seconds
+    
+    timeoutRef.current = setTimeout(nextSlide, duration);
   };
 
   useEffect(() => {
     if (slides.length > 0) {
       resetTimeout();
     }
-    return () => clearTimeout(timeoutRef.current);
+    return () => {
+      clearTimeout(timeoutRef.current);
+    };
   }, [currentIndex, slides.length]);
 
   if (loading) {
@@ -66,7 +72,6 @@ export default function Homeview({AnimeData, loading}) {
           src={currentSlide.poster}
           alt={`${currentSlide.name} Poster`}
           className="w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
-          loading="lazy"
         />
         
         {/* Gradient Overlay */}
@@ -108,16 +113,26 @@ export default function Homeview({AnimeData, loading}) {
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`transition-all duration-300 rounded-full ${
+                  className={`transition-all duration-300 rounded-full relative overflow-hidden ${
                     index === currentIndex
-                      ? "bg-[#f47521] scale-110"
+                      ? "bg-gray-600 scale-110"
                       : "bg-gray-600 hover:bg-[#f47521]/70"
                   }`}
                   style={{
                     width: index === currentIndex ? '3rem' : '2rem',
                     height: '0.5rem'
                   }}
-                />
+                >
+                  {index === currentIndex && (
+                    <div 
+                      className="absolute top-0 left-0 h-full bg-[#f47521] animate-progress rounded-full"
+                      style={{ 
+                        animationDuration: '5s',
+                        animationFillMode: 'forwards'
+                      }}
+                    />
+                  )}
+                </button>
               ))}
             </div>
           </div>
