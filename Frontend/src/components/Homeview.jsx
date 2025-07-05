@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
+import { FaPlay, FaPlus } from "react-icons/fa";
+import {RiBookmarkLine} from "react-icons/ri"
 
-export default function Homeview({AnimeData,loading}) {
+export default function Homeview({AnimeData, loading}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const timeoutRef = useRef(null);
 
@@ -25,7 +27,7 @@ export default function Homeview({AnimeData,loading}) {
 
   const resetTimeout = () => {
     clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(nextSlide, 2000);
+    timeoutRef.current = setTimeout(nextSlide, 5000); // Increased to 5 seconds
   };
 
   useEffect(() => {
@@ -35,102 +37,95 @@ export default function Homeview({AnimeData,loading}) {
     return () => clearTimeout(timeoutRef.current);
   }, [currentIndex, slides.length]);
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="text-white text-center bg-black h-screen flex items-center justify-center">
-        Loading...
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f47521] mx-auto mb-4"></div>
+          <p className="text-lg">Loading...</p>
+        </div>
       </div>
     );
-  if (slides.length === 0)
+  }
+
+  if (slides.length === 0) {
     return (
-      <div>
-       
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p className="text-lg text-gray-400"></p>
       </div>
     );
+  }
 
   const currentSlide = slides[currentIndex];
 
   return (
-    <div className="min-h-screen bg-black text-white font-['Crunchyroll_Atyp',_sans-serif]">
-      <div className="relative w-full h-screen overflow-hidden">
+    <div className="relative min-h-screen bg-black text-white font-['Crunchyroll_Atyp',_sans-serif] overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0 w-full h-full">
         <img
           src={currentSlide.poster}
           alt={`${currentSlide.name} Poster`}
-          className="absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-700 ease-in-out"
+          className="w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
           loading="lazy"
         />
+        
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+      </div>
 
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(0,0,0,0.85)_20%,rgba(0,0,0,0.5)_60%,transparent_100%),linear-gradient(to_top,rgba(0,0,0,0.9),transparent)]" />
-
-
-        <div className="relative z-10 h-full flex items-center justify-start">
-          <div className="hidden md:flex flex-col justify-center w-full max-w-[40rem] px-6 lg:px-12 h-full">
-            <h1 className="text-[#f47521] text-3xl lg:text-5xl font-extrabold leading-tight mb-6 drop-shadow-lg">
+      {/* Content Container */}
+      <div className="relative z-10 h-screen flex items-end md:items-center pb-16 md:pb-0">
+        <div className="w-full max-w-[96rem] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
+          <div className="flex flex-col items-center md:items-start justify-center h-full max-w-2xl lg:max-w-3xl mx-auto md:mx-0">
+            
+            {/* Title */}
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-4 sm:mb-6 text-[#f47521] drop-shadow-lg text-center md:text-left">
               {currentSlide.name}
             </h1>
-            <p className="text-gray-200 text-sm lg:text-base leading-relaxed font-medium max-w-[36rem]">
-              {currentSlide.description.length > 500
-                ? `${currentSlide.description.slice(0, 500)}...`
+            
+            {/* Description */}
+            <p className="text-sm sm:text-base md:text-lg text-gray-200 leading-relaxed mb-6 sm:mb-8 max-w-xl lg:max-w-2xl text-center md:text-left">
+              {currentSlide.description.length > 400
+                ? `${currentSlide.description.slice(0, 400)}...`
                 : currentSlide.description}
             </p>
-            <div className="mt-8 flex gap-4">
-              <button className="bg-[#f47521] text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-[#e55f0a] transition duration-300">
-                ▶ Watch Now
-              </button>
-              <button className="border border-[#f47521] text-[#f47521] px-6 py-3 rounded-full font-semibold text-sm hover:bg-[#f47521] hover:text-white transition duration-300">
-                + Add to Crunchylist
+            
+            {/* Action Buttons */}
+            <div className="flex flex-row gap-2 sm:gap-3 md:gap-4 mb-8 sm:mb-10">
+            <button className="flex items-center gap-2 bg-[#f47521] hover:bg-[#e66713] text-black font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-lg transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-xl">
+            <FaPlay size={12} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
+                                    Watch Now
+                                </button>
+              <button className="flex items-center gap-2 border-2 border-[#f47521] text-[#f47521] hover:bg-[#f47521] hover:text-white px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg font-semibold text-xs sm:text-sm md:text-base transition-all duration-300 transform hover:scale-105">
+              <RiBookmarkLine size={20}/>
+                Add to Crunchylist
               </button>
             </div>
 
-            <div className="flex mt-6 gap-2">
+            {/* Carousel Indicators */}
+            <div className="flex gap-2 sm:gap-3">
               {slides.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`w-10 h-2 rounded-full transition-all duration-300 ${
+                  className={`transition-all duration-300 rounded-full ${
                     index === currentIndex
                       ? "bg-[#f47521] scale-110"
                       : "bg-gray-600 hover:bg-[#f47521]/70"
                   }`}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="md:hidden flex flex-col justify-end w-full px-4 pb-12 h-full bg-gradient-to-t from-black/90 to-transparent">
-            <h1 className="text-[#f47521] text-2xl font-bold text-center leading-tight mb-4 drop-shadow-lg">
-              {currentSlide.name}
-            </h1>
-            <p className="text-gray-200 text-sm lg:text-base leading-relaxed font-medium mb-4 text-center max-w-[36rem]">
-              {currentSlide.description.length > 200
-                ? `${currentSlide.description.slice(0, 200)}...`
-                : currentSlide.description}
-            </p>
-            <div className="flex justify-center gap-4">
-              <button className="bg-[#f47521] text-white px-6 py-2 rounded-full font-semibold text-sm hover:bg-[#e55f0a] transition duration-300">
-                ▶ Watch Now
-              </button>
-              <button className="border border-[#f47521] text-[#f47521] px-6 py-2 rounded-full font-semibold text-sm hover:bg-[#f47521] hover:text-white transition duration-300">
-                + Add to Crunchylist
-              </button>
-            </div>
-
-            <div className="flex justify-center mt-4 gap-2">
-              {slides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className={`w-8 h-2 rounded-full transition-all duration-300 ${
-                    index === currentIndex
-                      ? "bg-[#f47521] scale-110"
-                      : "bg-gray-600 hover:bg-[#f47521]/70"
-                  }`}
+                  style={{
+                    width: index === currentIndex ? '3rem' : '2rem',
+                    height: '0.5rem'
+                  }}
                 />
               ))}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Mobile-specific overlay for better text readability */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent md:hidden" />
     </div>
   );
 }

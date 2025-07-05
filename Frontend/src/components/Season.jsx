@@ -23,7 +23,7 @@ export default function Season({data}) {
             </div>
 
             {/* Main content container */}
-            <div className="relative z-10 w-full max-w-[90rem] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
+            <div className="relative mt-12 z-10 w-full max-w-[90rem] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
                 <div className="min-h-screen flex flex-col justify-center py-8 sm:py-12 lg:py-16">
                     <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
                         
@@ -70,7 +70,7 @@ export default function Season({data}) {
                                             <div className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none"/>
                                         )}
                                     </div>
-                                    {description.length > 300 && (
+                                    {description.length > 305 && (
                                         <button 
                                             onClick={() => setShowFullDescription(!showFullDescription)}
                                             className="text-sm font-semibold text-[#f47521] hover:text-white transition-all duration-300 flex items-center gap-1 group"
