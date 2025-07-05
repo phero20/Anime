@@ -13,6 +13,7 @@ import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import PageWrapper from './components/PageWrapper';
 import Anime from './pages/Anime';
+import Producer from './pages/Producer'
 import { fetchAnimeData } from './redux/apifetch/GetanimeDataSlice';
 
 function App() {
@@ -57,6 +58,10 @@ function App() {
                           <Route path="/anime/:id"
                         element={
                             <PageWrapper><Anime /></PageWrapper>
+                        }/>
+                         <Route path="/producer/:name"
+                        element={
+                            <PageWrapper><Producer /></PageWrapper>
                         }/>
 
                 </Routes>

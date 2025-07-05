@@ -19,7 +19,6 @@ export default function Anime() {
     const relatedAnimes = CardAnimeData ?. data ?. data.relatedAnimes;
     const recommendedAnimes = CardAnimeData ?. data ?. data.recommendedAnimes;
 
-    console.log(CardAnimeData)
 
     return (
         <div className='w-full overflow-hidden'>

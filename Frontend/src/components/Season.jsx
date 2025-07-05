@@ -1,9 +1,12 @@
 import React, {useState} from "react";
 import {FaPlay} from "react-icons/fa";
 import {RiBookmarkLine, RiAddFill} from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Season({data}) {
     const [showFullDescription, setShowFullDescription] = useState(false);
+  const navigate = useNavigate();
     
     if (!data) return null;
 
@@ -132,8 +135,9 @@ export default function Season({data}) {
                                             <div className="flex flex-wrap gap-2">
                                                 {genres.map((genre) => (
                                                     <span 
+                                                    onClick={() => navigate(`/producer/${genre.replace(/\s+/g, '-')}`)}
                                                         key={genre}
-                                                        className="bg-gray-800/80 hover:bg-gray-700/80 px-3 py-1.5 rounded-full text-xs sm:text-sm text-gray-300 transition-colors duration-300"
+                                                        className="bg-gray-800/80 cursor-pointer hover:text-[#f47521] hover:bg-gray-700/80 px-3 py-1.5 rounded-full text-xs sm:text-sm text-gray-300 transition-colors duration-300"
                                                     >
                                                         {genre}
                                                     </span>
@@ -148,8 +152,9 @@ export default function Season({data}) {
                                             <div className="flex flex-wrap gap-2">
                                                 {producers.map((producer) => (
                                                     <span 
+                                                    onClick={() => navigate(`/producer/${producer.replace(/\s+/g, '-')}`)}
                                                         key={producer}
-                                                        className="bg-gray-800/80 hover:bg-gray-700/80 px-3 py-1.5 rounded-full text-xs sm:text-sm text-gray-300 transition-colors duration-300"
+                                                        className="bg-gray-800/80 cursor-pointer hover:text-[#fe7521] hover:bg-gray-700/80 px-3 py-1.5 rounded-full text-xs sm:text-sm text-gray-300 transition-colors duration-300"
                                                     >
                                                         {producer}
                                                     </span>

@@ -147,7 +147,7 @@ export default function AnimeCards({
         } /> {
         scroll && showLeft && (
           <button onClick={scrollLeft}
-            className="absolute -left-2.5 top-1/2 -translate-y-1/2  p-2 rounded-full z-20 hidden md:flex">
+            className="absolute -left-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full z-20 hidden md:flex">
             <FaChevronLeft size={18} />
           </button>
         )
@@ -156,7 +156,7 @@ export default function AnimeCards({
       {
         scroll && showRight && (
           <button onClick={scrollRight}
-            className="absolute -right-2.5 top-1/2 -translate-y-1/2  p-2 rounded-full z-20 hidden md:flex">
+            className="absolute -right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full z-20 hidden md:flex">
             <FaChevronRight size={18} />
           </button>
         )

@@ -38,10 +38,20 @@ export const fetchCardAnimeData = createAsyncThunk(
   }
 );
 
+export const fetchProducerAnimeData = createAsyncThunk(
+  'AnimeData/fetchProducerAnimeData',
+  async ({ name, page }) => {
+    const response = await axios.get(`${backendUrl}/api/anime/producer/${name}/${page}`);
+    return response.data;
+  }
+);
+
+
 const initialState = {
   AnimeData: null,
   CategoryAnimeData: null,
   GenreAnimeData : null,
+  ProducerAnimeData : null,
   CardAnimeData:null,
   loading: false,
   error: null,
@@ -144,6 +154,37 @@ const GetanimeDataSlice = createSlice({
         }
       })
       .addCase(fetchGenreAnimeData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Handle fetchProducerAnimeData
+      .addCase(fetchProducerAnimeData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProducerAnimeData.fulfilled, (state, action) => {
+        state.loading = false;
+        const { page } = action.meta.arg;
+        const newAnimes = action.payload.data?.data?.animes || [];
+
+        if (page === 1) {
+          state.ProducerAnimeData = action.payload;
+        } else {
+          const existingAnimes = state.ProducerAnimeData?.data?.data?.animes || [];
+          state.ProducerAnimeData = {
+            ...action.payload,
+            data: {
+              ...action.payload.data,
+              data: {
+                ...action.payload.data.data,
+                animes: [...existingAnimes, ...newAnimes],
+              },
+            },
+          };
+        }
+      })
+      .addCase(fetchProducerAnimeData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
