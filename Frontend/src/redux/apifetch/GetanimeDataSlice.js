@@ -61,7 +61,6 @@ export const fetchEpisodesServerData = createAsyncThunk(
     const response = await axios.post(`${backendUrl}/api/anime/episodes-server`, {
       episodeId: episodeId
     });
-    console.log('Episode server response:', response.data);
     return response.data;
   }
 );
@@ -74,6 +73,7 @@ const initialState = {
   EpisodesData : null,
   EpisodesServerData : null,
   CardAnimeData:null,
+  EpisodeImage:null,
   loading: false,
   error: null,
 };
@@ -81,7 +81,14 @@ const initialState = {
 const GetanimeDataSlice = createSlice({
   name: 'AnimeData',
   initialState,
-  reducers: {},
+  reducers: {
+    setEpisodeImage: (state, action) => {
+      state.EpisodeImage = action.payload;
+    },
+    clearEpisodeImage: (state) => {
+      state.EpisodeImage = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
 
@@ -242,4 +249,5 @@ const GetanimeDataSlice = createSlice({
   },
 });
 
+export const { setEpisodeImage, clearEpisodeImage } = GetanimeDataSlice.actions;
 export default GetanimeDataSlice.reducer;

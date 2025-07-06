@@ -2,16 +2,18 @@ import React, {useState} from "react";
 import {FaPlay} from "react-icons/fa";
 import {RiBookmarkLine, RiAddFill} from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
-
+import { setEpisodeImage, clearEpisodeImage } from '../redux/apifetch/GetanimeDataSlice';
+import { useDispatch } from 'react-redux';
 
 export default function Season({data}) {
-    const [showFullDescription, setShowFullDescription] = useState(false);
+    const dispatch = useDispatch();
   const navigate = useNavigate();
+
+    const [showFullDescription, setShowFullDescription] = useState(false);
     
     if (!data) return null;
 
     const {poster, name, stats, description,id,anilistId,malId} = data.anime.info;
-    console.log(data)
     const {studios, genres, producers} = data.anime.moreInfo;
 
     return (
@@ -115,7 +117,11 @@ export default function Season({data}) {
 
                             {/* Action buttons */}
                             <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                                <button onClick={()=>navigate(`/episodes/${id || malId || anilistId}`)} className="flex items-center gap-2 bg-[#f47521] hover:bg-[#e66713] text-black font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-lg transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-xl">
+                                <button onClick={()=>{navigate(`/episodes/${id || malId || anilistId}`)
+                                  dispatch(clearEpisodeImage());
+                                  dispatch(setEpisodeImage(poster));
+                            
+                            }} className="flex items-center gap-2 bg-[#f47521] hover:bg-[#e66713] text-black font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-lg transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-xl">
                                     <FaPlay size={16}/>
                                     START WATCHING
                                 </button>
