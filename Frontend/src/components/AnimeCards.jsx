@@ -164,11 +164,18 @@ export default function AnimeCards({
 
       {
         scroll ? (
-          <div ref={scrollRef}
-            className="flex overflow-x-auto space-x-4 sm:space-x-5 md:space-x-7 lg:space-x-9 pb-4 snap-x snap-mandatory scrollbar-hide scroll-smooth">
-            {
-              data.map(renderCard)
-            } </div>
+          <div className="relative">
+            {/* Left gradient shadow */}
+            <div className="pointer-events-none absolute left-0 top-0 h-full w-10 z-20 bg-gradient-to-r from-black via-black/10 to-transparent" />
+            {/* Right gradient shadow */}
+            <div className="pointer-events-none absolute right-0 top-0 h-full w-10 z-20 bg-gradient-to-l from-black via-black/10 to-transparent" />
+            <div
+              ref={scrollRef}
+              className="flex overflow-x-auto space-x-4 sm:space-x-5 md:space-x-7 lg:space-x-9 pb-4 snap-x snap-mandatory scrollbar-hide scroll-smooth rounded-2xl bg-transparent relative z-10"
+            >
+              {data.map(renderCard)}
+            </div>
+          </div>
         ) : (
           <InfiniteScroll dataLength={
             data.length
