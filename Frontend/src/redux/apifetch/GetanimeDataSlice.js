@@ -65,6 +65,20 @@ export const fetchEpisodesServerData = createAsyncThunk(
   }
 );
 
+export const fetchEpisodesStreamLink = createAsyncThunk(
+  'AnimeData/fetchEpisodesStreamLink',
+  async ({ episodeId, server, category }) => {
+    console.log(episodeId, server, category);
+    const response = await axios.post(`${backendUrl}/api/anime/episodes-stream-links`, {
+      episodeId: episodeId,
+      server: server,
+      category: category
+    });
+    console.log(response)
+    return response.data;
+  }
+);
+
 const initialState = {
   AnimeData: null,
   CategoryAnimeData: null,
@@ -73,6 +87,7 @@ const initialState = {
   EpisodesData : null,
   EpisodesServerData : null,
   CardAnimeData:null,
+ EpisodeStreamLinks : null,
   EpisodeImage:null,
   loading: false,
   error: null,
@@ -135,6 +150,24 @@ const GetanimeDataSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
+   //stream links
+
+   .addCase(fetchEpisodesStreamLink.pending, (state) => {
+    state.loading = true;
+    state.error = null;
+  })
+  .addCase(fetchEpisodesStreamLink.fulfilled, (state, action) => {
+    state.loading = false;
+    state.EpisodeStreamLinks = action.payload;
+  })
+  .addCase(fetchEpisodesStreamLink.rejected, (state, action) => {
+    state.loading = false;
+    state.error = action.error.message;
+  })
+
+
+
 
       // Handle fetchCategoryAnimeData
       .addCase(fetchCategoryAnimeData.pending, (state) => {
