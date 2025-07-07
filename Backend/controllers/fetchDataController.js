@@ -5,7 +5,7 @@ const backendUrl = process.env.BACKEND_URL
 const fetchHomeData = async (req, res) => {
     try {
         const response = await axios.get(backendUrl + "/api/v2/hianime/home");
-        return res.json({success: true, data: response.data});
+              return res.json({success: true, data: response.data});
     } catch (error) {
         res.json({success: false, message: error.message});
     }

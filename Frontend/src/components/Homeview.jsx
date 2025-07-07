@@ -1,10 +1,17 @@
 import React, { useEffect, useState, useRef } from "react";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import {RiBookmarkLine} from "react-icons/ri"
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { setEpisodeImage, clearEpisodeImage } from '../redux/apifetch/GetanimeDataSlice';
+
+
 
 export default function Homeview({AnimeData, loading}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const timeoutRef = useRef(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const slides =
     !loading &&
@@ -79,7 +86,7 @@ export default function Homeview({AnimeData, loading}) {
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 h-screen flex items-end md:items-center pb-16 md:pb-0">
+      <div className="relative z-10 h-screen flex items-end md:items-center pb-24 md:pb-0">
         <div className="w-full max-w-[96rem] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
           <div className="flex flex-col items-center md:items-start justify-center h-full max-w-2xl lg:max-w-3xl mx-auto md:mx-0">
             
@@ -97,7 +104,12 @@ export default function Homeview({AnimeData, loading}) {
             
             {/* Action Buttons */}
             <div className="flex flex-row gap-2 sm:gap-3 md:gap-4 mb-8 sm:mb-10">
-            <button className="flex items-center gap-2 bg-[#f47521] hover:bg-[#e66713] text-black font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-lg transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-xl">
+            <button 
+             onClick={()=>{navigate(`/episodes/${currentSlide.id}`)
+             dispatch(clearEpisodeImage());
+             dispatch(setEpisodeImage(currentSlide.poster));
+       }}
+            className="flex items-center gap-2 bg-[#f47521] hover:bg-[#e66713] text-black font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-lg transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-xl">
             <FaPlay size={12} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
                                     Watch Now
                                 </button>

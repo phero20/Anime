@@ -1,47 +1,47 @@
-import React, {useState} from "react";
-import {FaPlay} from "react-icons/fa";
-import {RiBookmarkLine, RiAddFill} from "react-icons/ri";
+import React, { useState } from "react";
+import { FaPlay } from "react-icons/fa";
+import { RiBookmarkLine, RiAddFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { setEpisodeImage, clearEpisodeImage } from '../redux/apifetch/GetanimeDataSlice';
 import { useDispatch } from 'react-redux';
 
-export default function Season({data}) {
+export default function Season({ data }) {
     const dispatch = useDispatch();
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const [showFullDescription, setShowFullDescription] = useState(false);
-    
+
     if (!data) return null;
 
-    const {poster, name, stats, description,id,anilistId,malId} = data.anime.info;
-    const {studios, genres, producers} = data.anime.moreInfo;
+    const { poster, name, stats, description, id, anilistId, malId } = data.anime.info;
+    const { studios, genres, producers } = data.anime.moreInfo;
 
     return (
         <section className="relative w-full min-h-screen bg-black text-white overflow-hidden">
             {/* Background poster with overlay */}
             <div className="absolute inset-0">
-                <img 
+                <img
                     src={poster}
                     alt={name}
                     className="w-full h-full object-cover opacity-40"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"/>
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
             </div>
 
             {/* Main content container */}
             <div className="relative mt-12 z-10 w-full max-w-[90rem] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
                 <div className="min-h-screen flex flex-col justify-center py-8 sm:py-12 lg:py-16">
                     <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
-                        
+
                         {/* Left content section */}
                         <div className="w-full lg:w-2/3 flex flex-col gap-6 sm:gap-8">
-                            
+
                             {/* Title section */}
                             <div className="space-y-4">
                                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-[#f47521]">
                                     {name}
                                 </h1>
-                                
+
                                 {/* Episode info */}
                                 <div className="flex flex-wrap items-center gap-4 text-sm sm:text-base text-gray-300">
                                     {stats?.episodes?.sub && (
@@ -67,25 +67,28 @@ export default function Season({data}) {
                                 <h3 className="text-lg sm:text-xl font-semibold text-white">Synopsis</h3>
                                 <div className="space-y-2">
                                     <div className="relative overflow-hidden">
-                                        <p className={`text-sm sm:text-base text-gray-200 leading-relaxed transition-all duration-700 ease-in-out ${
-                                            showFullDescription ? "max-h-[2000px] opacity-100" : "max-h-[115px] opacity-90"
-                                        }`}>
+                                        <p className={`text-sm sm:text-base text-gray-200 leading-relaxed transition-all duration-700 ease-in-out ${showFullDescription ? "max-h-[2000px] opacity-100" : "max-h-[115px] opacity-90"
+                                            }`}>
                                             {description}
                                         </p>
                                         {!showFullDescription && description.length > 300 && (
-                                            <div className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none"/>
+                                            <div className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none" />
                                         )}
                                     </div>
                                     {description.length > 305 && (
-                                        <button 
-                                            onClick={() => setShowFullDescription(!showFullDescription)}
+                                        <button
+                                            onClick={() => {
+                                                setShowFullDescription(!showFullDescription)
+                                                window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+
+                                            }}
                                             className="text-sm font-semibold text-[#f47521] hover:text-white transition-all duration-300 flex items-center gap-1 group"
                                         >
                                             <span>{showFullDescription ? "Show Less" : "Read More"}</span>
-                                            <svg 
+                                            <svg
                                                 className={`w-4 h-4 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`}
-                                                fill="none" 
-                                                stroke="currentColor" 
+                                                fill="none"
+                                                stroke="currentColor"
                                                 viewBox="0 0 24 24"
                                             >
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -117,19 +120,20 @@ export default function Season({data}) {
 
                             {/* Action buttons */}
                             <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                                <button onClick={()=>{navigate(`/episodes/${id || malId || anilistId}`)
-                                  dispatch(clearEpisodeImage());
-                                  dispatch(setEpisodeImage(poster));
-                            
-                            }} className="flex items-center gap-2 bg-[#f47521] hover:bg-[#e66713] text-black font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-lg transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-xl">
-                                    <FaPlay size={16}/>
+                                <button onClick={() => {
+                                    navigate(`/episodes/${id || malId || anilistId}`)
+                                    dispatch(clearEpisodeImage());
+                                    dispatch(setEpisodeImage(poster));
+
+                                }} className="flex items-center gap-2 bg-[#f47521] hover:bg-[#e66713] text-black font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-lg transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-xl">
+                                    <FaPlay size={16} />
                                     START WATCHING
                                 </button>
                                 <button className="flex items-center justify-center w-12 h-12 border-2 border-[#f47521] text-[#f47521] hover:bg-[#f47521] hover:text-black rounded-lg transition-all duration-300">
-                                    <RiBookmarkLine size={20}/>
+                                    <RiBookmarkLine size={20} />
                                 </button>
                                 <button className="flex items-center justify-center w-12 h-12 text-[#f47521] hover:text-white hover:bg-[#f47521]/20 rounded-lg transition-all duration-300">
-                                    <RiAddFill size={24}/>
+                                    <RiAddFill size={24} />
                                 </button>
                             </div>
 
@@ -141,8 +145,8 @@ export default function Season({data}) {
                                             <h4 className="text-sm sm:text-base font-semibold text-[#f47521]">Genres</h4>
                                             <div className="flex flex-wrap gap-2">
                                                 {genres.map((genre) => (
-                                                    <span 
-                                                    onClick={() => navigate(`/producer/${genre.replace(/\s+/g, '-')}`)}
+                                                    <span
+                                                        onClick={() => navigate(`/producer/${genre.replace(/\s+/g, '-')}`)}
                                                         key={genre}
                                                         className="bg-gray-800/80 cursor-pointer hover:text-[#f47521] hover:bg-gray-700/80 px-3 py-1.5 rounded-full text-xs sm:text-sm text-gray-300 transition-colors duration-300"
                                                     >
@@ -158,8 +162,8 @@ export default function Season({data}) {
                                             <h4 className="text-sm sm:text-base font-semibold text-[#f47521]">Producers</h4>
                                             <div className="flex flex-wrap gap-2">
                                                 {producers.map((producer) => (
-                                                    <span 
-                                                    onClick={() => navigate(`/producer/${producer.replace(/\s+/g, '-')}`)}
+                                                    <span
+                                                        onClick={() => navigate(`/producer/${producer.replace(/\s+/g, '-')}`)}
                                                         key={producer}
                                                         className="bg-gray-800/80 cursor-pointer hover:text-[#fe7521] hover:bg-gray-700/80 px-3 py-1.5 rounded-full text-xs sm:text-sm text-gray-300 transition-colors duration-300"
                                                     >
@@ -174,7 +178,7 @@ export default function Season({data}) {
                         </div>
 
                         {/* Right spacer for desktop */}
-                        <div className="hidden lg:block lg:w-1/3"/>
+                        <div className="hidden lg:block lg:w-1/3" />
                     </div>
                 </div>
             </div>

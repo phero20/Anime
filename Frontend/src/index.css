@@ -34,3 +34,20 @@
   animation: progress linear forwards;
 }
 
+/* Escalator-like continuous horizontal scroll for Swiper */
+.escalator-swiper .swiper-wrapper {
+  animation: escalator-scroll 40s linear infinite;
+}
+.escalator-swiper:hover .swiper-wrapper,
+.escalator-swiper:active .swiper-wrapper {
+  animation-play-state: paused;
+}
+@keyframes escalator-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* Adjust -50% to match your content width for seamless loop */
+}
+/*
+  To adjust speed: change '40s' in the animation property above.
+  To make the loop seamless, ensure the total width of slides is at least double the Swiper container width (Swiper's loop prop helps, but you may need to duplicate slides for a perfect effect).
+*/
+

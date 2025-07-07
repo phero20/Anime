@@ -1,9 +1,13 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import Title from "./Title";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { MdLiveTv } from "react-icons/md";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Link } from "react-router-dom";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
 
 export default function AnimeCards({
   data,
@@ -13,67 +17,50 @@ export default function AnimeCards({
   hasMore
 }) {
   const scrollRef = useRef(null);
-  const [showLeft, setShowLeft] = useState(true);
-  const [showRight, setShowRight] = useState(true);
+  // Always use a safe array for data
+  const safeData = Array.isArray(data) ? data : [];
+  // Remove unused showLeft and showRight
+  // const [showLeft, setShowLeft] = useState(true);
+  // const [showRight, setShowRight] = useState(true);
 
   useEffect(() => {
     if (!scroll || !scrollRef.current)
       return;
-
-    const node = scrollRef.current;
-
-    const handleScroll = () => {
-      const { scrollLeft, scrollWidth, clientWidth } = node;
-      setShowLeft(scrollLeft > 0);
-      setShowRight(scrollLeft + clientWidth < scrollWidth - 1);
-    };
-
-    handleScroll();
-    node.addEventListener("scroll", handleScroll);
-    return () => node.removeEventListener("scroll", handleScroll);
+    // No need for handleScroll logic
   }, [scroll]);
 
-  if (!Array.isArray(data) || data.length === 0) {
-    return <div className="text-center text-gray-400 py-8">No {name}
-      found.</div>;
+  // Generate a unique navigation class/id from the name prop
+  const navId = name ? name.replace(/\s+/g, '-') : 'animecards';
+
+  // Duplicate cards if not enough to fill Swiper for autoplay/loop
+  const maxVisibleSlides = 6; // adjust as needed for your breakpoints
+  let swiperData = safeData;
+  if (scroll && safeData.length > 0 && safeData.length <= maxVisibleSlides) {
+    swiperData = Array(3).fill(safeData).flat(); // 3x duplication for safety
   }
 
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -900, behavior: "smooth" });
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 900, behavior: "smooth" });
-    }
-  };
+  if (safeData.length === 0) {
+    return <div className="text-center text-gray-400 py-8">No {name} found.</div>;
+  }
 
   const renderCard = (item, index) => (
-    <Link to={
-      `/anime/${item.id
-      }`
-    }
-      key={index}>
-      <div 
-      {...(!scroll ? { 'data-aos': 'zoom-out-up' } : {})}
+    <Link to={`/anime/${item.id}`} key={index}>
+      <div {...(!scroll ? { 'data-aos': 'zoom-out-up' } : {})}
         className={
           `group cursor-pointer relative overflow-hidden snap-start flex-shrink-0 hover:shadow-xl transition-shadow ${scroll ? "min-w-[140px] sm:min-w-[160px] md:min-w-[180px] lg:min-w-[200px] xl:min-w-[220px]" : "w-full"
           }`
         }>
         <div className="relative overflow-hidden">
-                    <div className="w-full h-[200px] sm:h-[240px] md:h-[280px] lg:h-[320px] xl:h-[360px] rounded-lg overflow-hidden">
+          <div className="w-full h-[200px] sm:h-[240px] md:h-[280px] lg:h-[320px] xl:h-[360px] rounded-lg overflow-hidden">
             <img src={
               item.poster
             }
               alt={
                 item.name
               }
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-150"
-              />
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-150" />
           </div>
-          
+
           <div className="px-2 sm:px-3 py-2">
             <h3 className="text-xs sm:text-sm font-semibold text-[#f47521] w-full line-clamp-2">
               {
@@ -142,43 +129,56 @@ export default function AnimeCards({
   return (
     <div className="w-full max-w-[95%] mx-auto px-2 sm:px-4 md:px-6 py-6 text-white font-['Crunchyroll_Atyp',_sans-serif] relative">
       <Title name={name}
-        anime={
-          scroll ? 'Animes' : ''
-        } /> {
-        scroll && showLeft && (
-          <button onClick={scrollLeft}
-            className="absolute -left-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full z-20 hidden md:flex">
-            <FaChevronLeft size={18} />
-          </button>
-        )
-      }
-
-      {
-        scroll && showRight && (
-          <button onClick={scrollRight}
-            className="absolute -right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full z-20 hidden md:flex">
-            <FaChevronRight size={18} />
-          </button>
-        )
-      }
+        anime={scroll ? 'Animes' : ''} /> 
+          {/* <>
+            <button className={`swiper-prev-${navId} ${scroll ? 'opacity-100' : 'opacity-0'} absolute -left-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full z-20 hidden md:flex`}>
+              <FaChevronLeft size={18} />
+            </button>
+            <button className={`swiper-next-${navId} absolute ${scroll ? 'opacity-100' : 'opacity-0'} -right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full z-20 hidden md:flex`}>
+              <FaChevronRight size={18} />
+            </button>
+          </> */}
+        
 
       {
         scroll ? (
           <div className="relative">
             {/* Left gradient shadow */}
-            <div className="pointer-events-none absolute left-0 top-0 h-full w-10 z-20 bg-gradient-to-r from-black via-black/10 to-transparent" />
-            {/* Right gradient shadow */}
+            <div className="pointer-events-none absolute left-0 top-0 h-full w-10 z-20 bg-gradient-to-r from-black via-black/10 to-transparent" /> {/* Right gradient shadow */}
             <div className="pointer-events-none absolute right-0 top-0 h-full w-10 z-20 bg-gradient-to-l from-black via-black/10 to-transparent" />
-            <div
-              ref={scrollRef}
-              className="flex overflow-x-auto space-x-4 sm:space-x-5 md:space-x-7 lg:space-x-9 pb-4 snap-x snap-mandatory scrollbar-hide scroll-smooth rounded-2xl bg-transparent relative z-10"
+            <Swiper
+              modules={[Navigation, Autoplay]}
+              loop={true}
+              freeMode={true}
+              autoplay={{
+                delay:0, // no delay between transitions
+                disableOnInteraction: false, // keep auto-scrolling after user interaction
+                pauseOnMouseEnter: false, // optional: pause on hover
+              }}
+              speed={4000} // higher = slower, lower = faster (try 4000ms for smoothness)
+              navigation={{
+                nextEl: `.swiper-next-${navId}`,
+                prevEl: `.swiper-prev-${navId}`,
+              }}
+              // slidesPerGroup={data.length-1}
+              slidesPerView="auto"
+              spaceBetween={25}
+              allowTouchMove={true}
+              className="pb-4 scroll-smooth rounded-2xl bg-transparent relative z-10"
             >
-              {data.map(renderCard)}
-            </div>
+              {swiperData.map((item, index) => (
+                <SwiperSlide
+                  key={index}
+                  className="!w-[140px] sm:!w-[160px] md:!w-[180px] lg:!w-[200px] xl:!w-[220px] flex-shrink-0 snap-start"
+                >
+                  {renderCard(item, index % safeData.length)}
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         ) : (
           <InfiniteScroll dataLength={
-            data.length
+            safeData.length
           }
             next={fetchMoreData}
             hasMore={hasMore}
@@ -186,10 +186,10 @@ export default function AnimeCards({
               <p
                 className="text-center py-4">Loading more...</p>
             }
-           
+
             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5  gap-3 sm:gap-4 md:gap-6 scrollbar-hide">
             {
-              data.map(renderCard)
+              safeData.map(renderCard)
             } </InfiniteScroll>
         )
       } </div>

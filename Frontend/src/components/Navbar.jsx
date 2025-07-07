@@ -139,84 +139,84 @@ export default function Navbar() {
   return (
     <div className="relative z-50 text-lg">
       {menuOpen && (
-        <div className="fixed top-0 left-0 w-full h-screen bg-[#030303] text-[#F1EFEC] pt-20 px-6 z-50 overflow-y-auto">
-          <div className="flex flex-col gap-2">
+        <div className="fixed inset-0 z-50">
+          {/* Full-Screen Themed Mobile Menu */}
+          <div className="fixed inset-0 w-full h-full bg-[#181818] text-[#F1EFEC] pt-8 px-2 z-50 overflow-y-auto animate-slide-in flex flex-col">
             {/* Close Button */}
-            <button aria-label="Close menu" className="absolute top-4 right-4 text-3xl px-3 py-0.5 rounded-full hover:bg-[#232323] transition font-bold text-[#f47521] focus:outline-none focus:ring-2 focus:ring-[#f47521]"
-              onClick={() => setMenuOpen(false)}>
+            <button aria-label="Close menu" className="absolute top-4 right-4 text-4xl px-3 py-1 rounded-full hover:bg-[#232323] transition font-bold text-[#F1EFEC] focus:outline-none focus:ring-2 focus:ring-[#f47521]" onClick={() => setMenuOpen(false)}>
               &times;
             </button>
-            {/* Navigation Section (navItems + moreItems combined) */}
-            <div>
-              <div className="text-[#f47521] font-semibold text-base mb-2 pl-2 tracking-wide">Navigation</div>
-              <div className="flex flex-col gap-1">
-                {[...navItems, ...moreItems].map((item) => (
-                  <div key={item}
-                    onClick={() => handleNavItemClick(item.toLowerCase())}
-                    className={`rounded px-4 py-2 transition-all duration-200 cursor-pointer capitalize text-base font-medium ${
-                      !isCategoryPage && !isGenrePage && isHomepage && activeSection === item.toLowerCase() 
-                        ? "bg-[#f47521] text-[#030303]" 
-                        : "hover:bg-[#232323] hover:text-[#f47521]"
-                    }`}>
-                    {item}
+            <div className="flex flex-col gap-2 my-8">
+              {/* Navigation Section */}
+              <div className="bg-[#232323] rounded-xl shadow p-4 flex flex-col gap-2">
+                <div className="uppercase text-xs tracking-widest text-gray-400 mb-2 font-semibold">Navigation</div>
+                <div className="flex flex-col gap-1">
+                  {[...navItems, ...moreItems].map((item) => (
+                    <div key={item}
+                      onClick={() => handleNavItemClick(item.toLowerCase())}
+                      className={`rounded-lg px-4 py-2 transition-all duration-200 cursor-pointer capitalize text-base font-medium text-left tracking-wide ${
+                        !isCategoryPage && !isGenrePage && isHomepage && activeSection === item.toLowerCase()
+                          ? "bg-[#f47521] text-[#181818] shadow" : "hover:bg-[#181818] hover:text-[#f47521] text-gray-300"
+                      }`}
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Category Section */}
+              <div className="bg-[#232323] rounded-xl shadow p-4 flex flex-col gap-2">
+                <div className="flex items-center justify-between cursor-pointer px-2 py-2 rounded-lg" onClick={() => { setCategoryOpen((prev) => !prev); setGenreOpen(false); }}>
+                  <span className="uppercase text-xs tracking-widest text-gray-400 font-semibold">Category</span>
+                  {categoryOpen ? <FaChevronUp size={18} /> : <FaChevronDown size={18} />}
+                </div>
+                {categoryOpen && (
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 px-2 py-2 bg-[#181818] rounded-lg border border-[#232323] shadow">
+                    {categoryItems.map((item) => (
+                      <NavLink key={item}
+                        to={`/category/${item.toLowerCase()}`}
+                        onClick={() => setMenuOpen(false)}
+                        className={({ isActive }) => `text-base cursor-pointer capitalize transition-all duration-200 rounded px-3 py-2 font-medium text-left ${
+                          isActive ? "bg-[#f47521] text-[#181818] shadow" : "text-gray-300 hover:bg-[#232323] hover:text-[#f47521]"
+                        }`}>
+                        {item.replace(/-/g, " ")}
+                      </NavLink>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
-            </div>
-            {/* Category Section */}
-            <div>
-              <div onClick={() => {
-                setCategoryOpen((prev) => !prev);
-                setGenreOpen(false);
-              }}
-                className={`flex items-center justify-between cursor-pointer px-2 py-2 rounded-lg bg-[#181818] mb-2 ${
-                  isCategoryPage ? "text-[#f47521]" : "text-[#F1EFEC]"
-                }`}>
-                <span className="font-semibold text-base">Category</span>
-                {categoryOpen ? <FaChevronUp size={16} /> : <FaChevronDown size={16} />}
-              </div>
-              {categoryOpen && (
-                <div className="grid grid-cols-2 gap-x-4 gap-y-4 px-2 py-3 bg-[#181818] rounded-lg">
-                  {categoryItems.map((item) => (
-                    <NavLink key={item}
-                      to={`/category/${item.toLowerCase()}`}
-                      onClick={() => setMenuOpen(false)}
-                      className={({ isActive }) => `text-sm cursor-pointer capitalize transition-all duration-200 rounded px-2 py-1 font-medium ${
-                        isActive ? "bg-[#f47521] text-[#030303]" : "text-gray-300 hover:bg-[#232323] hover:text-[#f47521]"
-                      }`}>
-                      {item.replace(/-/g, " ")}
-                    </NavLink>
-                  ))}
+              {/* Genres Section */}
+              <div className="bg-[#232323] rounded-xl shadow p-4 flex flex-col gap-2">
+                <div className="flex items-center justify-between cursor-pointer px-2 py-2 rounded-lg" onClick={() => { setGenreOpen((prev) => !prev); setCategoryOpen(false); }}>
+                  <span className="uppercase text-xs tracking-widest text-gray-400 font-semibold">Genres</span>
+                  {genreOpen ? <FaChevronUp size={18} /> : <FaChevronDown size={18} />}
                 </div>
-              )}
-            </div>
-            {/* Genres Section */}
-            <div>
-              <div onClick={() => {
-                setGenreOpen((prev) => !prev);
-                setCategoryOpen(false);
-              }}
-                className={`flex items-center justify-between cursor-pointer px-2 py-2 rounded-lg bg-[#181818] mb-2 ${
-                  isGenrePage ? "text-[#f47521]" : "text-[#F1EFEC]"
-                }`}>
-                <span className="font-semibold text-base">Genres</span>
-                {genreOpen ? <FaChevronUp size={16} /> : <FaChevronDown size={16} />}
+                {genreOpen && (
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 px-2 py-2 bg-[#181818] rounded-lg border border-[#232323] shadow">
+                    {genres.map((item) => (
+                      <NavLink key={item}
+                        to={`/genre/${item.toLowerCase()}`}
+                        onClick={() => setMenuOpen(false)}
+                        className={({ isActive }) => `text-base cursor-pointer capitalize transition-all duration-200 rounded px-3 py-2 font-medium text-left ${
+                          isActive ? "bg-[#f47521] text-[#181818] shadow" : "text-gray-300 hover:bg-[#232323] hover:text-[#f47521]"
+                        }`}>
+                        {item.replace(/-/g, " ")}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
               </div>
-              {genreOpen && (
-                <div className="grid grid-cols-2 gap-x-4 gap-y-4 px-2 py-3 bg-[#181818] rounded-lg">
-                  {genres.map((item) => (
-                    <NavLink key={item}
-                      to={`/genre/${item.toLowerCase()}`}
-                      onClick={() => setMenuOpen(false)}
-                      className={({ isActive }) => `text-sm cursor-pointer capitalize transition-all duration-200 rounded px-2 py-1 font-medium ${
-                        isActive ? "bg-[#f47521] text-[#030303]" : "text-gray-300 hover:bg-[#232323] hover:text-[#f47521]"
-                      }`}>
-                      {item.replace(/-/g, " ")}
-                    </NavLink>
-                  ))}
-                </div>
-              )}
             </div>
+            {/* Slide-in animation */}
+            <style>{`
+              @keyframes slide-in {
+                from { transform: translateX(-100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+              }
+              .animate-slide-in {
+                animation: slide-in 0.35s cubic-bezier(0.4,0,0.2,1);
+              }
+            `}</style>
           </div>
         </div>
       )}

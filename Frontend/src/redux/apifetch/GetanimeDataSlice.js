@@ -8,6 +8,7 @@ export const fetchAnimeData = createAsyncThunk(
   'AnimeData/fetchAnimeData',
   async () => {
     const response = await axios.get(`${backendUrl}/api/anime/getdata`);
+    console.log(response)
     return response.data;
   }
 );

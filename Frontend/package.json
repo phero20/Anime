@@ -21,7 +21,8 @@
     "react-infinite-scroll-component": "^6.1.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.2",
-    "react-scroll": "^1.9.3"
+    "react-scroll": "^1.9.3",
+    "swiper": "^11.2.10"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
