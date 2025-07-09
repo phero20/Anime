@@ -8,7 +8,6 @@ export const fetchAnimeData = createAsyncThunk(
   'AnimeData/fetchAnimeData',
   async () => {
     const response = await axios.get(`${backendUrl}/api/anime/getdata`);
-    console.log(response)
     return response.data;
   }
 );
@@ -75,7 +74,16 @@ export const fetchEpisodesStreamLink = createAsyncThunk(
       server: server,
       category: category
     });
-    console.log(response)
+    return response.data;
+  }
+);
+
+
+
+export const fetchSearchSuggestions = createAsyncThunk(
+  'AnimeData/fetchSearchSuggestions',
+  async ({ q }) => {
+    const response = await axios.get(`${backendUrl}/api/anime/search-suggestions/q=${q}`);
     return response.data;
   }
 );
@@ -85,6 +93,7 @@ const initialState = {
   CategoryAnimeData: null,
   GenreAnimeData : null,
   ProducerAnimeData : null,
+  SearchSuggestionsData:null,
   EpisodesData : null,
   EpisodesServerData : null,
   CardAnimeData:null,
@@ -203,7 +212,7 @@ const GetanimeDataSlice = createSlice({
 
 
 
-
+ //fhanlde card data
       .addCase(fetchCardAnimeData.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -219,7 +228,7 @@ const GetanimeDataSlice = createSlice({
 
 
 
-
+//hanlde genre
       .addCase(fetchGenreAnimeData.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -277,6 +286,20 @@ const GetanimeDataSlice = createSlice({
         }
       })
       .addCase(fetchProducerAnimeData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Handle fetchSearchSuggestions
+      .addCase(fetchSearchSuggestions.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchSearchSuggestions.fulfilled, (state, action) => {
+        state.loading = false;
+        state.SearchSuggestionsData = action.payload;
+      })
+      .addCase(fetchSearchSuggestions.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

@@ -16,6 +16,7 @@ import Anime from './pages/Anime';
 import Producer from './pages/Producer'
 import {fetchAnimeData} from './redux/apifetch/GetanimeDataSlice';
 import Episodes from './pages/Episodes';
+import Search from './pages/Search';
 
 function App() {
     const dispatch = useDispatch();
@@ -67,6 +68,10 @@ function App() {
                     <Route path="/episodes/:id"
                         element={
                             <PageWrapper><Episodes/></PageWrapper>
+                        }/>
+                        <Route path="/search"
+                        element={
+                            <PageWrapper><Search/></PageWrapper>
                         }/>
                 </Routes>
             </AnimatePresence>

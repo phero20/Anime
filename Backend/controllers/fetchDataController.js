@@ -2,7 +2,7 @@ import axios from "axios";
 
 const backendUrl = process.env.BACKEND_URL
 
-const fetchHomeData = async (req, res) => {
+export const fetchHomeData = async (req, res) => {
     try {
         const response = await axios.get(backendUrl + "/api/v2/hianime/home");
               return res.json({success: true, data: response.data});
@@ -11,7 +11,7 @@ const fetchHomeData = async (req, res) => {
     }
 };
 
-const fetchCategoryData = async (req, res) => {
+export const fetchCategoryData = async (req, res) => {
     try {
         const name = req.params.name;
         const page = req.params.page
@@ -22,7 +22,7 @@ const fetchCategoryData = async (req, res) => {
     }
 }
 
-const fetchGenreData = async (req, res) => {
+export const fetchGenreData = async (req, res) => {
     try {
         const name = req.params.name;
         const page = req.params.page
@@ -33,7 +33,7 @@ const fetchGenreData = async (req, res) => {
     }
 }
 
-const fetchAnimeData = async (req, res) => {
+export const fetchAnimeData = async (req, res) => {
     try {
         const id = req.params.id;
         const response = await axios.get(backendUrl + `/api/v2/hianime/anime/${id}`)
@@ -43,7 +43,7 @@ const fetchAnimeData = async (req, res) => {
     }
 }
 
-const fetchProducerData = async (req, res) => {
+export const fetchProducerData = async (req, res) => {
     try {
         const name = req.params.name;
         const page = req.params.page;
@@ -54,7 +54,7 @@ const fetchProducerData = async (req, res) => {
     }
 }
 
-const fetchEpisodesData = async (req, res) => {
+export const fetchEpisodesData = async (req, res) => {
     try {
         const id = req.params.id;
         const response = await axios.get(backendUrl + `/api/v2/hianime/anime/${id}/episodes`)
@@ -64,7 +64,7 @@ const fetchEpisodesData = async (req, res) => {
     }
 }
 
-const fetchEpisodesServerData = async (req, res) => {
+export const fetchEpisodesServerData = async (req, res) => {
     try {
         const episodeId = req.body.episodeId
         const response = await axios.get(backendUrl +`/api/v2/hianime/episode/servers?animeEpisodeId=${episodeId}`)
@@ -74,7 +74,7 @@ const fetchEpisodesServerData = async (req, res) => {
     }
 }
 
-const fetchEpisodeStreamLinks = async (req, res) => {
+export const fetchEpisodeStreamLinks = async (req, res) => {
     try {
         const episodeId = req.body.episodeId
         const server = req.body.server;
@@ -86,13 +86,12 @@ const fetchEpisodeStreamLinks = async (req, res) => {
     }
 }
 
-export {
-    fetchHomeData,
-    fetchCategoryData,
-    fetchGenreData,
-    fetchAnimeData,
-    fetchProducerData,
-    fetchEpisodesData,
-    fetchEpisodesServerData,
-    fetchEpisodeStreamLinks
-};
+export const fetchSearchSuggestions = async (req,res) => {
+    try {
+       const q = req.params.q;
+        const response = await axios.get(backendUrl +`/api/v2/hianime/search/suggestion?q=${q}`);
+        return res.json({success: true, data: response.data});
+    } catch (error) {
+        res.json({success: false, message: error.message});
+    }
+}

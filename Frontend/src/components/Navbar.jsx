@@ -373,10 +373,11 @@ export default function Navbar() {
         </div>
 
         <div className="flex gap-3 items-center">
-          {[FaSearch, RiBookmarkFill, FaUser].map((Icon, i) => (
+          {[{icon:FaSearch,path:'search'}, {icon:RiBookmarkFill,path:'saved'}, {icon:FaUser,path:'user'}].map((Icon, i) => (
             <div key={i}
+            onClick={()=>navigate(`/${Icon.path}`)}
               className="p-2 hover:bg-[#f47521] hover:text-[#030303] rounded-full cursor-pointer transition">
-              <Icon size={16} />
+              <Icon.icon size={16} />
             </div>
           ))}
         </div>
