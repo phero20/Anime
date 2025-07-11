@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { FaFilm } from 'react-icons/fa';
 import { fetchEpisodesData, fetchEpisodesServerData, fetchEpisodesStreamLink } from '../redux/apifetch/GetanimeDataSlice';
 import {
   FaPlay,
@@ -419,11 +418,14 @@ export default function Episodes() {
                   <img
                     src={EpisodeImage || `https://placehold.co/192x128/1f2937/ffffff?text=${episode.title.length > 20 ? episode.title.slice(0, 20) + '...' : episode.title}`}
                     alt={episode.title}
-                    className="w-full h-full object-cover block group-hover:scale-150 transition-all duration-500"
+                    className="w-full h-full object-cover block group-hover:scale-150 transition-all duration-700"
                     draggable={false}
                   />
                   <div className="absolute bottom-1 left-1 bg-[#181818] text-[#f47521] text-[10px] font-semibold px-2 py-0.5 rounded shadow">
                     EP {episode.number}
+                  </div>
+                  <div className='w-full h-full bg-black/70 flex items-center justify-center absolute top-0 left-0 group-hover:opacity-100 opacity-0 transition-all duration-500'>
+                    <FaPlay />
                   </div>
                 </div>
                 {/* Info */}
