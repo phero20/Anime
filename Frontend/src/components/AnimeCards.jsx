@@ -45,7 +45,7 @@ export default function AnimeCards({
 
   const renderCard = (item, index) => (
     <Link to={`/anime/${item.id}`} key={index}>
-      <div {...(!scroll ? { 'data-aos': 'zoom-out-up' } : {})}
+      <div {...(!scroll ? { 'data-aos': 'zoom-out-up' ,'data-aos-offset':'100' } : {})}
         className={
           `group cursor-pointer relative overflow-hidden snap-start flex-shrink-0 hover:shadow-xl transition-shadow ${scroll ? "min-w-[140px] sm:min-w-[160px] md:min-w-[180px] lg:min-w-[200px] xl:min-w-[220px]" : "w-full"
           }`
@@ -187,7 +187,7 @@ export default function AnimeCards({
                 className="text-center py-4">Loading more...</p>
             }
 
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5  gap-3 sm:gap-4 md:gap-6 scrollbar-hide">
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 scrollbar-hide">
             {
               safeData.map(renderCard)
             } </InfiniteScroll>

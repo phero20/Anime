@@ -37,7 +37,7 @@ export default function Dropdown({ options, value, onChange, placeholder = 'Sele
   return (
     <div ref={containerRef} className={`relative w-full ${className}`}>
       <div
-        className="flex items-center justify-between bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 cursor-pointer hover:border-[#f47521] transition-all text-xs sm:text-sm text-[#F1EFEC] min-h-[36px]"
+        className="flex items-center justify-between bg-slate-900 border border-gray-700 rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 cursor-pointer hover:border-[#f47521] transition-all text-xs sm:text-sm text-[#F1EFEC] min-h-[36px]"
         onClick={() => setIsOpen(v => !v)}
         tabIndex={0}
         onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setIsOpen(v => !v); }}

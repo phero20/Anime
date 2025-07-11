@@ -42,7 +42,7 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div data-aos='zoom-in-up' className="bg-gray-950 rounded-2xl shadow-2xl w-full max-w-2xl px-3 py-6 mx-2 sm:p-8 relative border border-[#232323]">
+      <div data-aos='zoom-in-up' className="bg-black rounded-2xl shadow-2xl w-full max-w-2xl px-3 py-6 mx-2 sm:p-8 relative border border-[#f47521]/80">
         <button
           className="absolute top-4 right-4 text-[#f47521] text-2xl sm:text-3xl hover:text-[#f47521]/80 focus:outline-none"
           onClick={onClose}
@@ -133,7 +133,7 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
               min="1900"
               max={new Date().getFullYear()}
               placeholder="e.g. 2014"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg text-xs sm:text-sm px-2 py-2 sm:px-3 sm:py-2 text-[#F1EFEC] focus:border-[#f47521] focus:outline-none"
+              className="w-full bg-slate-900 border border-gray-700 rounded-lg text-xs sm:text-sm px-2 py-2 sm:px-3 sm:py-2 text-[#F1EFEC] focus:border-[#f47521] focus:outline-none"
             />
           </div>
         </div>
@@ -155,7 +155,7 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
             Cancel
           </button> */}
           <button
-            className="px-3 sm:px-5 py-2 rounded-lg bg-[#f47521] text-xs sm:text-base text-white hover:bg-[#d65d13] transition-colors font-semibold shadow-lg"
+            className="px-3 py-2 rounded-lg bg-[#f47521] text-xs sm:text-base text-black hover:bg-[#d65d13] transition-colors font-medium shadow-lg"
             onClick={handleApply}
           >
             Apply Filters

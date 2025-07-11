@@ -23,7 +23,7 @@ function App() {
     const location = useLocation();
 
     useEffect(() => {
-        AOS.init({duration: 600, once: false, easing: 'ease-in-out', mirror: true});
+        AOS.init({duration: 700, once: false, easing: 'ease-in-out', mirror: true});
 
         const handleScroll = () => {
             AOS.refresh();
@@ -31,7 +31,7 @@ function App() {
 
         window.addEventListener('scroll', handleScroll, {passive: true});
         return() => window.removeEventListener('scroll', handleScroll);
-    }, []);
+     },[]);
 
     useEffect(() => {
         dispatch(fetchAnimeData());

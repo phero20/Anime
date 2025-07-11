@@ -8,7 +8,8 @@ import {
     fetchEpisodesData,
     fetchEpisodesServerData,
     fetchEpisodeStreamLinks,
-    fetchSearchSuggestions
+    fetchSearchSuggestions,
+    fetchSearchResult
 } from '../controllers/fetchDataController.js';
 
 
@@ -24,7 +25,10 @@ fetchDataRouter.get('/episodes/:id', fetchEpisodesData);
 fetchDataRouter.post('/episodes-server', fetchEpisodesServerData);
 fetchDataRouter.post('/episodes-stream-links', fetchEpisodeStreamLinks);
 fetchDataRouter.post('/episodes-stream-links', fetchEpisodeStreamLinks);
-fetchDataRouter.get('/search-suggestions/q=:q',fetchSearchSuggestions)
+fetchDataRouter.get('/search-suggestions/q=:q',fetchSearchSuggestions);
+fetchDataRouter.get('/search-result/q=:q',fetchSearchResult);
+
+
 
 
 

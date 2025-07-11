@@ -95,3 +95,14 @@ export const fetchSearchSuggestions = async (req,res) => {
         res.json({success: false, message: error.message});
     }
 }
+
+
+export const fetchSearchResult = async (req,res) => {
+    try {
+       const q = req.params.q;
+        const response = await axios.get(backendUrl +`/api/v2/hianime/search?q=${q}`);
+        return res.json({success: true, data: response.data});
+    } catch (error) {
+        res.json({success: false, message: error.message});
+    }
+}

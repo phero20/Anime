@@ -88,11 +88,22 @@ export const fetchSearchSuggestions = createAsyncThunk(
   }
 );
 
+
+export const fetchSearchResults = createAsyncThunk(
+  'AnimeData/fetchSearchResults',
+  async ({ q }) => {
+    const response = await axios.get(`${backendUrl}/api/anime/search-result/q=${q}`);
+    return response.data;
+  }
+);
+
+
 const initialState = {
   AnimeData: null,
   CategoryAnimeData: null,
   GenreAnimeData : null,
   ProducerAnimeData : null,
+  SearchResultData:null,
   SearchSuggestionsData:null,
   EpisodesData : null,
   EpisodesServerData : null,
@@ -115,6 +126,9 @@ const GetanimeDataSlice = createSlice({
     },
     clearSearchSuggestions: (state) => {
       state.SearchSuggestionsData = null;
+    },
+    clearSearchResult: (state)=>{
+      state.SearchResultData = null;
     },
   },
   extraReducers: (builder) => {
@@ -305,9 +319,25 @@ const GetanimeDataSlice = createSlice({
       .addCase(fetchSearchSuggestions.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+
+
+      .addCase(fetchSearchResults.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchSearchResults.fulfilled, (state, action) => {
+        state.loading = false;
+        state.SearchResultData = action.payload;
+      })
+      .addCase(fetchSearchResults.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
+
+      
   },
 });
 
-export const { setEpisodeImage, clearEpisodeImage, clearSearchSuggestions } = GetanimeDataSlice.actions;
+export const { setEpisodeImage, clearEpisodeImage, clearSearchSuggestions,clearSearchResult } = GetanimeDataSlice.actions;
 export default GetanimeDataSlice.reducer;
