@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import SearchFilter from '../components/SearchFilter';
 import AnimeCards from '../components/AnimeCards';
 import { useNavigate } from 'react-router-dom';
+import loadingAnimation from '../components/LoadingAnimation'
+import LoadingAnimation from '../components/LoadingAnimation';
 
 export default function Search() {
   const dispatch = useDispatch();
@@ -217,8 +219,8 @@ export default function Search() {
           >
             <div className="bg-gray-900/80 backdrop-blur-sm rounded-lg shadow-xl border border-gray-700/50 max-h-80 overflow-y-auto scrollbar-none">
               {showLoading ? (
-                <div className="p-4 text-center">
-                  <div className="text-[#f47521] text-sm sm:text-base">Loading suggestions...</div>
+                <div className="p-4 w-full">
+                  <LoadingAnimation />
                 </div>
               ) : (
                 <div className="py-1">
@@ -282,9 +284,9 @@ export default function Search() {
 
       {/* Loading and Results */}
       {resultsLoading && showResults === false && (
-        <div className="flex justify-center items-center py-10">
-          <div className="text-[#f47521] text-lg font-semibold animate-pulse">Loading results...</div>
-        </div>
+         <div className="p-4 w-full">
+         <LoadingAnimation />
+       </div>
       )}
       {showResults && searchResult && (
   <div className='flex flex-col items-center'>

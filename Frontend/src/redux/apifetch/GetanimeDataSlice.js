@@ -130,6 +130,12 @@ const GetanimeDataSlice = createSlice({
     clearSearchResult: (state)=>{
       state.SearchResultData = null;
     },
+    clearCategoryData: (state) => {
+      state.CategoryAnimeData = null;
+    },
+    clearGenreData: (state) => {
+      state.GenreAnimeData = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -339,5 +345,5 @@ const GetanimeDataSlice = createSlice({
   },
 });
 
-export const { setEpisodeImage, clearEpisodeImage, clearSearchSuggestions,clearSearchResult } = GetanimeDataSlice.actions;
+export const { setEpisodeImage, clearEpisodeImage, clearSearchSuggestions, clearSearchResult, clearCategoryData, clearGenreData } = GetanimeDataSlice.actions;
 export default GetanimeDataSlice.reducer;

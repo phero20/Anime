@@ -8,6 +8,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
+import LoadingAnimation from "./LoadingAnimation";
 
 export default function AnimeCards({
   data,
@@ -39,9 +40,6 @@ export default function AnimeCards({
     swiperData = Array(3).fill(safeData).flat(); // 3x duplication for safety
   }
 
-  if (safeData.length === 0) {
-    return <div className="text-center text-gray-400 py-8">No {name} found.</div>;
-  }
 
   const renderCard = (item, index) => (
     <Link to={`/anime/${item.id}`} key={index}>
@@ -183,8 +181,9 @@ export default function AnimeCards({
             next={fetchMoreData}
             hasMore={hasMore}
             loader={
-              <p
-                className="text-center py-4">Loading more...</p>
+              <div className="p-4 w-full">
+         <LoadingAnimation />
+       </div>
             }
 
             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 scrollbar-hide">

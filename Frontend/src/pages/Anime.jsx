@@ -5,6 +5,7 @@ import {useParams} from 'react-router-dom';
 import Season from '../components/Season';
 import MoreInfo from '../components/MoreInfo';
 import AnimeCards from '../components/AnimeCards'
+import LoadingAnimation from '../components/LoadingAnimation';
 
 
 export default function Anime() {
@@ -13,35 +14,39 @@ export default function Anime() {
     useEffect(() => {
         dispatch(fetchCardAnimeData(id));
     }, [dispatch]);
-    const {CardAnimeData} = useSelector((state) => state.AnimeData);
+    const {CardAnimeData, loading} = useSelector((state) => state.AnimeData);
 
-    const data = CardAnimeData ?. data ?. data;
-    const relatedAnimes = CardAnimeData ?. data ?. data.relatedAnimes;
-    const recommendedAnimes = CardAnimeData ?. data ?. data.recommendedAnimes;
+    const data = CardAnimeData?.data?.data;
+    const relatedAnimes = CardAnimeData?.data?.data?.relatedAnimes;
+    const recommendedAnimes = CardAnimeData?.data?.data?.recommendedAnimes;
 
+
+    // Show loading animation while data is loading
+    if (loading || !data) {
+        return (
+            <div className='w-full overflow-hidden'>
+                <div className="w-full min-h-screen bg-black text-white flex items-center justify-center">
+                    <LoadingAnimation />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className='w-full overflow-hidden'>
             <div data-aos="zoom-out-up">
                 <Season data={data}/>
-
             </div>
            
-                <MoreInfo data={data}/>
+            <MoreInfo data={data}/>
 
-                  
-                <div data-aos="zoom-out-up">
-                    
+            <div data-aos="zoom-out-up">
                 <AnimeCards data={relatedAnimes} name={'Related'} scroll={true}  />
-                </div>
+            </div>
 
-                <div data-aos="zoom-out-up">
-                    
-                    <AnimeCards data={recommendedAnimes} name={'Recommended'} scroll={true}  />
-                    </div>
-        
-
-
+            <div data-aos="zoom-out-up">
+                <AnimeCards data={recommendedAnimes} name={'Recommended'} scroll={true}  />
+            </div>
         </div>
     )
 }

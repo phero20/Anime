@@ -13,6 +13,7 @@ import {
 } from 'react-icons/fa';
 import { AnimatePresence, motion } from 'framer-motion';
 import VideoPlayer from '../components/VideoPlayer';
+import LoadingAnimation from '../components/LoadingAnimation';
 
 
 export default function Episodes() {
@@ -119,12 +120,11 @@ export default function Episodes() {
 
   if (episodesLoading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f47521] mx-auto mb-4"></div>
-          <p className="text-lg">Loading episodes...</p>
-        </div>
+      <div className='w-full overflow-hidden'>
+      <div className="w-full min-h-screen bg-black text-white flex items-center justify-center">
+          <LoadingAnimation />
       </div>
+  </div>
     );
   }
 

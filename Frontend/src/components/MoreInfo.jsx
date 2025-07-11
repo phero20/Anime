@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { FaPlay, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import LoadingAnimation from "./LoadingAnimation";
 
 export default function MoreInfo({ data }) {
   // Move all hooks before any early returns
@@ -40,6 +41,17 @@ export default function MoreInfo({ data }) {
     seasonRef.current?.addEventListener("scroll", update);
     return () => seasonRef.current?.removeEventListener("scroll", update);
   }, [seasons.length]);
+
+  // Show loading animation while data is loading
+  if (!data) {
+    return (
+      <section className="w-full bg-black text-white font-['Crunchyroll_Atyp',sans-serif]">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-8 sm:py-12">
+          <LoadingAnimation />
+        </div>
+      </section>
+    );
+  }
 
   if (!data?.anime?.info) return null;
 
