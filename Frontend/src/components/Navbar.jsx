@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FaHamburger,
   FaSearch,
@@ -138,17 +139,35 @@ export default function Navbar() {
 
   return (
     <div className="relative z-50 text-lg">
-      {menuOpen && (
-        <div className="fixed inset-0 z-50">
-          {/* Full-Screen Themed Mobile Menu */}
-          <div className="fixed inset-0 w-full h-full bg-[#181818] text-[#F1EFEC] pt-8 px-2 z-50 overflow-y-auto animate-slide-in flex flex-col">
-            {/* Close Button */}
-            <button aria-label="Close menu" className="absolute top-4 right-4 text-4xl px-3 py-1 rounded-full hover:bg-[#232323] transition font-bold text-[#F1EFEC] focus:outline-none focus:ring-2 focus:ring-[#f47521]" onClick={() => setMenuOpen(false)}>
-              &times;
-            </button>
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div 
+            className="fixed inset-0 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
+          >
+            {/* Full-Screen Themed Mobile Menu */}
+            <motion.div 
+              className="fixed inset-0 w-full h-full bg-black text-[#F1EFEC] pt-8 px-2 z-50 overflow-y-auto flex flex-col"
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 300, 
+                damping: 35,
+                duration: 0.2
+              }}
+            >
+              {/* Close Button */}
+              <button aria-label="Close menu" className="absolute top-4 right-4 text-4xl px-3 py-1 rounded-full hover:text-white transition font-bold text-[#F47521]" onClick={() => setMenuOpen(false)}>
+                &times;
+              </button>
             <div className="flex flex-col gap-2 my-8">
               {/* Navigation Section */}
-              <div className="bg-[#232323] rounded-xl shadow p-4 flex flex-col gap-2">
+              <div className="bg-gray-900/80 rounded-xl shadow p-4 flex flex-col gap-2">
                 <div className="uppercase text-xs tracking-widest text-gray-400 mb-2 font-semibold">Navigation</div>
                 <div className="flex flex-col gap-1">
                   {[...navItems, ...moreItems].map((item) => (
@@ -156,7 +175,7 @@ export default function Navbar() {
                       onClick={() => handleNavItemClick(item.toLowerCase())}
                       className={`rounded-lg px-4 py-2 transition-all duration-200 cursor-pointer capitalize text-base font-medium text-left tracking-wide ${
                         !isCategoryPage && !isGenrePage && isHomepage && activeSection === item.toLowerCase()
-                          ? "bg-[#f47521] text-[#181818] shadow" : "hover:bg-[#181818] hover:text-[#f47521] text-gray-300"
+                          ? "bg-[#f47521] text-[#181818] shadow" : "hover:bg-gray-800 hover:text-[#f47521] text-gray-300"
                       }`}
                     >
                       {item}
@@ -165,19 +184,19 @@ export default function Navbar() {
                 </div>
               </div>
               {/* Category Section */}
-              <div className="bg-[#232323] rounded-xl shadow p-4 flex flex-col gap-2">
+              <div className="bg-gray-900/80 rounded-xl shadow p-4 flex flex-col gap-2">
                 <div className="flex items-center justify-between cursor-pointer px-2 py-2 rounded-lg" onClick={() => { setCategoryOpen((prev) => !prev); setGenreOpen(false); }}>
                   <span className="uppercase text-xs tracking-widest text-gray-400 font-semibold">Category</span>
-                  <FaChevronDown size={18} className={`transition-transform duration-300 ${categoryOpen ? 'rotate-180' : ''}`} />
+                  <FaChevronDown size={18} className={`transition-transform text-[#f47521] duration-300 ${categoryOpen ? 'rotate-180' : ''}`} />
                 </div>
                 {categoryOpen && (
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 px-2 py-2 bg-[#181818] rounded-lg border border-[#232323] shadow">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 px-2 py-2 bg-gray-900 rounded-lg border border-[#232323] shadow">
                     {categoryItems.map((item) => (
                       <NavLink key={item}
                         to={`/category/${item.toLowerCase()}`}
                         onClick={() => setMenuOpen(false)}
                         className={({ isActive }) => `text-base cursor-pointer capitalize transition-all duration-200 rounded px-3 py-2 font-medium text-left ${
-                          isActive ? "bg-[#f47521] text-[#181818] shadow" : "text-gray-300 hover:bg-[#232323] hover:text-[#f47521]"
+                          isActive ? "bg-[#f47521] text-[#181818] shadow" : "text-gray-300 hover:bg-gray-800 hover:text-[#f47521]"
                         }`}>
                         {item.replace(/-/g, " ")}
                       </NavLink>
@@ -186,19 +205,19 @@ export default function Navbar() {
                 )}
               </div>
               {/* Genres Section */}
-              <div className="bg-[#232323] rounded-xl shadow p-4 flex flex-col gap-2">
+              <div className="bg-gray-900/80 rounded-xl shadow p-4 flex flex-col gap-2">
                 <div className="flex items-center justify-between cursor-pointer px-2 py-2 rounded-lg" onClick={() => { setGenreOpen((prev) => !prev); setCategoryOpen(false); }}>
                   <span className="uppercase text-xs tracking-widest text-gray-400 font-semibold">Genres</span>
-                  <FaChevronDown size={18} className={`transition-transform duration-300 ${genreOpen ? 'rotate-180' : ''}`} />
+                  <FaChevronDown size={18} className={`transition-transform text-[#f47521] duration-300 ${genreOpen ? 'rotate-180' : ''}`} />
                 </div>
                 {genreOpen && (
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 px-2 py-2 bg-[#181818] rounded-lg border border-[#232323] shadow">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 px-2 py-2 bg-gray-900 rounded-lg border border-[#232323] shadow">
                     {genres.map((item) => (
                       <NavLink key={item}
                         to={`/genre/${item.toLowerCase()}`}
                         onClick={() => setMenuOpen(false)}
                         className={({ isActive }) => `text-base cursor-pointer capitalize transition-all duration-200 rounded px-3 py-2 font-medium text-left ${
-                          isActive ? "bg-[#f47521] text-[#181818] shadow" : "text-gray-300 hover:bg-[#232323] hover:text-[#f47521]"
+                          isActive ? "bg-[#f47521] text-[#181818] shadow" : "text-gray-300 hover:bg-gray-800 hover:text-[#f47521]"
                         }`}>
                         {item.replace(/-/g, " ")}
                       </NavLink>
@@ -207,19 +226,12 @@ export default function Navbar() {
                 )}
               </div>
             </div>
-            {/* Slide-in animation */}
-            <style>{`
-              @keyframes slide-in {
-                from { transform: translateX(-100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-              }
-              .animate-slide-in {
-                animation: slide-in 0.35s cubic-bezier(0.4,0,0.2,1);
-              }
-            `}</style>
-          </div>
-        </div>
-      )}
+            {/* Animation styles */}
+            
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Hide navbar when menuOpen is true on mobile */}
       <nav className={`fixed top-0 left-0 right-0 z-50 text-[#F1EFEC] flex items-center justify-between px-4 lg:px-12 py-3 transition-all duration-500 ${
