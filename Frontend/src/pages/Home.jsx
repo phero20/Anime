@@ -135,7 +135,7 @@ export default function Home() {
             scroller.scrollTo(section, {
               smooth: true,
               duration: 800,
-              offset: -80,
+              offset: 0,
             });
           }, 150);
         }
@@ -143,35 +143,35 @@ export default function Home() {
 
     return (
         <div className="text-white scroll-smooth w-full overflow-hidden">
-            <div id="home" data-aos="zoom-out-up">
+            <div id="home" data-aos="zoom-out-up" data-aos-offset="0">
                 <Homeview AnimeData={AnimeData} loading={loading}/>
             </div>
 
             {sections1.map((item, index) => (
-                <section key={index} data-aos="zoom-out-up" id={item.id}>
+                <section key={index} data-aos="zoom-out-up" data-aos-offset="0" id={item.id}>
                     <AnimeCards data={item.data} name={item.name} scroll={true}/>
                 </section>
             ))}
 
-            <div data-aos="zoom-out-up">
+            <div data-aos="zoom-out-up" data-aos-offset="0">
                 <MiddlePosters data={poster1Data}/>
             </div>
 
-            <section id="top10">
+            <section id="top10" data-aos-offset="0">
                 <TopAnimeList top10Animes={top10Animes}/>
             </section>
             
-            <div data-aos="zoom-out-up">
+            <div data-aos="zoom-out-up" data-aos-offset="0">
                 <MiddlePosters data={poster2Data}/>
             </div>
             
             {sections2.map((item, index) => (
-                <section key={index} data-aos="zoom-out-up" id={item.id}>
+                <section key={index} data-aos="zoom-out-up" data-aos-offset="0" id={item.id}>
                     <AnimeCards data={item.data} name={item.name} scroll={true}/>
                 </section>
             ))}
             
-            <div data-aos="zoom-out-up">
+            <div data-aos="zoom-out-up" data-aos-offset="0">
                 <MiddlePosters data={poster3Data}/>
             </div>
         </div>
