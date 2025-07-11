@@ -290,10 +290,10 @@ export default function Search() {
   <div className='flex flex-col items-center'>
     {
       Object.keys(appliedFilters).length > 0 && (
-        <div className="flex items-center gap-4 mb-2">
+        <div className="flex items-center gap-6 mb-2">
           <h4 className="text-sm sm:text-base font-semibold text-[#f47521]">Filters Applied</h4>
           <button
-            className="text-xs sm:text-sm px-3 py-1 rounded-full border border-[#f47521] text-[#f47521] hover:bg-[#f47521] hover:text-white transition-colors duration-200"
+            className="text-xs sm:text-sm px-3 py-1 rounded-lg border border-[#f47521] text-[#f47521] hover:bg-[#f47521] hover:text-white transition-colors duration-200"
             onClick={() => {
               setFilters({
                 genres: '',

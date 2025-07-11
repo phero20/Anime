@@ -4,7 +4,7 @@ import {
   FaSearch,
   FaUser,
   FaChevronDown,
-  FaChevronUp
+  // FaChevronUp
 } from "react-icons/fa";
 import { RiBookmarkFill } from "react-icons/ri";
 import { Link as ScrollLink, scroller } from "react-scroll";
@@ -168,7 +168,7 @@ export default function Navbar() {
               <div className="bg-[#232323] rounded-xl shadow p-4 flex flex-col gap-2">
                 <div className="flex items-center justify-between cursor-pointer px-2 py-2 rounded-lg" onClick={() => { setCategoryOpen((prev) => !prev); setGenreOpen(false); }}>
                   <span className="uppercase text-xs tracking-widest text-gray-400 font-semibold">Category</span>
-                  {categoryOpen ? <FaChevronUp size={18} /> : <FaChevronDown size={18} />}
+                  <FaChevronDown size={18} className={`transition-transform duration-300 ${categoryOpen ? 'rotate-180' : ''}`} />
                 </div>
                 {categoryOpen && (
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2 px-2 py-2 bg-[#181818] rounded-lg border border-[#232323] shadow">
@@ -189,7 +189,7 @@ export default function Navbar() {
               <div className="bg-[#232323] rounded-xl shadow p-4 flex flex-col gap-2">
                 <div className="flex items-center justify-between cursor-pointer px-2 py-2 rounded-lg" onClick={() => { setGenreOpen((prev) => !prev); setCategoryOpen(false); }}>
                   <span className="uppercase text-xs tracking-widest text-gray-400 font-semibold">Genres</span>
-                  {genreOpen ? <FaChevronUp size={18} /> : <FaChevronDown size={18} />}
+                  <FaChevronDown size={18} className={`transition-transform duration-300 ${genreOpen ? 'rotate-180' : ''}`} />
                 </div>
                 {genreOpen && (
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2 px-2 py-2 bg-[#181818] rounded-lg border border-[#232323] shadow">
@@ -223,7 +223,7 @@ export default function Navbar() {
       
       {/* Hide navbar when menuOpen is true on mobile */}
       <nav className={`fixed top-0 left-0 right-0 z-50 text-[#F1EFEC] flex items-center justify-between px-4 lg:px-12 py-3 transition-all duration-500 ${
-        isScrolled ? "bg-[#030303]" : "bg-transparent"
+        isScrolled ? "bg-[#030303]" : " bg-transparent"
       } ${menuOpen ? "hidden" : ""}`}>
         <div className="flex items-center gap-6">
           <div className="lg:hidden cursor-pointer" onClick={toggleMenu}>
@@ -270,7 +270,7 @@ export default function Navbar() {
                 setCategoryOpen(false);
                 setGenreOpen(false);
               }}>
-              More {moreOpen ? <FaChevronUp size={14} /> : <FaChevronDown size={14} />}
+              More <FaChevronDown size={14} className={`transition-transform duration-300 ${moreOpen ? 'rotate-180' : ''}`} />
             </div>
             <div className={`absolute top-full right-0 mt-2 bg-[#030303] rounded shadow-md z-30 py-4 overflow-hidden flex flex-col gap-4 transition-all duration-300 ${
               moreOpen ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
@@ -312,7 +312,7 @@ export default function Navbar() {
                 setMoreOpen(false);
                 setGenreOpen(false);
               }}>
-              Category {categoryOpen ? <FaChevronUp size={14} /> : <FaChevronDown size={14} />}
+              Category <FaChevronDown size={14} className={`transition-transform duration-300 ${categoryOpen ? 'rotate-180' : ''}`} />
             </div>
             <div className={`absolute top-full right-0 mt-2 bg-[#030303] rounded shadow-md z-30 p-4 grid grid-cols-3 gap-x-14 gap-y-7 w-max min-w-[300px] transition-all duration-300 ${
               categoryOpen ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
@@ -353,7 +353,7 @@ export default function Navbar() {
                 setCategoryOpen(false);
                 setMoreOpen(false);
               }}>
-              Genres {genreOpen ? <FaChevronUp size={14} /> : <FaChevronDown size={14} />}
+              Genres <FaChevronDown size={14} className={`transition-transform duration-300 ${genreOpen ? 'rotate-180' : ''}`} />
             </div>
             <div className={`absolute top-full -right-1/2 mt-2 bg-[#030303] rounded shadow-md z-30 p-4 grid grid-cols-5 gap-x-14 gap-y-7 w-max min-w-[300px] transition-all duration-300 ${
               genreOpen ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
@@ -374,11 +374,10 @@ export default function Navbar() {
 
         <div className="flex gap-3 items-center">
           {[{icon:FaSearch,path:'search'}, {icon:RiBookmarkFill,path:'saved'}, {icon:FaUser,path:'user'}].map((Icon, i) => (
-            <div key={i}
-            onClick={()=>navigate(`/${Icon.path}`)}
-              className="p-2 hover:bg-[#f47521] hover:text-[#030303] rounded-full cursor-pointer transition">
+            <NavLink to={`/${Icon.path}`} key={i}
+            className={({ isActive }) =>`p-2 hover:bg-[#f47521] hover:text-[#030303] rounded-full cursor-pointer transition} ${ isActive ? 'bg-[#f47521] text-black' : ''}` }>
               <Icon.icon size={16} />
-            </div>
+            </NavLink>
           ))}
         </div>
       </nav>
