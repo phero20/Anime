@@ -310,7 +310,7 @@ export default function Episodes() {
           <div className='flex flex-col gap-2'>
             <h2 className="text-xl text-[#f47521] font-semibold"> Episodes </h2>
             {
-              totalEpisodes && (<span className="bg-gray-800 w-28 md:w-32 flex gap-2 justify-center px-2 py-1 rounded text-xs">
+              totalEpisodes && (<span className="bg-gray-800 w-32 flex gap-2 justify-center px-2 py-1 rounded text-xs">
                 <FaEye className="text-[#f47521]"
                   size={16} />  Episode {
                   totalEpisodes

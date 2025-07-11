@@ -1,16 +1,29 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from "react-redux";
+
 import Dropdown from './Dropdown';
 
-const GENRES = [
-  'action', 'adventure', 'comedy', 'drama', 'fantasy', 'horror', 'mystery', 'romance', 'sci-fi', 'slice-of-life', 'sports', 'supernatural',
-];
-const TYPES = ['tv', 'movie', 'ova', 'special', 'ona', 'music'];
-const SORTS = ['score', 'popularity', 'date', 'title'];
+
+const TYPES = [ "Most-Favorite",
+  "Most-Popular",
+  "Subbed-Anime",
+  "Dubbed-Anime",
+  "Recently-Updated",
+  "Recently-Added",
+  "Top-Upcoming",
+  "Top-Airing",
+  "Movie",
+  "Special",
+  "OVA",
+  "ONA",
+  "TV",
+  "Completed",];
+const SORTS = ['recently-added','score', 'popularity', 'date', 'title'];
 const SEASONS = ['spring', 'summer', 'fall', 'winter'];
 const LANGUAGES = ['sub', 'dub'];
 const STATUSES = ['finished-airing', 'currently-airing', 'not-yet-aired'];
 const RATED = ['g', 'pg', 'pg-13', 'r', 'r+', 'rx'];
-const SCORES = ['good', 'average', 'bad'];
+const SCORES = ['good', 'very-good', 'bad'];
 
 function toOptions(arr, capitalize = false, transform = null) {
   return arr.map(v => ({
@@ -19,10 +32,43 @@ function toOptions(arr, capitalize = false, transform = null) {
   }));
 }
 
+function buildDateString(year, month, day) {
+  if (!year) return '';
+  return `${year}-${month || 0}-${day || 0}`;
+}
+
 export default function SearchFilter({ open, onClose, onApply, filters }) {
   const [localFilters, setLocalFilters] = useState(filters);
+  const { AnimeData } = useSelector((state) => state.AnimeData);
+  const GENRES = AnimeData?.data?.data?.genres || [];
+
+  // State for start and end date dropdowns
+  const [startYear, setStartYear] = useState('');
+  const [startMonth, setStartMonth] = useState('');
+  const [startDay, setStartDay] = useState('');
+  const [endYear, setEndYear] = useState('');
+  const [endMonth, setEndMonth] = useState('');
+  const [endDay, setEndDay] = useState('');
+
   useEffect(() => {
     setLocalFilters(filters);
+    // Parse filters.start_date and end_date into dropdowns if present
+    if (filters.start_date) {
+      const [y, m, d] = filters.start_date.split('-');
+      setStartYear(y || '');
+      setStartMonth(m && m !== '0' ? m : '');
+      setStartDay(d && d !== '0' ? d : '');
+    } else {
+      setStartYear(''); setStartMonth(''); setStartDay('');
+    }
+    if (filters.end_date) {
+      const [y, m, d] = filters.end_date.split('-');
+      setEndYear(y || '');
+      setEndMonth(m && m !== '0' ? m : '');
+      setEndDay(d && d !== '0' ? d : '');
+    } else {
+      setEndYear(''); setEndMonth(''); setEndDay('');
+    }
   }, [filters, open]);
 
   if (!open) return null;
@@ -31,13 +77,12 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
     setLocalFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setLocalFilters((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleApply = () => {
-    onApply(localFilters);
+    onApply({
+      ...localFilters,
+      start_date: buildDateString(startYear, startMonth, startDay),
+      end_date: buildDateString(endYear, endMonth, endDay),
+    });
   };
 
   return (
@@ -124,28 +169,37 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
           </div>
           {/* Start Date */}
           <div>
-            <label className="block text-xs sm:text-sm mb-1 font-semibold text-[#f47521]">Start Year</label>
+            <label className="block text-xs sm:text-sm mb-1 font-semibold text-[#f47521]">Start Date</label>
             <input
-              type="number"
+              type="date"
               name="start_date"
-              value={localFilters.start_date}
-              onChange={handleInputChange}
-              min="1900"
-              max={new Date().getFullYear()}
-              placeholder="e.g. 2014"
+              value={localFilters.start_date || ''}
+              onChange={e => handleChange('start_date', e.target.value)}
               className="w-full bg-slate-900 border border-gray-700 rounded-lg text-xs sm:text-sm px-2 py-2 sm:px-3 sm:py-2 text-[#F1EFEC] focus:border-[#f47521] focus:outline-none"
             />
           </div>
-        </div>
-        {/* Score full width */}
-        <div className="mt-6">
+          {/* End Date */}
+          <div>
+            <label className="block text-xs sm:text-sm mb-1 font-semibold text-[#f47521]">End Date</label>
+            <input
+              type="date"
+              name="end_date"
+              value={localFilters.end_date || ''}
+              onChange={e => handleChange('end_date', e.target.value)}
+              className="w-full bg-slate-900 border border-gray-700 rounded-lg text-xs sm:text-sm px-2 py-2 sm:px-3 sm:py-2 text-[#F1EFEC] focus:border-[#f47521] focus:outline-none"
+            />
+          </div>
+          {/* Score */}
+          <div>
           <label className="block text-xs sm:text-sm mb-1 font-semibold text-[#f47521]">Score</label>
-          <Dropdown
-            options={[{ value: '', label: 'Any' }, ...toOptions(SCORES, true)]}
-            value={localFilters.score}
-            onChange={v => handleChange('score', v)}
-            placeholder="Any Score"
-          />
+
+            <Dropdown
+              options={[{ value: '', label: 'Any' }, ...toOptions(SCORES, true)]}
+              value={localFilters.score}
+              onChange={v => handleChange('score', v)}
+              placeholder="Any Score"
+            />
+          </div>
         </div>
         <div className="flex justify-end mt-4 sm:mt-8 gap-2 sm:gap-3">
           {/* <button

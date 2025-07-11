@@ -65,19 +65,19 @@ export default function Dropdown({ options, value, onChange, placeholder = 'Sele
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder="Search..."
-                  className="bg-transparent outline-none text-xs sm:text-sm flex-1 text-[#F1EFEC] placeholder-gray-500"
+                  className="bg-transparent outline-none text-xs sm:text-sm flex-1 w-full text-center text-[#F1EFEC] placeholder-gray-500"
                   autoFocus
                 />
               </div>
             )}
-            <div className="py-1 mx-2 my-2">
+            <div className="py-2 px-2">
               {filteredOptions.length === 0 ? (
                 <div className="px-4 py-2 text-xs text-gray-500 text-center">No options</div>
               ) : (
                 filteredOptions.map(opt => (
                   <div
                     key={opt.value}
-                    className={`w-full px-4 py-2 text-xs sm:text-sm cursor-pointer hover:bg-gray-800 hover:text-[#f47521] rounded transition-all ${value === opt.value ? 'bg-[#f47521]/80 text-white font-semibold' : 'text-[#F1EFEC]'}`}
+                    className={`w-full px-4 py-2 text-xs sm:text-sm cursor-pointer hover:bg-gray-800 hover:text-[#f47521] rounded transition-all text-center ${value === opt.value ? 'bg-[#f47521]/80 text-white font-semibold' : 'text-[#F1EFEC]'}`}
                     onClick={() => { onChange(opt.value); setIsOpen(false); }}
                     role="option"
                     aria-selected={value === opt.value}

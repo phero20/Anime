@@ -45,7 +45,7 @@ export default function AnimeCards({
 
   const renderCard = (item, index) => (
     <Link to={`/anime/${item.id}`} key={index}>
-      <div {...(!scroll ? { 'data-aos': 'zoom-out-up' ,'data-aos-offset':'100' } : {})}
+      <div {...(!scroll ? { 'data-aos': 'zoom-out-up' ,'data-aos-offset':'120' } : {})}
         className={
           `group cursor-pointer relative overflow-hidden snap-start flex-shrink-0 hover:shadow-xl transition-shadow ${scroll ? "min-w-[140px] sm:min-w-[160px] md:min-w-[180px] lg:min-w-[200px] xl:min-w-[220px]" : "w-full"
           }`

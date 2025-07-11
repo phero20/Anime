@@ -7,9 +7,11 @@ import { MdOutlineSentimentDissatisfied } from 'react-icons/md';
 import { motion, AnimatePresence } from 'framer-motion';
 import SearchFilter from '../components/SearchFilter';
 import AnimeCards from '../components/AnimeCards';
+import { useNavigate } from 'react-router-dom';
 
 export default function Search() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
@@ -211,7 +213,7 @@ export default function Search() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="max-w-xl mx-auto px-4"
+            className="max-w-2xl mx-auto px-4"
           >
             <div className="bg-gray-900/80 backdrop-blur-sm rounded-lg shadow-xl border border-gray-700/50 max-h-80 overflow-y-auto scrollbar-none">
               {showLoading ? (
@@ -226,6 +228,7 @@ export default function Search() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.2, delay: index * 0.05 }}
+                      onClick={()=>navigate(`/anime/${suggestion.id}`)}
                       className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/50 cursor-pointer transition-colors duration-150 border-b border-gray-700/30 last:border-b-0 group"
                     >
                       {/* Anime Image */}
