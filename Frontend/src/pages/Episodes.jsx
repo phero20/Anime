@@ -189,10 +189,10 @@ export default function Episodes() {
 
       {/* Server Selection Section */}
       {selectedEpisode && (
-        <div className="mb-8">
+        <div className="mb-8 cursor-pointer"  onClick={() => setShowServerSelection(v => !v)}>
           {/* Current Server Info */}
           <div className="bg-gray-900/70 rounded-xl px-4 py-3 flex items-center justify-between mb-2 shadow border border-gray-800">
-            <div className="flex flex-col">
+            <div className="flex flex-col" >
               <div className='flex w-full items-center gap-3'>
                 <FaServer className="text-[#f47521] text-lg" />
                 <span className="font-bold text-white text-base uppercase">{selectedServer.server ? selectedServer.server.serverName : 'Select Server'}</span>
@@ -204,13 +204,13 @@ export default function Episodes() {
                 )}
               </div>
 
-              <div className="text-gray-300 text-xs mt-2">
+              <div  className="text-gray-300 text-xs mt-2">
                 If current server doesn't work please try other servers beside, click to change.
               </div>
             </div>
             <button
               className={`text-gray-400 hover:text-[#f47521] transition-all duration-200 transform ${showServerSelection ? 'rotate-180' : ''}`}
-              onClick={() => setShowServerSelection(v => !v)}
+             
               title="Show/hide server selection"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -226,7 +226,7 @@ export default function Episodes() {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.40, ease: [0.4, 0, 0.2, 1] }}
+                transition={{ duration: 0.35 }}
                 style={{ overflow: 'hidden' }}
               >
 
@@ -245,7 +245,7 @@ export default function Episodes() {
                             key={server.serverId}
                             onClick={() => {
                               handleServerClick(server, 'sub')
-                              setShowServerSelection(v => !v)
+                              // setShowServerSelection(v => !v)
                               setTimeout(() => {
                                 window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
                               }, 100)
@@ -278,7 +278,7 @@ export default function Episodes() {
                             key={server.serverId}
                             onClick={() => {
                               handleServerClick(server, 'dub')
-                              setShowServerSelection(v => !v)
+                              // setShowServerSelection(v => !v)
                               setTimeout(() => {
                                 window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
                               }, 100)
@@ -310,7 +310,7 @@ export default function Episodes() {
           <div className='flex flex-col gap-2'>
             <h2 className="text-xl text-[#f47521] font-semibold"> Episodes </h2>
             {
-              totalEpisodes && (<span className="bg-gray-800 w-24 md:w-32 flex gap-2 justify-center px-2 py-1 rounded text-xs">
+              totalEpisodes && (<span className="bg-gray-800 w-28 md:w-32 flex gap-2 justify-center px-2 py-1 rounded text-xs">
                 <FaEye className="text-[#f47521]"
                   size={16} />  Episode {
                   totalEpisodes

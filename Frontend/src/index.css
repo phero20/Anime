@@ -8,6 +8,8 @@
     margin: 0;
     padding: 0;
 }
+
+/* Hide scrollbar completely */
 .scrollbar-hide {
   -ms-overflow-style: none; 
   scrollbar-width: none; 
@@ -15,6 +17,56 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none; 
 }
+
+/* Custom scrollbar styling */
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: #f47521 #2d2d2d;
+}
+.scrollbar-custom::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #2d2d2d;
+  border-radius: 3px;
+}
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: #f47521;
+  border-radius: 3px;
+}
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: #e0651a;
+}
+
+/* Thin scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #666 #2d2d2d;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 2px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+
 
 .active {
   color: #f47521;
