@@ -288,6 +288,12 @@ export default function Search() {
       )}
       {showResults && searchResult && (
   <div className='flex flex-col items-center'>
+          <div className='text-sm sm:text-base font-semibold text-[#f47521] my-4'>
+          Total results :  
+         <span className='bg-gray-800/80 ml-1 cursor-pointer hover:text-[#fe7521] hover:bg-gray-700/80 px-2 py-1 rounded-lg text-xs sm:text-sm text-gray-300 transition-colors duration-300'>
+         {searchResult.length}
+          </span> 
+        </div>
     {
       Object.keys(appliedFilters).length > 0 && (
         <div className="flex items-center gap-6 mb-2">
@@ -337,11 +343,15 @@ export default function Search() {
             >
               {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}: <span className="font-medium">{value}</span>
             </span>
+            
           ))
         )}
+     
       </div>
+
     </div>
     <div className="py-0">
+
       <AnimeCards data={searchResult} />
     </div>
   </div>

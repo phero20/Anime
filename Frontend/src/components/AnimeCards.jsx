@@ -127,7 +127,7 @@ export default function AnimeCards({
   );
 
   return (
-    <div className="w-full max-w-[95%] mx-auto px-2 sm:px-4 md:px-6 py-6 text-white font-['Crunchyroll_Atyp',_sans-serif] relative">
+    <div className="w-full max-w-[98%] mx-auto px-2 sm:px-4 md:px-6 py-6 text-white font-['Crunchyroll_Atyp',_sans-serif] relative">
       <Title name={name}
         anime={scroll ? 'Animes' : ''} /> 
           {/* <>
