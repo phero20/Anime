@@ -6,7 +6,6 @@ import './App.css';
 import Category from './pages/Category';
 import Genre from './pages/Genre';
 import Home from './pages/Home';
-
 import {AnimatePresence} from 'framer-motion';
 import {useDispatch} from 'react-redux';
 import Footer from './components/Footer';
@@ -18,13 +17,14 @@ import {fetchAnimeData} from './redux/apifetch/GetanimeDataSlice';
 import Episodes from './pages/Episodes';
 import Search from './pages/Search';
 import { setUser } from './redux/apifetch/AuthSlicer';
+import Profile from './pages/Profile';
 
 function App() {
     const dispatch = useDispatch();
     const location = useLocation();
 
     useEffect(() => {
-        AOS.init({duration: 700, once: false, easing: 'ease-in-out', mirror: true});
+        AOS.init({duration: 600, once: false, easing: 'ease-in-out', mirror: true});
 
         const handleScroll = () => {
             AOS.refresh();
@@ -54,6 +54,7 @@ function App() {
 
     return (
         <>
+     
             <Navbar/>
             <AnimatePresence mode="wait">
                 <Routes location={location}
@@ -88,13 +89,14 @@ function App() {
                         element={
                             <PageWrapper><Search/></PageWrapper>
                         }/>
-                          {/* <Route path="/auth"
+                          <Route path="/profile"
                         element={
-                            <PageWrapper><Auth/></PageWrapper>
-                        }/> */}
+                            <PageWrapper><Profile/></PageWrapper>
+                        }/>
                 </Routes>
             </AnimatePresence>
             <Footer/>
+            
         </>
     );
 }

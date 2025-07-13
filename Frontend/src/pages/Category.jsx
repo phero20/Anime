@@ -54,6 +54,7 @@ const Category = () => {
 
     return (
         <div className="mt-16">
+            <p className='text-white pl-10'>switch</p>
             <AnimeCards data={animes}
                 name={
                     name.toUpperCase()

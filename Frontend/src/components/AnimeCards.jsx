@@ -39,7 +39,18 @@ export default function AnimeCards({
   if (scroll && safeData.length > 0 && safeData.length <= maxVisibleSlides) {
     swiperData = Array(3).fill(safeData).flat(); // 3x duplication for safety
   }
+  const swiperRef = useRef(null);
 
+  // Custom interval fallback for autoplay
+  useEffect(() => {
+    if (!scroll) return;
+    const interval = setInterval(() => {
+      if (swiperRef.current && swiperRef.current.slideNext && swiperRef.current.autoplay && !swiperRef.current.autoplay.running) {
+        swiperRef.current.slideNext();
+      }
+    }, 2000); // fallback every 2s
+    return () => clearInterval(interval);
+  }, [scroll]);
 
   const renderCard = (item, index) => (
     <Link to={`/anime/${item.id}`} key={index}>
@@ -147,20 +158,33 @@ export default function AnimeCards({
             <Swiper
               modules={[Navigation, Autoplay]}
               loop={true}
-              freeMode={true}
               autoplay={{
-                delay:0, // no delay between transitions
-                disableOnInteraction: false, // keep auto-scrolling after user interaction
-                pauseOnMouseEnter: false, // optional: pause on hover
+                delay: 100,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: false,
               }}
-              speed={4000} // higher = slower, lower = faster (try 4000ms for smoothness)
+              speed={4000}
               navigation={{
                 nextEl: `.swiper-next-${navId}`,
                 prevEl: `.swiper-prev-${navId}`,
               }}
-              // slidesPerGroup={data.length-1}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+                setTimeout(() => {
+                  if (swiper.autoplay && !swiper.autoplay.running) {
+                    swiper.autoplay.start();
+                  }
+                }, 300);
+              }}
+              onInit={(swiper) => {
+                setTimeout(() => {
+                  if (swiper.autoplay && !swiper.autoplay.running) {
+                    swiper.autoplay.start();
+                  }
+                }, 300);
+              }}
               slidesPerView="auto"
-              spaceBetween={25}
+              spaceBetween={35}
               allowTouchMove={true}
               className="pb-4 scroll-smooth rounded-2xl bg-transparent relative z-10"
             >
