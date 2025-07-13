@@ -262,7 +262,7 @@ export default function Navbar() {
             
             {/* Auth Component */}
             <motion.div 
-              className="relative z-10 w-full h-full flex items-center justify-center p-2"
+              className="relative z-10 w-full h-full flex items-center justify-center"
               initial={{ scale: 0.8, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={showGreeting ? {} : { scale: 0.8, opacity: 0, y: 20 }}

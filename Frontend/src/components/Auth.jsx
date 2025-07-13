@@ -113,7 +113,7 @@ export default function Auth({ onClose,showGreeting,setShowGreeting }) {
           </motion.div>
         </div>
       ) : (
-        <div className="flex items-center justify-center p-2">
+        <div className="flex items-center justify-center p-2 mx-2">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
