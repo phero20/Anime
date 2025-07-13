@@ -32,43 +32,15 @@ function toOptions(arr, capitalize = false, transform = null) {
   }));
 }
 
-function buildDateString(year, month, day) {
-  if (!year) return '';
-  return `${year}-${month || 0}-${day || 0}`;
-}
+
 
 export default function SearchFilter({ open, onClose, onApply, filters }) {
   const [localFilters, setLocalFilters] = useState(filters);
   const { AnimeData } = useSelector((state) => state.AnimeData);
   const GENRES = AnimeData?.data?.data?.genres || [];
 
-  // State for start and end date dropdowns
-  const [startYear, setStartYear] = useState('');
-  const [startMonth, setStartMonth] = useState('');
-  const [startDay, setStartDay] = useState('');
-  const [endYear, setEndYear] = useState('');
-  const [endMonth, setEndMonth] = useState('');
-  const [endDay, setEndDay] = useState('');
-
   useEffect(() => {
     setLocalFilters(filters);
-    // Parse filters.start_date and end_date into dropdowns if present
-    if (filters.start_date) {
-      const [y, m, d] = filters.start_date.split('-');
-      setStartYear(y || '');
-      setStartMonth(m && m !== '0' ? m : '');
-      setStartDay(d && d !== '0' ? d : '');
-    } else {
-      setStartYear(''); setStartMonth(''); setStartDay('');
-    }
-    if (filters.end_date) {
-      const [y, m, d] = filters.end_date.split('-');
-      setEndYear(y || '');
-      setEndMonth(m && m !== '0' ? m : '');
-      setEndDay(d && d !== '0' ? d : '');
-    } else {
-      setEndYear(''); setEndMonth(''); setEndDay('');
-    }
   }, [filters, open]);
 
   if (!open) return null;
@@ -80,8 +52,8 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
   const handleApply = () => {
     onApply({
       ...localFilters,
-      start_date: buildDateString(startYear, startMonth, startDay),
-      end_date: buildDateString(endYear, endMonth, endDay),
+      start_date: localFilters.start_date || '',
+      end_date: localFilters.end_date || '',
     });
   };
 
@@ -170,22 +142,24 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
           <div>
             <label className="block text-xs sm:text-sm mb-1 font-semibold text-[#f47521]">Start Date</label>
             <input
-              type="date"
+              type="text"
               name="start_date"
               value={localFilters.start_date || ''}
               onChange={e => handleChange('start_date', e.target.value)}
               className="w-full bg-slate-900 border border-gray-700 rounded-lg text-xs sm:text-sm px-2 py-2 sm:px-3 sm:py-2 text-[#F1EFEC] focus:border-[#f47521] focus:outline-none"
+              placeholder="YYYY-MM-DD (e.g., 2024-0-0)"
             />
           </div>
           {/* End Date */}
           <div>
             <label className="block text-xs sm:text-sm mb-1 font-semibold text-[#f47521]">End Date</label>
             <input
-              type="date"
+              type="text"
               name="end_date"
               value={localFilters.end_date || ''}
               onChange={e => handleChange('end_date', e.target.value)}
               className="w-full bg-slate-900 border border-gray-700 rounded-lg text-xs sm:text-sm px-2 py-2 sm:px-3 sm:py-2 text-[#F1EFEC] focus:border-[#f47521] focus:outline-none"
+              placeholder="YYYY-MM-DD (e.g., 2024-0-0)"
             />
           </div>
           {/* Score */}
@@ -208,7 +182,7 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
             Cancel
           </button> */}
           <button
-            className="px-3 py-2 rounded-lg bg-[#f47521] text-xs sm:text-base text-black hover:bg-[#d65d13] transition-colors font-medium shadow-lg"
+            className="px-3 py-2 rounded-lg bg-[#f47521] text-base text-black hover:bg-[#d65d13] transition-colors font-semibold shadow-lg"
             onClick={handleApply}
           >
             Apply Filters

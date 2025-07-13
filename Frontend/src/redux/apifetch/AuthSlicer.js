@@ -6,7 +6,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 // Async thunk for user login
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
-  async ({ email, password }, { rejectWithValue }) => {
+  async ({ email, password }) => {
     try {
       const response = await axios.post(`${backendUrl}/api/auth/login`, {
         email,
@@ -14,7 +14,7 @@ export const loginUser = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Login failed');
+      throw error.response?.data?.message || 'Login failed';
     }
   }
 );
@@ -22,7 +22,7 @@ export const loginUser = createAsyncThunk(
 // Async thunk for user signup
 export const signupUser = createAsyncThunk(
   'auth/signupUser',
-  async ({ username, email, password }, { rejectWithValue }) => {
+  async ({ username, email, password }) => {
     try {
       const response = await axios.post(`${backendUrl}/api/auth/signup`, {
         username,
@@ -31,22 +31,23 @@ export const signupUser = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Signup failed');
+      throw error.response?.data?.message || 'Signup failed';
     }
   }
 );
 
+
 // Async thunk for Google authentication
 export const googleAuth = createAsyncThunk(
   'auth/googleAuth',
-  async (accessToken, { rejectWithValue }) => {
+  async (accessToken) => {
     try {
       const response = await axios.post(`${backendUrl}/api/auth/google`, {
         accessToken
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Google auth failed');
+      throw error.response?.data?.message || 'Google auth failed';
     }
   }
 );
@@ -54,17 +55,15 @@ export const googleAuth = createAsyncThunk(
 // Async thunk for logout
 export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
-  async (_, { rejectWithValue }) => {
+  async () => {
     try {
       const response = await axios.post(`${backendUrl}/api/auth/logout`);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Logout failed');
+      throw error.response?.data?.message || 'Logout failed';
     }
   }
 );
-
-
 
 const initialState = {
   user: null,
@@ -97,6 +96,11 @@ const AuthSlice = createSlice({
       state.error = null;
     },
     
+    // Set error
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
+    
     // Set loading state
     setLoading: (state, action) => {
       state.loading = action.payload;
@@ -124,7 +128,7 @@ const AuthSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.error.message;
         state.user = null;
         state.isAuthenticated = false;
       })
@@ -136,13 +140,13 @@ const AuthSlice = createSlice({
       })
       .addCase(signupUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
+        state.user = action.payload.data;
         state.isAuthenticated = true;
         state.error = null;
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.error.message;
         state.user = null;
         state.isAuthenticated = false;
       })
@@ -160,7 +164,7 @@ const AuthSlice = createSlice({
       })
       .addCase(googleAuth.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.error.message;
         state.user = null;
         state.isAuthenticated = false;
       })
@@ -177,13 +181,11 @@ const AuthSlice = createSlice({
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.error.message;
         // Still clear user even if logout request fails
         state.user = null;
         state.isAuthenticated = false;
-      })
-      
-      // Check auth status cases
+      });
   }
 });
 
@@ -192,6 +194,7 @@ export const {
   setUser, 
   clearUser, 
   clearError, 
+  setError,
   setLoading, 
   updateUserProfile 
 } = AuthSlice.actions;

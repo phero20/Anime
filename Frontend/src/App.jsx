@@ -17,6 +17,7 @@ import Producer from './pages/Producer'
 import {fetchAnimeData} from './redux/apifetch/GetanimeDataSlice';
 import Episodes from './pages/Episodes';
 import Search from './pages/Search';
+import { setUser } from './redux/apifetch/AuthSlicer';
 
 function App() {
     const dispatch = useDispatch();
@@ -35,6 +36,20 @@ function App() {
 
     useEffect(() => {
         dispatch(fetchAnimeData());
+    }, [dispatch]);
+
+    // Check localStorage for user data on app initialization
+    useEffect(() => {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            try {
+                const parsedUser = JSON.parse(userData);
+                dispatch(setUser(parsedUser));
+            } catch (error) {
+                console.error('Error parsing user data from localStorage:', error);
+                localStorage.removeItem('user'); // Remove invalid data
+            }
+        }
     }, [dispatch]);
 
     return (

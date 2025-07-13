@@ -250,7 +250,7 @@ export default function Navbar() {
           >
             {/* Transparent background */}
             <motion.div 
-              className="absolute inset-0 bg-gray-950/90"
+              className="absolute inset-0 bg-gray-950/70"
               // initial={{ backdropFilter: "blur(0px)" }}
               // animate={{ backdropFilter: "blur(8px)" }}
               // exit={{ backdropFilter: "blur(0px)" }}
@@ -430,16 +430,16 @@ export default function Navbar() {
         <div className="flex gap-3 items-center">
           {[{icon:FaSearch,path:'search'}, {icon:RiBookmarkFill,path:'saved'}].map((Icon, i) => (
             <NavLink to={`/${Icon.path}`} key={i}
-            className={({ isActive }) =>`p-2 hover:bg-[#f47521] hover:text-[#030303] rounded-full cursor-pointer transition} ${ isActive ? 'bg-[#f47521] text-black' : ''}` }>
-              <Icon.icon size={16} />
+            className={({ isActive }) =>`p-2 hover:bg-[#f47521] hover:text-[#030303] rounded-full cursor-pointer transition-all duration-500 } ${ isActive ? 'bg-[#f47521] text-black' : ''}` }>
+              <Icon.icon size={18} />
             </NavLink>
           ))}
           
           {/* Conditional Auth Button */}
           {user ? (
             <NavLink to="/profile" 
-              className={({ isActive }) =>`p-2 hover:bg-[#f47521] hover:text-[#030303] rounded-full cursor-pointer transition ${ isActive ? 'bg-[#f47521] text-black' : ''}`}>
-              <FaUser size={16} />
+              className={({ isActive }) =>`p-0.5 hover:bg-[#f47521] hover:text-[#030303] rounded-full cursor-pointer transition-all duration-500 ${ isActive ? 'bg-[#f47521] text-black' : ''}`}>
+              <img src={user.avatar} className="w-7 rounded-full" alt="" />
             </NavLink>
           ) : (
             <button 

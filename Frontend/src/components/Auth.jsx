@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash, FaUser, FaEnvelope, FaLock, FaGoogle, FaTimes } from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser, signupUser, selectAuthLoading, selectAuthError, clearError, setUser, selectUser, setError } from '../redux/apifetch/AuthSlicer';
 
 export default function Auth({ onClose }) {
+  const dispatch = useDispatch();
+  const loading = useSelector(selectAuthLoading);
+  const error = useSelector(selectAuthError);
+  const user = useSelector(selectUser)
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -18,16 +24,52 @@ export default function Auth({ onClose }) {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Clear any previous errors
+    dispatch(clearError());
+    
+    // Client-side validation for signup
+    if (!isLogin) {
+      if (formData.username.length < 3) {
+        dispatch(setError('Username must be at least 3 characters long'));
+        return;
+      }
+      
+      if (formData.password.length < 6) {
+        dispatch(setError('Password must be at least 6 characters long'));
+        return;
+      }
+    }
+    
     if (isLogin) {
       // Handle login
-      console.log('Login:', { email: formData.email, password: formData.password });
+      const result = await dispatch(loginUser({
+        email: formData.email,
+        password: formData.password
+      }));
+      
+      if (loginUser.fulfilled.match(result)) {
+        // Login successful, close modal
+        if (onClose) onClose();
+      }
     } else {
       // Handle signup
-      console.log('Signup:', formData);
+      const result = await dispatch(signupUser({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password
+      }));
+      
+      if (signupUser.fulfilled.match(result)) {
+        const userData = result.payload.data;
+        dispatch(setUser(userData));
+        localStorage.setItem('user', JSON.stringify(userData));
+        if (onClose) onClose();
+      }
     }
-  };
+  };  
 
   const handleGoogleAuth = () => {
     // Handle Google authentication
@@ -43,7 +85,7 @@ export default function Auth({ onClose }) {
         className="w-full max-w-md"
       >
         {/* Auth Card */}
-        <div className="bg-gray-950 backdrop-blur-sm border border-[#f47521]/30 rounded-2xl shadow-2xl p-8 relative">
+        <div className="bg-gray-950 backdrop-blur-sm border border-[#f47521]/80 rounded-2xl shadow-2xl p-8 relative">
           {/* Close Button */}
           {onClose && (
             <button 
@@ -63,6 +105,13 @@ export default function Auth({ onClose }) {
               {isLogin ? 'Sign in to continue your anime journey' : 'Create your account to get started'}
             </p>
           </div>
+
+          {/* Error Display */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+              <p className="text-red-400 text-sm">{error}</p>
+            </div>
+          )}
 
           {/* Google Auth Button */}
           <button
@@ -99,7 +148,7 @@ export default function Auth({ onClose }) {
                       value={formData.username}
                       onChange={handleInputChange}
                       placeholder="Username"
-                      className="w-full bg-[#232323] border border-gray-600 focus:border-[#f47521] text-[#F1EFEC] py-3 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f47521]/20 transition-all duration-300"
+                      className="w-full bg-slate-900 border border-gray-600 focus:border-[#f47521] text-[#F1EFEC] py-3 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f47521]/20 transition-all duration-300"
                       required={!isLogin}
                     />
                   </div>
@@ -116,7 +165,7 @@ export default function Auth({ onClose }) {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Email"
-                className="w-full bg-[#232323] border border-gray-600 focus:border-[#f47521] text-[#F1EFEC] py-3 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f47521]/20 transition-all duration-300"
+                className="w-full bg-slate-900 border border-gray-600 focus:border-[#f47521] text-[#F1EFEC] py-3 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f47521]/20 transition-all duration-300"
                 required
               />
             </div>
@@ -130,7 +179,7 @@ export default function Auth({ onClose }) {
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Password"
-                className="w-full bg-[#232323] border border-gray-600 focus:border-[#f47521] text-[#F1EFEC] py-3 pl-10 pr-12 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f47521]/20 transition-all duration-300"
+                className="w-full bg-slate-900 border border-gray-600 focus:border-[#f47521] text-[#F1EFEC] py-3 pl-10 pr-12 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f47521]/20 transition-all duration-300"
                 required
               />
               <button
@@ -147,9 +196,10 @@ export default function Auth({ onClose }) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full bg-gradient-to-r from-[#f47521] to-[#e65a0a] hover:from-[#e65a0a] hover:to-[#f47521] text-[#181818] font-bold py-3 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-[#f47521] to-[#e65a0a] hover:from-[#e65a0a] hover:to-[#f47521] text-[#181818] font-bold py-3 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
             </motion.button>
           </form>
 
@@ -161,6 +211,7 @@ export default function Auth({ onClose }) {
                 onClick={() => {
                   setIsLogin(!isLogin);
                   setFormData({ username: '', email: '', password: '' });
+                  dispatch(clearError());
                 }}
                 className="text-[#f47521] hover:text-[#e65a0a] font-semibold transition-colors"
               >

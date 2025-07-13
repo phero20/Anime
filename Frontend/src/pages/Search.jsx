@@ -209,7 +209,7 @@ export default function Search() {
           >
             {/* Transparent background */}
             <motion.div 
-              className="absolute inset-0 bg-gray-950/90"
+              className="absolute inset-0 bg-gray-950/70"
               // exit={{ backdropFilter: "blur(0px)" }}
               transition={{ duration: 0.3 }}
               onClick={handleCloseFilter}
