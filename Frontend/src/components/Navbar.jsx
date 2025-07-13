@@ -5,12 +5,15 @@ import {
   FaSearch,
   FaUser,
   FaChevronDown,
+  FaTimes,
   // FaChevronUp
 } from "react-icons/fa";
 import { RiBookmarkFill } from "react-icons/ri";
 import { Link as ScrollLink, scroller } from "react-scroll";
 import { useSelector } from "react-redux";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { selectUser } from "../redux/apifetch/AuthSlicer";
+import Auth from "./Auth";
 
 export default function Navbar() {
   const location = useLocation();
@@ -21,8 +24,10 @@ export default function Navbar() {
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [genreOpen, setGenreOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const activeSection = useSelector((state) => state.ui.activeSection);
+  const user = useSelector(selectUser);
 
   const navItems = ["Home", "Trending", "Latests", "Upcomings"];
   const moreItems = [
@@ -232,6 +237,44 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Auth Modal */}
+      <AnimatePresence>
+        {showLoginModal && (
+          <motion.div 
+            className="fixed inset-0 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Transparent background */}
+            <motion.div 
+              className="absolute inset-0 bg-gray-950/90"
+              // initial={{ backdropFilter: "blur(0px)" }}
+              // animate={{ backdropFilter: "blur(8px)" }}
+              // exit={{ backdropFilter: "blur(0px)" }}
+              transition={{ duration: 0.3}}
+              onClick={() => setShowLoginModal(false)}
+            />
+            
+            {/* Auth Component */}
+            <motion.div 
+              className="relative z-10 w-full h-full flex items-center justify-center p-4"
+              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 20 }}
+              transition={{ 
+                duration: 0.4, 
+                ease: [0.25, 0.46, 0.45, 0.94],
+                delay: 0.1
+              }}
+            >
+              <Auth onClose={() => setShowLoginModal(false)} />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Hide navbar when menuOpen is true on mobile */}
       <nav className={`fixed top-0 left-0 right-0 z-50 text-[#F1EFEC] flex items-center justify-between px-4 lg:px-12 py-3 transition-all duration-500 ${
@@ -385,12 +428,26 @@ export default function Navbar() {
         </div>
 
         <div className="flex gap-3 items-center">
-          {[{icon:FaSearch,path:'search'}, {icon:RiBookmarkFill,path:'saved'}, {icon:FaUser,path:'user'}].map((Icon, i) => (
+          {[{icon:FaSearch,path:'search'}, {icon:RiBookmarkFill,path:'saved'}].map((Icon, i) => (
             <NavLink to={`/${Icon.path}`} key={i}
             className={({ isActive }) =>`p-2 hover:bg-[#f47521] hover:text-[#030303] rounded-full cursor-pointer transition} ${ isActive ? 'bg-[#f47521] text-black' : ''}` }>
               <Icon.icon size={16} />
             </NavLink>
           ))}
+          
+          {/* Conditional Auth Button */}
+          {user ? (
+            <NavLink to="/profile" 
+              className={({ isActive }) =>`p-2 hover:bg-[#f47521] hover:text-[#030303] rounded-full cursor-pointer transition ${ isActive ? 'bg-[#f47521] text-black' : ''}`}>
+              <FaUser size={16} />
+            </NavLink>
+          ) : (
+            <button 
+              onClick={() => setShowLoginModal(true)}
+              className="px-4 py-2 bg-[#f47521] text-black rounded-full hover:bg-[#ff6d12] hover:scale-105 transition-all duration-500 text-sm font-semibold">
+              Login
+            </button>
+          )}
         </div>
       </nav>
       

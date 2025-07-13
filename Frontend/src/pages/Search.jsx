@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import SearchFilter from '../components/SearchFilter';
 import AnimeCards from '../components/AnimeCards';
 import { useNavigate } from 'react-router-dom';
-import loadingAnimation from '../components/LoadingAnimation'
 import LoadingAnimation from '../components/LoadingAnimation';
 
 export default function Search() {
@@ -199,12 +198,45 @@ export default function Search() {
       </div>
 
       {/* Filter Modal */}
-      <SearchFilter
-        open={showFilter}
-        onClose={handleCloseFilter}
-        onApply={handleApplyFilter}
-        filters={filters}
-      />
+      <AnimatePresence>
+        {showFilter && (
+          <motion.div
+            className="fixed inset-0 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 1 }}
+            transition={{ duration: 0.3}}
+          >
+            {/* Transparent background */}
+            <motion.div 
+              className="absolute inset-0 bg-gray-950/90"
+              // exit={{ backdropFilter: "blur(0px)" }}
+              transition={{ duration: 0.3 }}
+              onClick={handleCloseFilter}
+            />
+            
+            {/* Filter Component */}
+            <motion.div 
+              className="relative z-10 w-full h-full flex items-center justify-center p-4"
+              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 20 }}
+              transition={{ 
+                duration: 0.4, 
+                ease: [0.25, 0.46, 0.45, 0.94],
+                delay: 0.1
+              }}
+            >
+              <SearchFilter
+                open={showFilter}
+                onClose={handleCloseFilter}
+                onApply={handleApplyFilter}
+                filters={filters}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Search Suggestions Dropdown */}
       <AnimatePresence mode="wait">

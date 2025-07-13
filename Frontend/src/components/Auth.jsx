@@ -1,0 +1,196 @@
+import React, { useState } from 'react';
+import { FaEye, FaEyeSlash, FaUser, FaEnvelope, FaLock, FaGoogle, FaTimes } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+
+export default function Auth({ onClose }) {
+  const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: ''
+  });
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isLogin) {
+      // Handle login
+      console.log('Login:', { email: formData.email, password: formData.password });
+    } else {
+      // Handle signup
+      console.log('Signup:', formData);
+    }
+  };
+
+  const handleGoogleAuth = () => {
+    // Handle Google authentication
+    console.log('Google auth clicked');
+  };
+
+  return (
+    <div className="flex items-center justify-center p-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md"
+      >
+        {/* Auth Card */}
+        <div className="bg-gray-950 backdrop-blur-sm border border-[#f47521]/30 rounded-2xl shadow-2xl p-8 relative">
+          {/* Close Button */}
+          {onClose && (
+            <button 
+              onClick={onClose}
+              className="absolute top-4 right-4 text-[#f47521] hover:text-white transition-colors z-10"
+            >
+              <FaTimes size={20} />
+            </button>
+          )}
+          
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-[#F1EFEC] mb-2">
+              {isLogin ? 'Welcome Back!' : 'Join Us!'}
+            </h1>
+            <p className="text-gray-400 text-sm">
+              {isLogin ? 'Sign in to continue your anime journey' : 'Create your account to get started'}
+            </p>
+          </div>
+
+          {/* Google Auth Button */}
+          <button
+            onClick={handleGoogleAuth}
+            className="w-full bg-[#232323] hover:bg-[#2a2a2a] border border-[#f47521]/30 text-[#F1EFEC] py-3 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-300 mb-6 group"
+          >
+            <FaGoogle className="text-[#f47521] group-hover:scale-110 transition-transform" />
+            <span>Continue with Google</span>
+          </button>
+
+          {/* Divider */}
+          <div className="flex items-center mb-6">
+            <div className="flex-1 h-px bg-gray-600"></div>
+            <span className="px-4 text-gray-400 text-sm">or</span>
+            <div className="flex-1 h-px bg-gray-600"></div>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Username Field (only for signup) */}
+            <AnimatePresence>
+              {!isLogin && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="relative">
+                    <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      placeholder="Username"
+                      className="w-full bg-[#232323] border border-gray-600 focus:border-[#f47521] text-[#F1EFEC] py-3 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f47521]/20 transition-all duration-300"
+                      required={!isLogin}
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Email Field */}
+            <div className="relative">
+              <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Email"
+                className="w-full bg-[#232323] border border-gray-600 focus:border-[#f47521] text-[#F1EFEC] py-3 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f47521]/20 transition-all duration-300"
+                required
+              />
+            </div>
+
+            {/* Password Field */}
+            <div className="relative">
+              <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="Password"
+                className="w-full bg-[#232323] border border-gray-600 focus:border-[#f47521] text-[#F1EFEC] py-3 pl-10 pr-12 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f47521]/20 transition-all duration-300"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#f47521] transition-colors"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+
+            {/* Submit Button */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              className="w-full bg-gradient-to-r from-[#f47521] to-[#e65a0a] hover:from-[#e65a0a] hover:to-[#f47521] text-[#181818] font-bold py-3 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              {isLogin ? 'Sign In' : 'Create Account'}
+            </motion.button>
+          </form>
+
+          {/* Toggle Auth Mode */}
+          <div className="text-center mt-6">
+            <p className="text-gray-400 text-sm">
+              {isLogin ? "Don't have an account? " : "Already have an account? "}
+              <button
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setFormData({ username: '', email: '', password: '' });
+                }}
+                className="text-[#f47521] hover:text-[#e65a0a] font-semibold transition-colors"
+              >
+                {isLogin ? 'Sign Up' : 'Sign In'}
+              </button>
+            </p>
+          </div>
+
+          {/* Forgot Password (only for login) */}
+          <AnimatePresence>
+            {isLogin && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="text-center mt-4"
+              >
+                <button className="text-[#f47521] hover:text-[#e65a0a] text-sm transition-colors">
+                  Forgot your password?
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Anime-themed decorative elements */}
+        <div className="absolute top-10 left-10 w-20 h-20 bg-[#f47521]/10 rounded-full blur-xl"></div>
+        <div className="absolute bottom-10 right-10 w-32 h-32 bg-[#f47521]/5 rounded-full blur-xl"></div>
+      </motion.div>
+    </div>
+  );
+}

@@ -73,6 +73,10 @@ function App() {
                         element={
                             <PageWrapper><Search/></PageWrapper>
                         }/>
+                          {/* <Route path="/auth"
+                        element={
+                            <PageWrapper><Auth/></PageWrapper>
+                        }/> */}
                 </Routes>
             </AnimatePresence>
             <Footer/>

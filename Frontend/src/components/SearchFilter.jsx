@@ -86,8 +86,7 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div data-aos='zoom-in-up' className="bg-black rounded-2xl shadow-2xl w-full max-w-2xl px-3 py-6 mx-2 sm:p-8 relative border border-[#f47521]/80">
+    <div className="bg-gray-950 rounded-2xl shadow-2xl w-full max-w-2xl px-3 py-6 mx-2 sm:p-8 relative border border-[#f47521]/80">
         <button
           className="absolute top-4 right-4 text-[#f47521] text-2xl sm:text-3xl hover:text-[#f47521]/80 focus:outline-none"
           onClick={onClose}
@@ -216,6 +215,5 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
           </button>
         </div>
       </div>
-    </div>
   );
 } 
