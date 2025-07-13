@@ -4,17 +4,18 @@ import axios from 'axios';
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 // Async thunk for user login
-export const loginUser = createAsyncThunk(
-  'auth/loginUser',
+// Async thunk for user sign in
+export const signInUser = createAsyncThunk(
+  'auth/signInUser',
   async ({ email, password }) => {
     try {
-      const response = await axios.post(`${backendUrl}/api/auth/login`, {
+      const response = await axios.post(`${backendUrl}/api/auth/signin`, {
         email,
         password
       });
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || 'Login failed';
+      throw error.response?.data?.message || 'Sign in failed';
     }
   }
 );
@@ -83,29 +84,29 @@ const AuthSlice = createSlice({
       state.isAuthenticated = !!action.payload;
       state.error = null;
     },
-    
+
     // Clear user manually (for immediate state updates)
     clearUser: (state) => {
       state.user = null;
       state.isAuthenticated = false;
       state.error = null;
     },
-    
+
     // Clear error
     clearError: (state) => {
       state.error = null;
     },
-    
+
     // Set error
     setError: (state, action) => {
       state.error = action.payload;
     },
-    
+
     // Set loading state
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
-    
+
     // Update user profile
     updateUserProfile: (state, action) => {
       if (state.user) {
@@ -116,23 +117,24 @@ const AuthSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Login cases
-      .addCase(loginUser.pending, (state) => {
+      // In extraReducers:
+      .addCase(signInUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(loginUser.fulfilled, (state, action) => {
+      .addCase(signInUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
+        state.user = action.payload.data;
         state.isAuthenticated = true;
         state.error = null;
       })
-      .addCase(loginUser.rejected, (state, action) => {
+      .addCase(signInUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
         state.user = null;
         state.isAuthenticated = false;
       })
-      
+
       // Signup cases
       .addCase(signupUser.pending, (state) => {
         state.loading = true;
@@ -150,7 +152,7 @@ const AuthSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
       })
-      
+
       // Google auth cases
       .addCase(googleAuth.pending, (state) => {
         state.loading = true;
@@ -168,7 +170,7 @@ const AuthSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
       })
-      
+
       // Logout cases
       .addCase(logoutUser.pending, (state) => {
         state.loading = true;
@@ -190,13 +192,13 @@ const AuthSlice = createSlice({
 });
 
 // Export actions
-export const { 
-  setUser, 
-  clearUser, 
-  clearError, 
+export const {
+  setUser,
+  clearUser,
+  clearError,
   setError,
-  setLoading, 
-  updateUserProfile 
+  setLoading,
+  updateUserProfile
 } = AuthSlice.actions;
 
 // Export selectors

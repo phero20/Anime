@@ -25,6 +25,8 @@ export default function Navbar() {
   const [genreOpen, setGenreOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showGreeting, setShowGreeting] = useState(false);
+
 
   const activeSection = useSelector((state) => state.ui.activeSection);
   const user = useSelector(selectUser);
@@ -242,7 +244,7 @@ export default function Navbar() {
       <AnimatePresence>
         {showLoginModal && (
           <motion.div 
-            className="fixed inset-0 z-50"
+            className={"fixed inset-0 z-50"}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
@@ -260,17 +262,17 @@ export default function Navbar() {
             
             {/* Auth Component */}
             <motion.div 
-              className="relative z-10 w-full h-full flex items-center justify-center p-4"
+              className="relative z-10 w-full h-full flex items-center justify-center p-2"
               initial={{ scale: 0.8, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.8, opacity: 0, y: 20 }}
+              exit={showGreeting ? {} : { scale: 0.8, opacity: 0, y: 20 }}
               transition={{ 
                 duration: 0.4, 
                 ease: [0.25, 0.46, 0.45, 0.94],
                 delay: 0.1
               }}
             >
-              <Auth onClose={() => setShowLoginModal(false)} />
+              <Auth onClose={() => setShowLoginModal(false)} showGreeting={showGreeting} setShowGreeting={setShowGreeting} />
             </motion.div>
           </motion.div>
         )}
