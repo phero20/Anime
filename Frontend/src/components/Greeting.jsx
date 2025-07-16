@@ -15,7 +15,7 @@ export default function Greeting({greetMessage}) {
       <h1 className="text-2xl md:text-3xl font-semibold text-[#f47521] text-center mb-2 tracking-tight" style={{textShadow: '0 2px 16px #23252688'}}>
           {greetMessage}
         </h1>
-        <p className="text-[#e0e0e0] text-base text-center opacity-80 font-normal mt-2 max-w-xs">
+        <p className="text-[#e0e0e0] text-base text-center opacity-70 font-normal mt-2 max-w-xs">
           We're glad you're here.
         </p>
     </motion.div>
