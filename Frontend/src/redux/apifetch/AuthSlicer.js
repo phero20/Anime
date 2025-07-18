@@ -13,6 +13,7 @@ export const signInUser = createAsyncThunk(
         email,
         password
       });
+      console.log(response);
       return response.data;
     } catch (error) {
       throw error.response?.data?.message || 'Sign in failed';
