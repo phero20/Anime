@@ -1,7 +1,8 @@
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUser, clearUser, deleteUser } from '../redux/apifetch/AuthSlicer';
+import { useNavigate } from 'react-router-dom';
+import { selectUser, clearUser, deleteUser, updateUser, setUser } from '../redux/apifetch/AuthSlicer';
 import { FaSignOutAlt, FaHeart,FaStar, FaBookmark, FaUserEdit, FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
 import AnimeCards from '../components/AnimeCards';
 
@@ -9,30 +10,72 @@ import AnimeCards from '../components/AnimeCards';
 export default function Profile() {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('favorites');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editForm, setEditForm] = useState({
+    username: user?.username || ''
+  });
+  const handleEditProfile = () => {
+    setIsEditModalOpen(true);
+    setEditForm({
+      username: user?.username || ''
+    });
+  };
+
+  const handleEditFormChange = (e) => {
+    setEditForm({ username: e.target.value });
+  };
+
+  const handleEditFormSubmit = async (e) => {
+    e.preventDefault();
+    const userId = user.userId;
+    const username = editForm.username;
+    try {
+      const result = await dispatch(updateUser({ userId, username }));
+      if (result.meta.requestStatus === 'fulfilled') {
+        // Preserve the token
+        const updatedUser = {
+          ...(result.payload?.data || result.payload),
+          token: user.token
+        };
+        
+        // Update Redux state
+        dispatch(setUser(updatedUser));
+        
+        // Update localStorage
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setIsEditModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+    }
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+  };
 
   // Placeholder data for demo
   const favorites = [];
   const wishlist = [];
-
+ 
   const handleLogout = () => {
     dispatch(clearUser());
     localStorage.removeItem('user');
+    navigate('/'); // Redirect to login page after logout
   };
 
   const handleConfirmDelete = async () => {
     try {
       await dispatch(deleteUser(user.userId));
       localStorage.removeItem('user');
-      // Close modal and clear text on success
       setIsDeleteModalOpen(false);
       setDeleteConfirmText('');
-      // User will be automatically logged out on success
     } catch (error) {
       console.error('Delete failed:', error);
-      // Keep modal open on failure so user can try again
     }
   };
 
@@ -85,7 +128,7 @@ export default function Profile() {
                   <p className="text-gray-400">{user.email}</p>
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0">
-                  <button className="px-4 py-2 rounded-lg bg-[#f47521] text-black font-bold flex items-center gap-2 hover:bg-[#e65a0a] transition-colors text-sm">
+                  <button onClick={handleEditProfile} className="px-4 py-2 rounded-lg bg-[#f47521] text-black font-bold flex items-center gap-2 hover:bg-[#e65a0a] transition-colors text-sm">
                     <FaUserEdit /> Edit Profile
                   </button>
                   <button onClick={handleLogout} className="px-3 py-2 rounded-lg bg-gray-800 text-white font-semibold flex items-center gap-2 hover:bg-gray-700 transition-colors text-sm">
@@ -161,10 +204,62 @@ export default function Profile() {
         </div>
       </div>
       
+      {/* Edit Profile Modal */}
+      <AnimatePresence>
+        {isEditModalOpen && (
+          <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+            <motion.div
+           initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.5 }}
+              className="relative w-full max-w-sm"
+            >
+              <button
+                type="button"
+                onClick={handleCloseEditModal}
+                className="absolute top-2 right-3 text-[#f47521] bg-transparent hover:text-white text-2xl font-bold focus:outline-none z-10"
+                aria-label="Close"
+              >
+                &times;
+              </button>
+              <form onSubmit={handleEditFormSubmit} className="bg-gray-950 rounded-2xl shadow-xl w-full p-6 border border-[#f47521]">
+                <div className="text-center mb-4">
+                  <FaUserEdit className="text-4xl text-[#f47521] mx-auto mb-2" />
+                  <h2 className="text-xl font-bold text-white">Edit Username</h2>
+                </div>
+                <div className="mb-6">
+                  <label className="block text-left text-[#f47521] font-semibold mb-1">Username</label>
+                  <input
+                    type="text"
+                    name="username"
+                    value={editForm.username}
+                    onChange={handleEditFormChange}
+                   className="w-full bg-slate-900 border border-gray-600 focus:border-[#f47521] text-[#F1EFEC] py-3 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f47521]/20 transition-all duration-300"
+                    required
+                    placeholder="Enter new username"
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <button type="submit" className="w-full py-3 rounded-lg bg-[#f47521] text-white font-semibold transition-colors hover:bg-[#e65a0a]">Save</button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Delete Confirmation Modal */}
       <AnimatePresence>
         {isDeleteModalOpen && (
           <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.5 }}
+              className="w-full max-w-md"
+            >
             <div className="bg-gray-900 rounded-2xl shadow-xl w-full max-w-md p-6 border border-red-500/50">
               <div className="text-center">
                 <FaExclamationTriangle className="text-5xl text-red-500 mx-auto mb-4" />
@@ -177,6 +272,7 @@ export default function Profile() {
                 <button onClick={handleConfirmDelete} disabled={deleteConfirmText !== 'DELETE'} className="w-full py-3 rounded-lg bg-red-600 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-700">Delete My Account</button>
               </div>
             </div>
+            </motion.div>
           </div>
         )}
       </AnimatePresence>

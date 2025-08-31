@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { signInUser, signupUser, selectAuthLoading, selectAuthError, clearError, setUser, setError } from '../redux/apifetch/AuthSlicer';
 import LoadingAnimation from './LoadingAnimation';
 import Greeting from './Greeting';
+import formgirl from '../assets/formgirl.png';
 
 export default function Auth({ onClose, showGreeting, setShowGreeting }) {
   const dispatch = useDispatch();
@@ -83,33 +84,23 @@ export default function Auth({ onClose, showGreeting, setShowGreeting }) {
           </motion.div>
         </div>
       ) : (
-        <div className="flex items-center justify-center p-2 mx-2">
+        <div className="flex items-center justify-center p-2 mx-2 relative">
+          {/* Anime Girl Image - absolutely positioned at top center */}
+          <div className="absolute left-1/2 top-[3.2rem]  transform -translate-x-1/2 -translate-y-1/2 z-20">
+            <img 
+              src={formgirl} 
+              alt="Anime Girl" 
+              className="w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-2xl"
+            />
+          </div>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5 }}
-            className="w-full max-w-lg"
+            className="w-full max-w-lg mt-16"
           >
             <div className="bg-gray-950 backdrop-blur-sm border border-[#f47521]/80 rounded-2xl shadow-2xl p-4 px-8 relative">
-              {/* Anime Girl Image - Mobile: on top, PC: on right side with rotation */}
-              <div className="absolute -top-16 sm:-top-20 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
-                <img 
-                  src="/src/assets/formgirl.png" 
-                  alt="Anime Girl" 
-                  className="w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-2xl"
-                />
-              </div>
-              
-              {/* PC version - right side with 90 degree rotation */}
-              <div className="hidden md:block absolute -right-[5.5rem] top-1/2 transform -translate-y-1/2 z-20">
-                <img 
-                  src="/src/assets/formgirl.png" 
-                  alt="Anime Girl" 
-                  className="w-32 h-32 object-contain drop-shadow-2xl transform rotate-90"
-                />
-              </div>
-
               {onClose && (
                 <button onClick={onClose} className="absolute top-4 right-4 text-[#f47521] hover:text-white transition-colors z-10">
                   <FaTimes size={20} />

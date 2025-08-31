@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { use } from 'react';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -63,6 +64,23 @@ export const deleteUser = createAsyncThunk(
     }
   }
 );
+
+// Thunk for updating user profile (username)
+export const updateUser = createAsyncThunk(
+  'auth/updateUser',
+  async ({userId, username}) => {
+    try {
+      const response = await axios.put(
+        `${backendUrl}/api/auth/update/${userId}`,
+        { username }
+      );
+      return response.data;
+    } catch (error) {
+          throw error.response?.data?.message || 'Update user failed';
+    }
+  }
+);
+
 
 const initialState = {
   user: null,
@@ -183,6 +201,23 @@ const AuthSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
         // Don't clear user state on delete failure - let user try again
+      })
+      // Update user cases
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.loading = false;
+        const token = state.user?.token;  // Preserve token
+        let updatedUser = action.payload?.data ?? action.payload;
+        state.user = { ...updatedUser, token };  // Merge token with updated user
+        state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   }
 });
