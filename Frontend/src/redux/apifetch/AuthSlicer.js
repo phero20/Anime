@@ -174,6 +174,7 @@ const AuthSlice = createSlice({
       // Logout cases
       .addCase(logoutUser.pending, (state) => {
         state.loading = true;
+        state.error = null; // Clear any existing errors
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.loading = false;
@@ -183,10 +184,11 @@ const AuthSlice = createSlice({
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
-        // Still clear user even if logout request fails
+        // Don't set error for logout failures - just clear user state
+        // state.error = action.error.message;
         state.user = null;
         state.isAuthenticated = false;
+        state.error = null; // Ensure no error persists after logout
       });
   }
 });
