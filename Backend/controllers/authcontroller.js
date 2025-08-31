@@ -32,6 +32,7 @@ export const signUp = async (req, res) => {
             success: true,
             data: {
                 token,
+                userId: user._id,
                 username: user.username,
                 email: user.email,
                 avatar: user.avatar
@@ -61,6 +62,7 @@ export const signIn = async (req, res) => {
             success: true,
             data: {
                 token,
+                userId: user._id,
                 username: user.username,
                 email: user.email,
                 avatar: user.avatar
@@ -70,3 +72,16 @@ export const signIn = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+
+export const deleteUser = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        await User.findByIdAndDelete(userId);
+        res.status(200).json({ success: true, message: 'User deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+

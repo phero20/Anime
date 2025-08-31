@@ -1,10 +1,10 @@
 import { AnimatePresence } from 'framer-motion';
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUser, clearUser, logoutUser } from '../redux/apifetch/AuthSlicer';
-import { FaSignOutAlt, FaHeart, FaBookmark, FaUserEdit, FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
+import { selectUser, clearUser, deleteUser } from '../redux/apifetch/AuthSlicer';
+import { FaSignOutAlt, FaHeart,FaStar, FaBookmark, FaUserEdit, FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
 import AnimeCards from '../components/AnimeCards';
-import Title from '../components/Title';
+
 
 export default function Profile() {
   const user = useSelector(selectUser);
@@ -17,21 +17,28 @@ export default function Profile() {
   const favorites = [];
   const wishlist = [];
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     dispatch(clearUser());
     localStorage.removeItem('user');
+  };
+
+  const handleConfirmDelete = async () => {
     try {
-      await dispatch(logoutUser());
-    } catch {
-      console.log('Logout API call failed, but user is logged out locally.');
+      await dispatch(deleteUser(user.userId));
+      localStorage.removeItem('user');
+      // Close modal and clear text on success
+      setIsDeleteModalOpen(false);
+      setDeleteConfirmText('');
+      // User will be automatically logged out on success
+    } catch (error) {
+      console.error('Delete failed:', error);
+      // Keep modal open on failure so user can try again
     }
   };
 
-  const handleConfirmDelete = () => {
-    // Add your actual user deletion logic here
-    alert('User account deleted.');
+  const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
-    handleLogout(); // Log the user out after deletion
+    setDeleteConfirmText(''); // Clear the text when closing
   };
   
   if (!user) {
@@ -91,23 +98,7 @@ export default function Profile() {
               </div>
             </div>
             
-            {/* User Stats */}
-            <div className="grid grid-cols-2 gap-3 mt-6">
-                <div className="bg-gray-900 p-3 rounded-md border border-gray-700 text-center hover:bg-gray-800 transition-all duration-300">
-                    <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <FaHeart className="text-sm text-white" />
-                    </div>
-                    <p className="text-lg font-bold text-white mb-1">{favorites.length}</p>
-                    <p className="text-xs text-gray-400">Favorites</p>
-                </div>
-                <div className="bg-gray-900 p-3 rounded-md border border-gray-700 text-center hover:bg-gray-800 transition-all duration-300">
-                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <FaBookmark className="text-sm text-white" />
-                    </div>
-                    <p className="text-lg font-bold text-white mb-1">{wishlist.length}</p>
-                    <p className="text-xs text-gray-400">Watchlist</p>
-                </div>
-            </div>
+
 
             {/* Enhanced Tab Navigation */}
             <div className="w-full border-b border-gray-700 mt-12 mb-8">
@@ -120,8 +111,9 @@ export default function Profile() {
                       : 'text-gray-400 border-transparent hover:text-white hover:border-gray-600'
                   }`}
                 >
-                  <FaHeart className="inline mr-2" />
+                  <FaStar className="inline mr-2" />
                   Favorites
+                  <span className="ml-2 text-sm font-normal text-gray-500">({favorites.length})</span>
                 </button>
                 <button 
                   onClick={() => setActiveTab('wishlist')} 
@@ -133,6 +125,7 @@ export default function Profile() {
                 >
                   <FaBookmark className="inline mr-2" />
                   Watchlist
+                  <span className="ml-2 text-sm font-normal text-gray-500">({wishlist.length})</span>
                 </button>
               </div>
             </div>
@@ -142,7 +135,7 @@ export default function Profile() {
                 favorites.length === 0 ? (
                   <div className="text-center py-20 text-gray-500">
                     <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <FaHeart className="text-4xl text-gray-600" />
+                      <FaStar className="text-4xl text-gray-600" />
                     </div>
                     <h3 className="text-2xl font-bold text-gray-300 mb-3">No Favorites Yet</h3>
                     <p className="text-gray-500 text-lg">Start adding anime to your favorites to see them here!</p>
@@ -180,7 +173,7 @@ export default function Profile() {
               </div>
               <input type="text" value={deleteConfirmText} onChange={(e) => setDeleteConfirmText(e.target.value)} placeholder="Type DELETE to confirm" className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 mt-6 text-center text-white focus:outline-none focus:border-red-500" />
               <div className="flex gap-4 mt-6">
-                <button onClick={() => setIsDeleteModalOpen(false)} className="w-full py-3 rounded-lg bg-gray-700 hover:bg-gray-700 font-semibold transition-colors">Cancel</button>
+                <button onClick={handleCloseDeleteModal} className="w-full py-3 rounded-lg bg-gray-700 hover:bg-gray-700 font-semibold transition-colors">Cancel</button>
                 <button onClick={handleConfirmDelete} disabled={deleteConfirmText !== 'DELETE'} className="w-full py-3 rounded-lg bg-red-600 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-700">Delete My Account</button>
               </div>
             </div>

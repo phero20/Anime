@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-// Async thunk for user login
 // Async thunk for user sign in
 export const signInUser = createAsyncThunk(
   'auth/signInUser',
@@ -37,7 +36,6 @@ export const signupUser = createAsyncThunk(
   }
 );
 
-
 // Async thunk for Google authentication
 export const googleAuth = createAsyncThunk(
   'auth/googleAuth',
@@ -53,15 +51,15 @@ export const googleAuth = createAsyncThunk(
   }
 );
 
-// Async thunk for logout
-export const logoutUser = createAsyncThunk(
-  'auth/logoutUser',
-  async () => {
+// Async thunk for delete user
+export const deleteUser = createAsyncThunk(
+  'auth/deleteUser',
+  async (userId) => {
     try {
-      const response = await axios.post(`${backendUrl}/api/auth/logout`);
+      const response = await axios.delete(`${backendUrl}/api/auth/delete/${userId}`);
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || 'Logout failed';
+      throw error.response?.data?.message || 'Delete user failed';
     }
   }
 );
@@ -116,8 +114,7 @@ const AuthSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Login cases
-      // In extraReducers:
+      // Sign in cases
       .addCase(signInUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -171,24 +168,21 @@ const AuthSlice = createSlice({
         state.isAuthenticated = false;
       })
 
-      // Logout cases
-      .addCase(logoutUser.pending, (state) => {
+      // Delete user cases
+      .addCase(deleteUser.pending, (state) => {
         state.loading = true;
-        state.error = null; // Clear any existing errors
+        state.error = null;
       })
-      .addCase(logoutUser.fulfilled, (state) => {
+      .addCase(deleteUser.fulfilled, (state) => {
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;
         state.error = null;
       })
-      .addCase(logoutUser.rejected, (state, action) => {
+      .addCase(deleteUser.rejected, (state, action) => {
         state.loading = false;
-        // Don't set error for logout failures - just clear user state
-        // state.error = action.error.message;
-        state.user = null;
-        state.isAuthenticated = false;
-        state.error = null; // Ensure no error persists after logout
+        state.error = action.error.message;
+        // Don't clear user state on delete failure - let user try again
       });
   }
 });
