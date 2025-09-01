@@ -59,7 +59,7 @@ const ToastMessage = ({ t, title, message, description, type }) => {
 export const showToast = {
   success: (message, options = {}) => {
     return toast.custom(
-      (t) => ( // Pass 't' so the component can dismiss itself
+      (t) => ( 
         <ToastMessage t={t} type="success" title={options.title || 'Success'} message={message} description={options.description} />
       ), { duration: 4000 }
     );
