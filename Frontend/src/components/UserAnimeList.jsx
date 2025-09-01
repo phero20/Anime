@@ -57,7 +57,7 @@ const UserAnimeCard = ({ item, listType }) => {
         <div className="flex items-center gap-2 mt-2">
           <button
             onClick={handleWatchClick}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#f47521] text-black text-xs font-bold rounded-full hover:bg-[#e65a0a] transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 bg-[#f47521] text-black text-xs font-bold rounded-full hover:bg-[#e65a0a] transition-colors duration-500"
           >
             <FaPlay />
             <span>Watch</span>
@@ -65,7 +65,7 @@ const UserAnimeCard = ({ item, listType }) => {
           {/* --- FIXED: Added onClick to the button --- */}
           <button
             onClick={handleRemove}
-            className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+            className="p-2 text-gray-400 hover:text-red-500 transition-colors duration-500"
             title={`Remove from ${listType}`}
           >
             <FaTrashAlt />

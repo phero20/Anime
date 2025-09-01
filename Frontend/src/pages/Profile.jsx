@@ -174,6 +174,7 @@ export default function Profile() {
         setIsDeleteModalOpen(false);
         setDeleteConfirmText("");
         showToast.success("Account deleted successfully");
+        navigate("/");
       } else {
         showToast.error("Failed to delete account");
       }
