@@ -21,7 +21,17 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: true
-  }
+  },
+  favorites: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'AnimeData',
+    default: []
+  }],
+  watchlist: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'AnimeData',
+    default: []
+  }]
 }, {
   timestamps: true
 });

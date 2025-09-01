@@ -112,11 +112,21 @@ export default function Auth({ onClose, showGreeting, setShowGreeting }) {
                 <p className="text-gray-400 text-xs sm:text-sm">{isLogin ? 'Sign in to continue your journey' : 'Create an account to get started'}</p>
               </div>
 
-              {error && (
-                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-                  <p className="text-red-400 text-sm">{error}</p>
-                </div>
-              )}
+              <AnimatePresence mode="wait">
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, height: 0, marginBottom: 0 }}
+                    animate={{ opacity: 1, y: 0, height: "auto", marginBottom: 16 }}
+                    exit={{ opacity: 0, y: -10, height: 0, marginBottom: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="bg-red-500/10 border border-red-500/30 rounded-lg overflow-hidden"
+                  >
+                    <div className="p-3">
+                      <p className="text-red-400 text-sm">{error}</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <button className="w-full bg-[#232323] hover:bg-[#2a2a2a] border border-[#f47521]/30 text-[#F1EFEC] py-4 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-300 mb-6 group touch-manipulation active:scale-95 min-h-[52px]" style={{ WebkitTapHighlightColor: 'transparent' }}>
                 <FaGoogle className="text-[#f47521] group-hover:scale-110 transition-transform" />

@@ -55,9 +55,13 @@ export const googleAuth = createAsyncThunk(
 // Async thunk for delete user
 export const deleteUser = createAsyncThunk(
   'auth/deleteUser',
-  async (userId) => {
+  async (token) => {
     try {
-      const response = await axios.delete(`${backendUrl}/api/auth/delete/${userId}`);
+      const response = await axios.delete(`${backendUrl}/api/auth/delete`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       return response.data;
     } catch (error) {
       throw error.response?.data?.message || 'Delete user failed';
@@ -68,11 +72,16 @@ export const deleteUser = createAsyncThunk(
 // Thunk for updating user profile (username)
 export const updateUser = createAsyncThunk(
   'auth/updateUser',
-  async ({userId, username}) => {
+  async ({token, username}) => {
     try {
       const response = await axios.put(
-        `${backendUrl}/api/auth/update/${userId}`,
-        { username }
+        `${backendUrl}/api/auth/update`,
+        { username },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
       return response.data;
     } catch (error) {

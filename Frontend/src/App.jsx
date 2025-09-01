@@ -18,6 +18,8 @@ import Episodes from './pages/Episodes';
 import Search from './pages/Search';
 import { setUser } from './redux/apifetch/AuthSlicer';
 import Profile from './pages/Profile';
+import ToastContainer from './components/Toast';
+
 
 function App() {
     const dispatch = useDispatch();
@@ -54,7 +56,7 @@ function App() {
 
     return (
         <>
-     
+            <ToastContainer />
             <Navbar/>
             <AnimatePresence mode="wait">
                 <Routes location={location}

@@ -12,22 +12,45 @@ const avatars = [
 export const signUp = async (req, res) => {
     try {
         const {username, email, password} = req.body;
-        // Check if user already exists
-        const userExists = await User.findOne({email});
-        if (userExists) {
-            return res.status(400).json({success: false, message: 'User Already Exists'});
+
+        // Check if email already exists
+        const emailExists = await User.findOne({email});
+        if (emailExists) {
+            return res.status(400).json({
+                success: false, 
+                message: 'Email is already registered. Please use a different email.'
+            });
         }
+
+        // Check if username already exists
+        const usernameExists = await User.findOne({username});
+        if (usernameExists) {
+            return res.status(400).json({
+                success: false, 
+                message: 'Username is already taken. Please choose a different username.'
+            });
+        }
+
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
+        
         // Randomly select avatar
         const avatar = avatars[Math.floor(Math.random() * avatars.length)];
+        
         // Create new user
-        const user = await User.create({username, email, password: hashedPassword, avatar});
+        const user = await User.create({
+            username, 
+            email, 
+            password: hashedPassword, 
+            avatar
+        });
+
         // Generate JWT token
         const token = jwt.sign({
             userId: user._id,
             email
         }, process.env.JWT_SECRET);
+
         res.status(201).json({
             success: true,
             data: {
@@ -39,7 +62,10 @@ export const signUp = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({success: false, message: error.message});
+        res.status(500).json({
+            success: false, 
+            message:error.message
+        });
     }
 }
 
@@ -76,7 +102,7 @@ export const signIn = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
     try {
-        const { userId } = req.params;
+        const { userId } = req.body;
         await User.findByIdAndDelete(userId);
         res.status(200).json({ success: true, message: 'User deleted successfully' });
     } catch (error) {
@@ -88,25 +114,48 @@ export const deleteUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
     try {
-        const { userId } = req.params;
-        const { username } = req.body;
+        const { username, userId } = req.body;
+
+        // Check if new username is already taken by another user
+        const existingUser = await User.findOne({ 
+            username, 
+            _id: { $ne: userId } // Exclude current user from check
+        });
+
+        if (existingUser) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Username is already taken. Please choose a different username.' 
+            });
+        }
+
+        // Update user if username is available
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             { username },
             { new: true }
         );
+
         if (!updatedUser) {
-            return res.status(404).json({ success: false, message: 'User not found' });
+            return res.status(404).json({ 
+                success: false, 
+                message: 'User not found' 
+            });
         }
+
         res.status(200).json({ 
-                success: true, 
-                data: {
+            success: true, 
+            data: {
                 userId: updatedUser._id,
                 username: updatedUser.username,
                 email: updatedUser.email,
-                avatar:updatedUser.avatar, 
-                }});
+                avatar: updatedUser.avatar
+            }
+        });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ 
+            success: false, 
+             message:error.message
+        });
     }
 };

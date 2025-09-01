@@ -3,8 +3,11 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { selectUser, clearUser, deleteUser, updateUser, setUser } from '../redux/apifetch/AuthSlicer';
-import { FaSignOutAlt, FaHeart,FaStar, FaBookmark, FaUserEdit, FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
+import { FaSignOutAlt, FaHeart, FaStar, FaBookmark, FaUserEdit, FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
 import AnimeCards from '../components/AnimeCards';
+import ToastContainer, { showToast, useToast } from '../components/Toast';
+import LoadingAnimation from '../components/LoadingAnimation';
+import formgirl from '../assets/formgirl.png';
 
 
 export default function Profile() {
@@ -15,26 +18,55 @@ export default function Profile() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [error, setError] = useState('');
   const [editForm, setEditForm] = useState({
     username: user?.username || ''
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [isUpdatingAccount,setIsUpdatingAccount] = useState(false);
+
+  const favorites = [];
+  const wishlist = [];
   const handleEditProfile = () => {
     setIsEditModalOpen(true);
+    setError(''); // Clear any previous error messages
     setEditForm({
       username: user?.username || ''
     });
   };
 
   const handleEditFormChange = (e) => {
-    setEditForm({ username: e.target.value });
+    const newUsername = e.target.value;
+    setEditForm({ username: newUsername });
+    
+    // Clear error when user starts typing, but check for same username
+    if (newUsername === user.username) {
+      setError('New username is same as current username');
+    } else {
+      setError('');
+    }
   };
 
   const handleEditFormSubmit = async (e) => {
     e.preventDefault();
-    const userId = user.userId;
     const username = editForm.username;
+
+    // Check if the new username is the same as current username
+    if (username === user.username) {
+      setError('New username is same as current username');
+      return;
+    }
+
+    setIsUpdatingAccount(true);
+    const token = user.token;
+    
+    setIsLoading(true);
+    const loadingToast = showToast.loading('Updating profile...');
+    
     try {
-      const result = await dispatch(updateUser({ userId, username }));
+      const result = await dispatch(updateUser({ token, username }));
+      
       if (result.meta.requestStatus === 'fulfilled') {
         // Preserve the token
         const updatedUser = {
@@ -47,35 +79,79 @@ export default function Profile() {
         
         // Update localStorage
         localStorage.setItem('user', JSON.stringify(updatedUser));
+        
+        // Show success toast
+        showToast.success('Profile updated successfully!');
+        setIsUpdatingAccount(false);
         setIsEditModalOpen(false);
+      } else {
+        setIsUpdatingAccount(false);
+        // Check if the error is due to username already taken
+        const errorMessage = result.error?.message || 
+                           result.payload?.message || 
+                           'Failed to update profile';
+        
+        // Only show error in form for username taken error, toast for other errors
+        if (errorMessage.includes('Username is already taken')) {
+          setError(errorMessage);
+        } else {
+          showToast.error(errorMessage);
+          setError(errorMessage);
+        }
       }
     } catch (error) {
+      // Extract error message from the response
+      const errorMessage = error.response?.data?.message || 
+                         error.message || 
+                         'Failed to update profile';
+      
+      // Only show error in form for username taken error, toast for other errors
+      if (errorMessage.includes('Username is already taken')) {
+        setError(errorMessage);
+      } else {
+        showToast.error(errorMessage);
+        setError(errorMessage);
+      }
       console.error('Failed to update profile:', error);
+      setIsUpdatingAccount(false);
+    } finally {
+      showToast.dismiss(loadingToast);
+      setIsLoading(false);
     }
-  };
+};
 
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
+    setError(''); // Clear any error messages when closing the modal
   };
 
-  // Placeholder data for demo
-  const favorites = [];
-  const wishlist = [];
  
   const handleLogout = () => {
     dispatch(clearUser());
     localStorage.removeItem('user');
-    navigate('/'); // Redirect to login page after logout
+    navigate('/');
   };
 
   const handleConfirmDelete = async () => {
+    setIsDeletingAccount(true);
+    const loadingToast = showToast.loading('Deleting account...');
+    
     try {
-      await dispatch(deleteUser(user.userId));
-      localStorage.removeItem('user');
-      setIsDeleteModalOpen(false);
-      setDeleteConfirmText('');
+      const result = await dispatch(deleteUser(user.token));
+      if (result.meta.requestStatus === 'fulfilled') {
+        localStorage.removeItem('user');
+        setIsDeleteModalOpen(false);
+        setDeleteConfirmText('');
+        showToast.success('Account deleted successfully');
+      } else {
+        showToast.error('Failed to delete account');
+      }
     } catch (error) {
+      showToast.error(error.message || 'Failed to delete account');
       console.error('Delete failed:', error);
+    } finally {
+      showToast.dismiss(loadingToast);
+      setIsDeletingAccount(false);
     }
   };
 
@@ -99,6 +175,7 @@ export default function Profile() {
 
   return (
     <>
+      {/* <ToastContainer /> */}
       <div className="w-full min-h-screen bg-black text-white font-['Crunchyroll_Atyp',_sans-serif]">
         {/* Profile Background Banner with User's Avatar */}
         <div className="relative w-full h-48 md:h-64 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
@@ -128,14 +205,43 @@ export default function Profile() {
                   <p className="text-gray-400">{user.email}</p>
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0">
-                  <button onClick={handleEditProfile} className="px-4 py-2 rounded-lg bg-[#f47521] text-black font-bold flex items-center gap-2 hover:bg-[#e65a0a] transition-colors text-sm">
-                    <FaUserEdit /> Edit Profile
+                  <button 
+                    onClick={handleEditProfile} 
+                    disabled={isLoading}
+                    className={`px-4 py-2 rounded-lg bg-[#f47521] text-black font-bold flex items-center gap-2 hover:bg-[#e65a0a] transition-colors text-sm ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                  >
+                    {isLoading ? (
+                      <>
+                        <LoadingAnimation size={16} /> 
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <FaUserEdit /> Edit Profile
+                      </>
+                    )}
                   </button>
-                  <button onClick={handleLogout} className="px-3 py-2 rounded-lg bg-gray-800 text-white font-semibold flex items-center gap-2 hover:bg-gray-700 transition-colors text-sm">
+                  <button 
+                    onClick={handleLogout} 
+                    className="px-3 py-2 rounded-lg bg-gray-800 text-white font-semibold flex items-center gap-2 hover:bg-gray-700 transition-colors text-sm"
+                  >
                     <FaSignOutAlt /> Logout
                   </button>
-                  <button onClick={() => setIsDeleteModalOpen(true)} className="px-3 py-2 rounded-lg bg-red-900 text-red-300 font-semibold flex items-center gap-2 hover:bg-red-800 hover:text-red-200 transition-colors text-sm">
-                    <FaTrashAlt /> Delete
+                  <button 
+                    onClick={() => setIsDeleteModalOpen(true)} 
+                    disabled={isDeletingAccount}
+                    className={`px-3 py-2 rounded-lg bg-red-900 text-red-300 font-semibold flex items-center gap-2 hover:bg-red-800 hover:text-red-200 transition-colors text-sm ${isDeletingAccount ? 'opacity-60 cursor-not-allowed' : ''}`}
+                  >
+                    {isDeletingAccount ? (
+                      <>
+                        <LoadingAnimation size={16} /> 
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <FaTrashAlt /> Delete
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -213,8 +319,15 @@ export default function Profile() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5 }}
-              className="relative w-full max-w-sm"
+              className="relative w-full max-w-sm mt-12"
             >
+              <div className="absolute left-1/2 -top-[4.8rem] transform -translate-x-1/2 z-20">
+                <img 
+                  src={formgirl} 
+                  alt="Anime Girl" 
+                  className="w-28 h-28 object-contain drop-shadow-2xl"
+                />
+              </div>
               <button
                 type="button"
                 onClick={handleCloseEditModal}
@@ -224,6 +337,17 @@ export default function Profile() {
                 &times;
               </button>
               <form onSubmit={handleEditFormSubmit} className="bg-gray-950 rounded-2xl shadow-xl w-full p-6 border border-[#f47521]">
+              {/* <AnimatePresence> */}
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mb-4 mt-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg"
+                  >
+                    <p className="text-red-400 text-sm">{error}</p>
+                  </motion.div>
+                )}
                 <div className="text-center mb-4">
                   <FaUserEdit className="text-4xl text-[#f47521] mx-auto mb-2" />
                   <h2 className="text-xl font-bold text-white">Edit Username</h2>
@@ -241,7 +365,18 @@ export default function Profile() {
                   />
                 </div>
                 <div className="flex gap-4">
-                  <button type="submit" className="w-full py-3 rounded-lg bg-[#f47521] text-white font-semibold transition-colors hover:bg-[#e65a0a]">Save</button>
+                  <button 
+                   disabled={isUpdatingAccount} 
+                  type="submit" className="w-full py-3 rounded-lg bg-[#f47521] text-white font-semibold transition-colors hover:bg-[#e65a0a]">
+                      {isUpdatingAccount ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <LoadingAnimation size={16} />
+                   
+                    </div>
+                  ) : (
+                    'Save'
+                  )}
+                    </button>
                 </div>
               </form>
             </motion.div>
@@ -258,8 +393,15 @@ export default function Profile() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5 }}
-              className="w-full max-w-md"
+              className="relative w-full max-w-md mt-12"
             >
+              <div className="absolute left-1/2 -top-[4.8rem] transform -translate-x-1/2 z-20">
+                <img 
+                  src={formgirl} 
+                  alt="Anime Girl" 
+                  className="w-28 h-28 object-contain drop-shadow-2xl"
+                />
+              </div>
             <div className="bg-gray-900 rounded-2xl shadow-xl w-full max-w-md p-6 border border-red-500/50">
               <div className="text-center">
                 <FaExclamationTriangle className="text-5xl text-red-500 mx-auto mb-4" />
@@ -268,8 +410,27 @@ export default function Profile() {
               </div>
               <input type="text" value={deleteConfirmText} onChange={(e) => setDeleteConfirmText(e.target.value)} placeholder="Type DELETE to confirm" className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 mt-6 text-center text-white focus:outline-none focus:border-red-500" />
               <div className="flex gap-4 mt-6">
-                <button onClick={handleCloseDeleteModal} className="w-full py-3 rounded-lg bg-gray-700 hover:bg-gray-700 font-semibold transition-colors">Cancel</button>
-                <button onClick={handleConfirmDelete} disabled={deleteConfirmText !== 'DELETE'} className="w-full py-3 rounded-lg bg-red-600 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-700">Delete My Account</button>
+                <button 
+                  onClick={handleCloseDeleteModal} 
+                  disabled={isDeletingAccount}
+                  className={`w-full py-3 rounded-lg bg-gray-700 hover:bg-gray-700 font-semibold transition-colors ${isDeletingAccount ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleConfirmDelete} 
+                  disabled={deleteConfirmText !== 'DELETE' || isDeletingAccount} 
+                  className="w-full py-3 rounded-lg bg-red-600 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-700"
+                >
+                  {isDeletingAccount ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <LoadingAnimation size={16} />
+                   
+                    </div>
+                  ) : (
+                    'Delete My Account'
+                  )}
+                </button>
               </div>
             </div>
             </motion.div>

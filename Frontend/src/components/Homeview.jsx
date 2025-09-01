@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { FaPlay, FaPlus } from "react-icons/fa";
-import {RiBookmarkLine} from "react-icons/ri"
+import {RiBookmarkLine,RiAddFill} from "react-icons/ri"
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { setEpisodeImage, clearEpisodeImage } from '../redux/apifetch/GetanimeDataSlice';
@@ -24,6 +24,53 @@ export default function Homeview({AnimeData, loading}) {
       : [];
 
   // Carousel navigation
+  // Add custom animations
+  useEffect(() => {
+    // Add these keyframes to the document if they don't exist
+    if (!document.querySelector('#custom-animations')) {
+      const style = document.createElement('style');
+      style.id = 'custom-animations';
+      style.textContent = `
+        @keyframes kenBurns {
+          0% { transform: scale(1.05); }
+          100% { transform: scale(1.15); }
+        }
+        @keyframes titleFadeIn {
+          0% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes descriptionFadeIn {
+          0% { opacity: 0; transform: translateY(10px); }
+          50% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes buttonsFadeIn {
+          0% { opacity: 0; transform: translateY(10px); }
+          70% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+             @keyframes indicatorsFadeIn {
+          0% { opacity: 0; transform: translateY(10px); }
+          70% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-title-fade-in {
+          animation: titleFadeIn 0.8s ease-out forwards;
+        }
+        .animate-description-fade-in {
+          animation: descriptionFadeIn 1s ease-out forwards;
+        }
+        .animate-buttons-fade-in {
+          animation: buttonsFadeIn 1.1s ease-out forwards;
+        }
+        .animate-indicators-fade-in {
+          animation: indicatorsFadeIn 1.2s ease-out forwards;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
+
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
   };
@@ -73,77 +120,101 @@ export default function Homeview({AnimeData, loading}) {
 
   return (
     <div className="relative min-h-screen bg-black text-white font-['Crunchyroll_Atyp',_sans-serif] overflow-hidden">
-      {/* Background Image */}
+      {/* Background Image with Parallax Effect */}
       <div className="absolute inset-0 w-full h-full">
         <img
           src={currentSlide.poster}
           alt={`${currentSlide.name} Poster`}
-          className="w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+          className="w-full h-full object-cover transition-all duration-1000 ease-in-out transform scale-105 animate-ken-burns"
+          style={{
+            animation: 'kenBurns 15s ease-in-out infinite alternate'
+          }}
         />
         
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+        {/* Enhanced Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-black/40 to-transparent opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-black/20 to-transparent opacity-40" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.9)_100%)]" />
       </div>
 
-      {/* Content Container */}
-      <div className="relative z-10 h-screen flex items-end md:items-center pb-24 md:pb-0">
+      {/* Content Container with Improved Layout */}
+      <div className="relative z-10 h-screen flex items-end md:items-center pb-0">
         <div className="w-full max-w-[96rem] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
           <div className="flex flex-col items-center md:items-start justify-center h-full max-w-2xl lg:max-w-3xl mx-auto md:mx-0">
             
             {/* Title */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-4 sm:mb-6 text-[#f47521] drop-shadow-lg text-center md:text-left">
-              {currentSlide.name}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight mb-4 sm:mb-6 text-center md:text-left animate-title-fade-in">
+              <span className="text-[#f47521]">
+                {currentSlide.name}
+              </span>
             </h1>
             
             {/* Description */}
-            <p className="text-sm sm:text-base md:text-lg text-gray-200 leading-relaxed mb-6 sm:mb-8 max-w-xl lg:max-w-2xl text-center md:text-left">
+            <p className="text-base sm:text-lg md:text-xl text-gray-100 leading-relaxed mb-8 sm:mb-10 max-w-xl lg:max-w-2xl text-center md:text-left animate-description-fade-in">
               {currentSlide.description.length > 400
                 ? `${currentSlide.description.slice(0, 400)}...`
                 : currentSlide.description}
             </p>
             
             {/* Action Buttons */}
-            <div className="flex flex-row gap-2 sm:gap-3 md:gap-4 mb-8 sm:mb-10">
-            <button 
-             onClick={()=>{navigate(`/episodes/${currentSlide.id}`)
-             dispatch(clearEpisodeImage());
-             dispatch(setEpisodeImage(currentSlide.poster));
-       }}
-            className="flex items-center gap-2 bg-[#f47521] hover:bg-[#e66713] text-black font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-lg transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-xl">
-            <FaPlay size={12} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
-                                    Watch Now
-                                </button>
-              <button className="flex items-center gap-2 border-2 border-[#f47521] text-[#f47521] hover:bg-[#f47521] hover:text-white px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg font-semibold text-xs sm:text-sm md:text-base transition-all duration-300 transform hover:scale-105">
-              <RiBookmarkLine size={20}/>
-                Add to Crunchylist
+            <div className="flex flex-row items-center gap-2 mb-8 sm:mb-10 animate-buttons-fade-in">
+              <button 
+                onClick={() => {
+                  navigate(`/episodes/${currentSlide.id}`);
+                  dispatch(clearEpisodeImage());
+                  dispatch(setEpisodeImage(currentSlide.poster));
+                }}
+                className="group flex items-center gap-2 bg-[#f47521] text-white font-bold px-3 py-2 rounded-lg transition-all duration-300 text-sm hover:bg-[#e65a0a]"
+              >
+                <FaPlay size={12} />
+                <span>Watch Now</span>
+              </button>
+
+              <button 
+                title="Add to Watchlist" 
+                className="group flex items-center gap-2 bg-transparent border border-[#f47521] text-white px-3 py-2 rounded-lg text-sm transition-all duration-300 hover:bg-[#f47521]"
+              >
+                <RiBookmarkLine size={14} className="text-[#f47521] group-hover:text-white" />
+                <span>Add to List</span>
+              </button>
+
+              <button 
+               title="Add to Favorites"
+                className="group flex items-center justify-center h-9 w-9 bg-transparent border border-[#f47521] text-[#f47521] rounded-lg transition-all duration-300 hover:bg-[#f47521] hover:text-white"
+              >
+                <RiAddFill size={16} className="transform group-hover:rotate-90 transition-transform duration-300" />
               </button>
             </div>
 
-            {/* Carousel Indicators */}
-            <div className="flex gap-2 sm:gap-3">
+            {/* Enhanced Carousel Indicators */}
+            <div className="flex gap-2 sm:gap-3 animate-indicators-fade-in">
               {slides.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`transition-all duration-300 rounded-full relative overflow-hidden ${
-                    index === currentIndex
-                      ? "bg-gray-600 scale-110"
-                      : "bg-gray-600 hover:bg-[#f47521]/70"
-                  }`}
-                  style={{
-                    width: index === currentIndex ? '3rem' : '2rem',
-                    height: '0.5rem'
-                  }}
+                  className="group relative"
                 >
-                  {index === currentIndex && (
-                    <div 
-                      className="absolute top-0 left-0 h-full bg-[#f47521] animate-progress rounded-full"
-                      style={{ 
-                        animationDuration: '5s',
-                        animationFillMode: 'forwards'
-                      }}
-                    />
-                  )}
+                  <div
+                    className={`transition-all duration-300 rounded-full relative overflow-hidden ${
+                      index === currentIndex
+                        ? "bg-gray-600 scale-110"
+                        : "bg-gray-700 hover:bg-gray-600"
+                    }`}
+                    style={{
+                      width: index === currentIndex ? '2.5rem' : '2rem',
+                      height: '0.4rem'
+                    }}
+                  >
+                    {index === currentIndex && (
+                      <div 
+                        className="absolute top-0 left-0 h-full bg-[#f47521] animate-progress rounded-full"
+                        style={{ 
+                          animationDuration: '5s',
+                          animationFillMode: 'forwards'
+                        }}
+                      />
+                    )}
+                  </div>
                 </button>
               ))}
             </div>
@@ -151,8 +222,8 @@ export default function Homeview({AnimeData, loading}) {
         </div>
       </div>
 
-      {/* Mobile-specific overlay for better text readability */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent md:hidden" />
+      {/* Enhanced Mobile Overlay */}
+      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
     </div>
   );
 }
