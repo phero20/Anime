@@ -3,13 +3,42 @@ import { FaPlay } from "react-icons/fa";
 import { RiBookmarkLine } from "react-icons/ri";
 import { MdLiveTv } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { setEpisodeImage, clearEpisodeImage } from '../redux/apifetch/GetanimeDataSlice';
+import { selectUser } from '../redux/apifetch/AuthSlicer';
+import { addToFavorites, addToWatchlist } from '../redux/apifetch/userAnime';
+import { useToast } from './Toast';
+
 
 export default function MiddlePosters({ data }) {
   const posterData = data || {};
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  const { success, error, loading, dismiss } = useToast();
+
+  const handleAddToWatchlist = async (item) => {
+    if (!user) {
+      error('Please login to add to watchlist');
+      return;
+    }
+    try {
+      const result = await dispatch(addToWatchlist({ 
+        token: user.token,
+        anime: { id: item.id, name: item.name, poster: item.poster, episodes: item.episodes }
+      })).unwrap();
+
+      if (result.success) {
+        success(result.message || 'Added to watchlist successfully');
+      } else {
+         error(result.message || (result.error?.message) || 'Failed to add to watchlist');
+      }
+    } catch (err) {
+     error(err?.response?.data?.message || err?.message || 'Failed to add to watchlist');
+    }
+  };
+
+
 
 
   return (
@@ -68,7 +97,9 @@ export default function MiddlePosters({ data }) {
               <FaPlay />
               <span className="whitespace-nowrap">START WATCHING S1 E1</span>
             </button>
-            <button className="flex items-center justify-center gap-2 border border-[#f47521] text-[#f47521] hover:bg-[#f47521]/10 font-semibold px-4 py-2 text-sm rounded transition">
+            <button 
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToWatchlist(posterData); }}
+            className="flex items-center justify-center gap-2 border border-[#f47521] text-[#f47521] hover:bg-[#f47521]/10 font-semibold px-4 py-2 text-sm rounded transition">
               <RiBookmarkLine />
               <span className="whitespace-nowrap">ADD TO WATCHLIST</span>
             </button>

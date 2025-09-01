@@ -209,9 +209,9 @@ export default function Homeview({AnimeData, loading}) {
       </div>
 
       {/* Content Container with Improved Layout */}
-      <div className="relative z-10 h-screen flex items-end md:items-center pb-0">
+      <div className="relative z-10 h-screen flex items-end md:items-center pb-2">
         <div className="w-full max-w-[96rem] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
-          <div className="flex flex-col items-center md:items-start justify-center h-full max-w-2xl lg:max-w-3xl mx-auto md:mx-0">
+          <div className="flex flex-col items-center mb-12 md:mb-0 md:items-start justify-center h-full max-w-2xl lg:max-w-3xl mx-auto md:mx-0">
             
             {/* Title */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight mb-4 sm:mb-6 text-center md:text-left animate-title-fade-in">
