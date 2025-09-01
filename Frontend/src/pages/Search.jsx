@@ -176,7 +176,7 @@ export default function Search() {
                   <input
                     type="text"
                     className="w-full bg-transparent text-white placeholder-gray-400 text-lg font-medium px-16 py-6 rounded-2xl border-0 outline-none focus:ring-0"
-                    placeholder="Search for anime titles, genres, or characters..."
+                    placeholder="Search for anime"
                     value={query}
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
