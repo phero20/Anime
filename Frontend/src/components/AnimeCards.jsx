@@ -69,10 +69,10 @@ export default function AnimeCards({
       if (result.success) {
         success(result.message || 'Added to watchlist successfully');
       } else {
-        error(result.message || 'Failed to add to watchlist');
+         error(result.message || (result.error?.message) || 'Failed to add to watchlist');
       }
     } catch (err) {
-      error(err?.response?.data?.message || 'Failed to add to watchlist');
+     error(err?.response?.data?.message || err?.message || 'Failed to add to watchlist');
     }
   };
 

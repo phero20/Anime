@@ -3,11 +3,89 @@ import { FaPlay } from "react-icons/fa";
 import { RiBookmarkLine, RiAddFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { setEpisodeImage, clearEpisodeImage } from '../redux/apifetch/GetanimeDataSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
+import { selectUser } from '../redux/apifetch/AuthSlicer';
+import { addToFavorites, addToWatchlist } from '../redux/apifetch/userAnime';
+import { useToast } from './Toast';
+
+
 
 export default function Season({ data }) {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+
+  const user = useSelector(selectUser);
+  const { success, error, dismiss } = useToast();
+
+
+
+ const handleAddToFavorites = async (item) => {
+    if (!user) {
+      error('Please login to add to favorites');
+      return;
+    }
+    
+
+    try {
+      const result = await dispatch(addToFavorites({ 
+        token: user.token,
+        anime: { id: item.id, name: item.name, poster: item.poster, episodes: item.episodes }
+      })).unwrap();
+
+   
+
+      if (result.success) {
+        success(result.message || `${item.name} added to favorites!`);
+      } else {
+        const errorMessage = result.message || (result.error?.message) || 'Failed to add to favorites';
+        error(errorMessage);
+      }
+    } catch (err) {
+     
+      const errorMessage = err?.response?.data?.message || err?.message || 'Failed to add to favorites';
+      error(errorMessage);
+    }
+  };
+
+  const handleAddToWatchlist = async (item) => {
+    if (!user) {
+      error('Please login to add to watchlist');
+      return;
+    }
+    try {
+      const result = await dispatch(addToWatchlist({ 
+        token: user.token,
+        anime: { id: item.id, name: item.name, poster: item.poster, episodes: item.episodes }
+      })).unwrap();
+
+      if (result.success) {
+        success(result.message || 'Added to watchlist successfully');
+      } else {
+        error(result.message || (result.error?.message) || 'Failed to add to watchlist');
+      }
+    } catch (err) {
+      error(err?.response?.data?.message || err?.message || 'Failed to add to watchlist');
+    }
+  };
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     const [showFullDescription, setShowFullDescription] = useState(false);
 
@@ -15,6 +93,7 @@ export default function Season({ data }) {
 
     const { poster, name, stats, description, id, anilistId, malId } = data.anime.info;
     const { studios, genres, producers } = data.anime.moreInfo;
+     const item = { id: id || malId || anilistId, name, poster };
 
     return (
         <section className="relative w-full min-h-screen bg-black text-white overflow-hidden">
@@ -129,10 +208,14 @@ export default function Season({ data }) {
                                     <FaPlay size={16} />
                                     START WATCHING
                                 </button>
-                                <button className="flex items-center justify-center w-12 h-12 border-2 border-[#f47521] text-[#f47521] hover:bg-[#f47521] hover:text-black rounded-lg transition-all duration-300">
+                                <button
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToWatchlist(item); }}
+                                className="flex items-center justify-center w-12 h-12 border-2 border-[#f47521] text-[#f47521] hover:bg-[#f47521] hover:text-black rounded-lg transition-all duration-300">
                                     <RiBookmarkLine size={20} />
                                 </button>
-                                <button className="flex items-center justify-center w-12 h-12 text-[#f47521] hover:text-white hover:bg-[#f47521]/20 rounded-lg transition-all duration-300">
+                                <button 
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToFavorites(item); }}
+                                className="flex items-center justify-center w-12 h-12 text-[#f47521] hover:text-white hover:bg-[#f47521]/20 rounded-lg transition-all duration-300">
                                     <RiAddFill size={24} />
                                 </button>
                             </div>

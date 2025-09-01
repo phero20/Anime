@@ -2,10 +2,12 @@ import React, { useEffect, useState, useRef } from "react";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import {RiBookmarkLine,RiAddFill} from "react-icons/ri"
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { setEpisodeImage, clearEpisodeImage } from '../redux/apifetch/GetanimeDataSlice';
 import LoadingAnimation from "./LoadingAnimation";
-
+import { selectUser } from '../redux/apifetch/AuthSlicer';
+import { addToFavorites, addToWatchlist } from '../redux/apifetch/userAnime';
+import { useToast } from './Toast';
 
 
 export default function Homeview({AnimeData, loading}) {
@@ -13,6 +15,75 @@ export default function Homeview({AnimeData, loading}) {
   const timeoutRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  const { success, error, dismiss } = useToast();
+
+
+
+ const handleAddToFavorites = async (item) => {
+    if (!user) {
+      error('Please login to add to favorites');
+      return;
+    }
+    
+
+    try {
+      const result = await dispatch(addToFavorites({ 
+        token: user.token,
+        anime: { id: item.id, name: item.name, poster: item.poster, episodes: item.episodes }
+      })).unwrap();
+
+   
+
+      if (result.success) {
+        success(result.message || `${item.name} added to favorites!`);
+      } else {
+        const errorMessage = result.message || (result.error?.message) || 'Failed to add to favorites';
+        error(errorMessage);
+      }
+    } catch (err) {
+     
+      const errorMessage = err?.response?.data?.message || err?.message || 'Failed to add to favorites';
+      error(errorMessage);
+    }
+  };
+
+  const handleAddToWatchlist = async (item) => {
+    if (!user) {
+      error('Please login to add to watchlist');
+      return;
+    }
+    try {
+      const result = await dispatch(addToWatchlist({ 
+        token: user.token,
+        anime: { id: item.id, name: item.name, poster: item.poster, episodes: item.episodes }
+      })).unwrap();
+
+      if (result.success) {
+        success(result.message || 'Added to watchlist successfully');
+      } else {
+        error(result.message || (result.error?.message) || 'Failed to add to watchlist');
+      }
+    } catch (err) {
+      error(err?.response?.data?.message || err?.message || 'Failed to add to watchlist');
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   const slides =
     !loading &&
@@ -172,6 +243,7 @@ export default function Homeview({AnimeData, loading}) {
 
               <button 
                 title="Add to Watchlist" 
+               onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToWatchlist(currentSlide); }}
                 className="group flex items-center gap-2 bg-transparent border border-[#f47521] text-white px-3 py-2 rounded-lg text-sm transition-all duration-300 hover:bg-[#f47521]"
               >
                 <RiBookmarkLine size={14} className="text-[#f47521] group-hover:text-white" />
@@ -180,6 +252,7 @@ export default function Homeview({AnimeData, loading}) {
 
               <button 
                title="Add to Favorites"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToFavorites(currentSlide); }}
                 className="group flex items-center justify-center h-9 w-9 bg-transparent border border-[#f47521] text-[#f47521] rounded-lg transition-all duration-300 hover:bg-[#f47521] hover:text-white"
               >
                 <RiAddFill size={16} className="transform group-hover:rotate-90 transition-transform duration-300" />
