@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSearchSuggestions, clearSearchSuggestions, fetchSearchResults, clearSearchResult } from '../redux/apifetch/GetanimeDataSlice';
 import { FaPlay, FaSearch } from 'react-icons/fa';
-import { FiX } from 'react-icons/fi';
+import { FiX, FiFilter } from 'react-icons/fi';
 import { MdOutlineSentimentDissatisfied } from 'react-icons/md';
 import { motion, AnimatePresence } from 'framer-motion';
 import SearchFilter from '../components/SearchFilter';
@@ -40,14 +40,12 @@ export default function Search() {
 
   // Memoize suggestions to prevent unnecessary re-renders
   const suggestions = useMemo(() => {
-    // If we're searching, don't show old results
     if (isSearching) {
       return [];
     }
     if (!SearchSuggestionsData?.data?.data) {
       return [];
     }
-    // Handle different possible data structures
     const data = SearchSuggestionsData.data.data;
     if (Array.isArray(data)) {
       return data;
@@ -59,25 +57,21 @@ export default function Search() {
     return [];
   }, [SearchSuggestionsData, isSearching]);
 
-  // Memoize the search function to prevent recreation
   const performSearch = useCallback((searchQuery) => {
     const formattedQuery = searchQuery.split(' ').join('+');
     dispatch(fetchSearchSuggestions({ q: formattedQuery }));
   }, [dispatch]);
 
-  // Debounce search with useCallback to prevent recreation
   const debouncedSearch = useCallback((searchQuery) => {
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
-    // Set searching state immediately
     setIsSearching(true);
     debounceTimeout.current = setTimeout(() => {
       performSearch(searchQuery);
     }, 300);
   }, [performSearch]);
 
-  // Debounce search - only run when query changes
   useEffect(() => {
     if (!query.trim()) {
       setIsSearching(false);
@@ -94,14 +88,12 @@ export default function Search() {
     };
   }, [query, debouncedSearch]);
 
-  // Reset searching state when loading completes
   useEffect(() => {
     if (!loading && isSearching) {
       setIsSearching(false);
     }
   }, [loading, isSearching]);
 
-  // Handle clear/close
   const handleClear = useCallback(() => {
     setQuery('');
     setIsSearching(false);
@@ -110,16 +102,14 @@ export default function Search() {
     setShowResults(false);
   }, [dispatch]);
 
-  // Handle input change
   const handleInputChange = useCallback((e) => {
     setQuery(e.target.value);
     setIsSearching(true);
     dispatch(clearSearchSuggestions());
     dispatch(clearSearchResult());
-    setShowResults(false); // Hide results and allow dropdown to show again
+    setShowResults(false);
   }, [dispatch]);
 
-  // Handle Enter key for search
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && query.trim()) {
       const params = Object.entries(filters)
@@ -137,63 +127,87 @@ export default function Search() {
     }
   };
 
-  // Handle filter open/close
   const handleOpenFilter = useCallback(() => setShowFilter(true), []);
   const handleCloseFilter = useCallback(() => setShowFilter(false), []);
   const handleApplyFilter = useCallback((newFilters) => {
     setFilters(newFilters);
     setShowFilter(false);
-    // Optionally trigger a new search here with filters
   }, []);
 
-  // Memoize the dropdown visibility
   const showDropdown = useMemo(
     () => query.trim().length > 0 && isInputFocused && !showResults,
     [query, isInputFocused, showResults]
   );
 
-  // Determine if we should show loading
   const showLoading = loading || isSearching;
 
   return (
-    <div className="min-h-64 mt-10 text-[#F1EFEC]">
-      {/* Search Bar + Filter Button */}
-      <div className="w-full flex flex-col items-center pt-8 pb-4 px-4">
-        <div className="w-full max-w-xl flex flex-col sm:flex-row items-end gap-2">
-          {/* Filter Button */}
-         
-          {/* Search Bar */}
-          <div className="relative flex-1 flex items-center w-full">
-            <input
-              type="text"
-              className="flex-1 bg-transparent  text-lg sm:text-xl md:text-2xl font-light px-0 py-2 border-0 border-b-2 focus:ring-0 border-[#f47521] placeholder-[#888] outline-none transition-shadow duration-200 shadow-md focus:shadow-[#232323]/40"
-              placeholder="Search anime..."
-              value={query}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              onFocus={() => setIsInputFocused(true)}
-              onBlur={() => setIsInputFocused(false)}
-              autoFocus
-            />
-            {query && (
-              <button
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 sm:p-2 text-[#F1EFEC] hover:text-[#f47521] cursor-pointer transition-colors duration-150"
-                onClick={handleClear}
-                aria-label="Clear search"
-              >
-                <FiX className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-[#f47521]" />
-              </button>
-            )}
-            {!query && (
-              <FaSearch className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-[#f47521]" />
-            )}
+    <div className="min-h-screen bg-[#0b0b0b] text-white mt-10">
+      {/* Professional Header Section */}
+      <div className="relative overflow-hidden">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0 "></div>
+        </div>
+        
+        <div className="relative z-10 max-w-6xl mx-auto px-6 py-16">
+          {/* Search Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+              Discover <span className="text-[#f47521]">Anime</span>
+            </h1>
+            <p className="text-xl text-gray-400 font-light">
+              Search through thousands of anime titles
+            </p>
           </div>
-          <button
-            className="px-3 py-2 text-sm font-medium border-2 flex items-center rounded-md border-[#f47521] text-[#f47521] hover:bg-[#f47521] hover:text-white hover:scale-105 transition-all duration-500 w-full sm:w-auto"
-            onClick={handleOpenFilter}
-          >
-            Filters
-          </button>
+
+          {/* Professional Search Bar */}
+          <div className="max-w-2xl mx-auto">
+            <div className="relative group">
+              {/* Search Input Container */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-gray-900 backdrop-blur-sm rounded-2xl border-2 border-white/10 transition-all duration-300 group-focus-within:border-[#f47521]/50 "></div>
+                
+                <div className="relative flex items-center">
+                  <div className="absolute left-6 z-10">
+                    <FaSearch className="text-gray-400 text-lg" />
+                  </div>
+                  
+                  <input
+                    type="text"
+                    className="w-full bg-transparent text-white placeholder-gray-400 text-lg font-medium px-16 py-6 rounded-2xl border-0 outline-none focus:ring-0"
+                    placeholder="Search for anime titles, genres, or characters..."
+                    value={query}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    onFocus={() => setIsInputFocused(true)}
+                    onBlur={() => setIsInputFocused(false)}
+                    autoFocus
+                  />
+                  
+                  <div className="absolute right-4 flex items-center gap-2">
+                    {query && (
+                      <button
+                        className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-200"
+                        onClick={handleClear}
+                        aria-label="Clear search"
+                      >
+                        <FiX className="text-lg" />
+                      </button>
+                    )}
+                    
+                    <button
+                      className="flex items-center gap-2 px-4 py-2 bg-[#f47521] hover:bg-[#e65a0a] text-white rounded-xl font-medium transition-all duration-200 hover:shadow-lg"
+                      onClick={handleOpenFilter}
+                    >
+                      <FiFilter className="text-sm" />
+                      <span className="hidden sm:inline">Filters</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -201,31 +215,23 @@ export default function Search() {
       <AnimatePresence>
         {showFilter && (
           <motion.div
-            className="fixed inset-0 z-50"
-            initial={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            initial={{ scale: 1 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 1 }}
-            transition={{ duration: 0.3}}
+            exit={{ scale: 0.5, opacity: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            {/* Transparent background */}
             <motion.div 
-              className="absolute inset-0 bg-gray-950/70"
-              // exit={{ backdropFilter: "blur(0px)" }}
-              transition={{ duration: 0.3 }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
               onClick={handleCloseFilter}
             />
             
-            {/* Filter Component */}
             <motion.div 
-              className="relative z-10 w-full h-full flex items-center justify-center p-4"
-              initial={{ scale: 0.8, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.8, opacity: 0, y: 20 }}
-              transition={{ 
-                duration: 0.4, 
-                ease: [0.25, 0.46, 0.45, 0.94],
-                delay: 0.1
-              }}
+              className="relative z-10 w-full flex justify-center"
+              initial={{ scale: .5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: .5 }}
             >
               <SearchFilter
                 open={showFilter}
@@ -243,65 +249,66 @@ export default function Search() {
         {showDropdown && !showResults && !resultsLoading && (showLoading || suggestions.length > 0) && (
           <motion.div
             key="search-dropdown"
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="max-w-2xl mx-auto px-4"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4 }}
+            className="max-w-2xl mx-auto px-6 -mt-8 relative z-20"
           >
-            <div className="bg-gray-900/80 backdrop-blur-sm rounded-lg shadow-xl border border-gray-700/50 max-h-80 overflow-y-auto scrollbar-none">
+            <div className="bg-gray-900 border border-white/10 rounded-xl shadow-2xl backdrop-blur-md max-h-96 overflow-y-auto scrollbar-hide">
               {showLoading ? (
-                <div className="p-4 w-full">
-                  <LoadingAnimation />
+                <div className="p-8 flex justify-center">
+                  <div className="flex items-center gap-3 text-gray-400">
+                    <LoadingAnimation size={24} />
+                  </div>
                 </div>
               ) : (
-                <div className="py-1">
+                <div className="py-2">
                   {suggestions.map((suggestion, index) => (
                     <motion.div
                       key={suggestion.id || suggestion.mal_id || index}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.2, delay: index * 0.05 }}
-                      onClick={()=>navigate(`/anime/${suggestion.id}`)}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/50 cursor-pointer transition-colors duration-150 border-b border-gray-700/30 last:border-b-0 group"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.9 }}
+                      onClick={() => navigate(`/anime/${suggestion.id}`)}
+                      className="flex items-center gap-4 px-6 py-4 hover:bg-white/5 cursor-pointer transition-all duration-200 border-b border-white/5 last:border-b-0 group"
                     >
-                      {/* Anime Image */}
-                      <div className="relative w-10 h-14 sm:w-12 sm:h-16 flex-shrink-0 overflow-hidden rounded-md">
+                      {/* Anime Thumbnail */}
+                      <div className="relative w-14 h-20 flex-shrink-0 overflow-hidden rounded-lg">
                         <img
                           src={suggestion.poster}
                           alt={suggestion.title || suggestion.name}
-                          className="object-cover h-full w-full transition-transform duration-700 rounded-md group-hover:scale-150"
+                          className="object-cover h-full w-full transition-transform duration-300 group-hover:scale-150"
                           onError={(e) => {
                             e.target.src = '/placeholder.jpg';
                           }}
                         />
-                        <div className='absolute flex items-center justify-center h-full w-full top-0 left-0 bg-black/70 group-hover:opacity-100 opacity-0 transition-all duration-500'>
-                        <FaPlay className='text-[#f47521]' />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                          <FaPlay className="text-white text-lg" />
                         </div>
                       </div>
                       
-                      {/* Anime Info */}
+                      {/* Anime Information */}
                       <div className="flex-1 min-w-0">
-                        <div className="text-[#F1EFEC] font-medium text-xs sm:text-sm md:text-base">
+                        <h4 className="text-white font-semibold text-base group-hover:text-[#f47521] transition-colors duration-200 line-clamp-1">
                           {suggestion.title || suggestion.name}
-                        </div>
-                        <div className="text-[#888] text-xs sm:text-sm mt-1">
-                          {suggestion.moreInfo && (
-                            <span className="inline-block bg-[#f47521]/20 text-[#f47521] px-1.5 py-0.5 rounded text-xs mr-2">
+                        </h4>
+                        
+                        <div className="flex items-center gap-3 mt-2 text-sm text-gray-400">
+                          {suggestion.moreInfo && suggestion.moreInfo[1] && (
+                            <span className="px-2 py-1 bg-white/10 rounded-md text-xs font-medium">
                               {suggestion.moreInfo[1]}
                             </span>
                           )}
-                          {suggestion.moreInfo && (
-                            <span className="text-[#888]">
-                              {suggestion.moreInfo[2]}
-                            </span>
+                          {suggestion.moreInfo && suggestion.moreInfo[2] && (
+                            <span>{suggestion.moreInfo[2]}</span>
                           )}
                         </div>
                       </div>
                       
                       {/* Year */}
-                      {suggestion.moreInfo && (
-                        <div className="text-[#888] text-xs flex-shrink-0">
+                      {suggestion.moreInfo && suggestion.moreInfo[0] && (
+                        <div className="text-gray-500 text-sm font-medium flex-shrink-0">
                           {suggestion.moreInfo[0]}
                         </div>
                       )}
@@ -314,82 +321,92 @@ export default function Search() {
         )}
       </AnimatePresence>
 
-      {/* Loading and Results */}
+      {/* Loading State */}
       {resultsLoading && showResults === false && (
-         <div className="p-4 w-full">
-         <LoadingAnimation />
-       </div>
+        <div className="flex justify-center py-16">
+          <div className="flex items-center gap-3 text-gray-400">
+           <LoadingAnimation size={24} />
+          </div>
+        </div>
       )}
+
+      {/* Search Results Section */}
       {showResults && searchResult && (
-  <div className='flex flex-col items-center'>
-          <div className='text-sm sm:text-base font-semibold text-[#f47521] my-4'>
-          Total results :  
-         <span className='bg-gray-800/80 ml-1 cursor-pointer hover:text-[#fe7521] hover:bg-gray-700/80 px-2 py-1 rounded-lg text-xs sm:text-sm text-gray-300 transition-colors duration-300'>
-         {searchResult.length}
-          </span> 
-        </div>
-    {
-      Object.keys(appliedFilters).length > 0 && (
-        <div className="flex items-center gap-6 mb-2">
-          <h4 className="text-sm sm:text-base font-semibold text-[#f47521]">Filters Applied</h4>
-          <button
-            className="text-xs sm:text-sm px-3 py-1 rounded-lg border border-[#f47521] text-[#f47521] hover:bg-[#f47521] hover:text-white transition-colors duration-200"
-            onClick={() => {
-              setFilters({
-                genres: '',
-                type: '',
-                sort: '',
-                season: '',
-                language: '',
-                status: '',
-                rated: '',
-                start_date: '',
-                score: '',
-              });
-              // Optionally trigger a new search with cleared filters
-              if (query.trim()) {
-                const fullQuery = query.trim();
-                dispatch(clearSearchResult());
-                setShowResults(false);
-                setResultsLoading(true);
-                dispatch(fetchSearchResults({ q: fullQuery })).then(() => {
-                  setResultsLoading(false);
-                  setShowResults(true);
-                });
-              }
-            }}
-          >
-            Clear Filters
-          </button>
-        </div>
-      )
-    }
-   
-    <div className="px-4 pt-4">
-      <div className="flex flex-wrap gap-2 justify-center">
-        {Object.keys(appliedFilters).length === 0 ? (
-          <span className="text-xs text-gray-400"></span>
-        ) : (
-          Object.entries(appliedFilters).map(([key, value]) => (
-            <span
-              key={key}
-              className="bg-gray-800/80 cursor-pointer hover:text-[#fe7521] hover:bg-gray-700/80 px-3 py-1.5 rounded-full text-xs sm:text-sm text-gray-300 transition-colors duration-300"
-            >
-              {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}: <span className="font-medium">{value}</span>
-            </span>
-            
-          ))
-        )}
-     
-      </div>
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          {/* Results Header */}
+          <div className="mb-8">
+            <div className="flex md:flex-row flex-col md:items-center max-md:gap-3 justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">
+                Search Results
+                <span className="ml-3 text-lg font-normal text-gray-400">
+                  ({searchResult.length} found)
+                </span>
+              </h2>
+              
+              {Object.keys(appliedFilters).length > 0 && (
+                <button
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all duration-500 font-medium"
+                  onClick={() => {
+                    setFilters({
+                      genres: '', type: '', sort: '', season: '', language: '', status: '', rated: '', start_date: '', score: '',
+                    });
+                    if (query.trim()) {
+                      const fullQuery = query.trim();
+                      dispatch(clearSearchResult());
+                      setShowResults(false);
+                      setResultsLoading(true);
+                      dispatch(fetchSearchResults({ q: fullQuery })).then(() => {
+                        setResultsLoading(false);
+                        setShowResults(true);
+                      });
+                    }
+                  }}
+                >
+                  Clear All Filters
+                </button>
+              )}
+            </div>
 
-    </div>
-    <div className="py-0">
+            {/* Applied Filters */}
+            {Object.keys(appliedFilters).length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+                  Active Filters
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(appliedFilters).map(([key, value]) => (
+                    <span
+                      key={key}
+                      className="inline-flex items-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm font-medium transition-all duration-200 cursor-default"
+                    >
+                      <span className="text-gray-300">
+                        {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
+                      </span>
+                      <span className="text-white font-semibold">{value}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
-      <AnimeCards data={searchResult} />
-    </div>
-  </div>
-)}
+          {/* Results Grid */}
+          <div className="border-t border-white/10 pt-8">
+            <AnimeCards data={searchResult} />
+          </div>
+        </div>
+      )}
+
+      {/* No Results State */}
+      {showResults && searchResult && searchResult.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <MdOutlineSentimentDissatisfied className="text-6xl text-gray-600 mb-4" />
+          <h3 className="text-xl font-semibold text-white mb-2">No Results Found</h3>
+          <p className="text-gray-400 max-w-md">
+            Try adjusting your search terms or filters to find what you're looking for.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
