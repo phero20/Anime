@@ -6,16 +6,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import LoadingAnimation from './LoadingAnimation';
 import { setEpisodeImage, clearEpisodeImage } from '../redux/apifetch/GetanimeDataSlice';
 import { removeFromFavorites, removeFromWatchlist } from '../redux/apifetch/userAnime';
-import { selectUser } from '../redux/apifetch/AuthSlicer'; // Import user selector
-import { useToast } from './Toast'; // Import custom toast hook
+import { selectUser } from '../redux/apifetch/AuthSlicer'; 
+import { useToast } from './Toast'; 
 
 const UserAnimeCard = ({ item, listType }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector(selectUser); // Get the logged-in user
+  const user = useSelector(selectUser); 
   const { success, error } = useToast();
 
-  // --- ADDED: Handler to remove item from list ---
+ 
   const handleRemove = async () => {
     if (!user) {
       error("Error", "You must be logged in to perform this action.");
@@ -41,32 +41,37 @@ const UserAnimeCard = ({ item, listType }) => {
   };
 
   return (
-    <div className="bg-gray-900/70 overflow-hidden flex group rounded-lg border-gray-800 hover:bg-gray-900/8 hover:shadow-xl border hover:ring-2 hover:ring-[#f47521] hover:text-[#f47521] hover:scale-[101%] transition-all duration-300">
-      <Link to={`/anime/${item.id}`} className="w-24 h-36 overflow-hidden flex-shrink-0">
-        <img src={item.poster} alt={item.name} className="w-full h-full object-cover block group-hover:scale-150 transition-all duration-700" />
-      </Link>
-      <div className="p-4 flex flex-col justify-between flex-grow">
-        <div>
-          <Link to={`/anime/${item.id}`} className="font-bold text-white text-lg hover:text-[#f47521] transition-colors line-clamp-2">
-            {item.name}
-          </Link>
-          <div className="text-sm text-gray-400 mt-1">
-            {item.episodes?.sub && `Sub | ${item.episodes.sub} Eps`}
-          </div>
+    <div className="group rounded-xl border-2 border-gray-800 bg-gray-900/70 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:border-[#f47521]/60 hover:scale-105">
+      <Link to={`/anime/${item.id}`} className="block relative w-full">
+        <div className="relative w-full aspect-[4/4] overflow-hidden">
+          <img
+            src={item.poster}
+            alt={item.name}
+            className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-150"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-90 transition-all duration-700" />
         </div>
-        <div className="flex items-center gap-2 mt-2">
+      </Link>
+      <div className="p-3 md:p-4 flex flex-col gap-2">
+        <Link to={`/anime/${item.id}`} className="font-semibold text-white text-sm md:text-base leading-snug hover:text-[#f47521] transition-colors line-clamp-2">
+          {item.name}
+        </Link>
+        <div className="text-xs md:text-sm text-gray-400">
+          {item.episodes?.sub ? `Sub • ${item.episodes.sub} Eps` : 'Sub • N/A'}
+        </div>
+        <div className="mt-2 flex items-center gap-2">
           <button
             onClick={handleWatchClick}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#f47521] text-black text-xs font-bold rounded-full hover:bg-[#e65a0a] transition-colors duration-500"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 bg-[#f47521] text-black text-xs md:text-sm font-bold rounded-lg hover:bg-[#e65a0a] transition-colors duration-300"
           >
             <FaPlay />
             <span>Watch</span>
           </button>
-          {/* --- FIXED: Added onClick to the button --- */}
           <button
             onClick={handleRemove}
-            className="p-2 text-gray-400 hover:text-red-500 transition-colors duration-500"
+            className="px-3 py-2 rounded-lg bg-gray-800 text-gray-300 hover:text-white hover:bg-red-600/20 transition-colors duration-300"
             title={`Remove from ${listType}`}
+            aria-label={`Remove ${item.name} from ${listType}`}
           >
             <FaTrashAlt />
           </button>
@@ -113,7 +118,7 @@ export default function UserAnimeList({ data, isLoading, listType }) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-6">
       {data.map(item => (
         <UserAnimeCard key={item.id} item={item} listType={listType} />
       ))}

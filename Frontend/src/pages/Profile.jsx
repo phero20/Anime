@@ -25,7 +25,7 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 import AnimeCards from "../components/AnimeCards";
-import ToastContainer, { showToast, useToast } from "../components/Toast";
+import ToastContainer, { showToast } from "../components/Toast";
 import LoadingAnimation from "../components/LoadingAnimation";
 import formgirl from "../assets/formgirl.png";
 import UserAnimeList from "../components/UserAnimeList";
@@ -50,7 +50,7 @@ export default function Profile() {
   const watchlist = useSelector(selectWatchlist);
   const isListLoading = useSelector(selectUserAnimeLoading);
 
-  const { success, error: showError, loading, dismiss } = useToast();
+  
 
   useEffect(() => {
     if (user?.token) {
@@ -95,7 +95,7 @@ export default function Profile() {
     const loadingToast = showToast.loading("Updating profile...");
 
     try {
-      const result = await dispatch(updateUser({ token, username }));
+      const result = await dispatch(updateUser({ token, username, userId: user.userId }));
 
       if (result.meta.requestStatus === "fulfilled") {
         // Preserve the token
@@ -242,8 +242,8 @@ export default function Profile() {
                     <span className="text-5xl font-bold text-white">
                       {avatarInitial}
                     </span>
-                  )}
-                </div>
+              )}
+            </div>
               </div>
               <div className="w-full flex flex-col md:flex-row items-center md:items-end justify-center md:justify-between mt-4 md:ml-6">
                 <div className="text-center md:text-left">
@@ -277,7 +277,7 @@ export default function Profile() {
                   >
                     <FaSignOutAlt /> Logout
                   </button>
-                  <button
+            <button
                     onClick={() => setIsDeleteModalOpen(true)}
                     disabled={isDeletingAccount}
                     className={`px-3 py-2 rounded-lg bg-red-900 text-red-300 font-semibold flex items-center gap-2 hover:bg-red-800 hover:text-red-200 transition-colors text-sm ${
@@ -294,15 +294,15 @@ export default function Profile() {
                         <FaTrashAlt /> Delete
                       </>
                     )}
-                  </button>
-                </div>
+            </button>
+          </div>
               </div>
             </div>
 
             {/* Enhanced Tab Navigation */}
             <div className="w-full border-b border-gray-700 mt-12 mb-8">
               <div className="flex justify-center md:justify-start gap-8">
-                <button
+              <button
                   onClick={() => setActiveTab("favorites")}
                   className={`pb-4 font-bold text-lg border-b-2 transition-all duration-300 relative ${
                     activeTab === "favorites"
@@ -315,11 +315,11 @@ export default function Profile() {
                   <span className="ml-2 text-sm font-normal text-gray-500">
                     ({favorites.length})
                   </span>
-                </button>
-                <button
-                  onClick={() => setActiveTab(" watchlist")}
+              </button>
+              <button
+                  onClick={() => setActiveTab("watchlist")}
                   className={`pb-4 font-bold text-lg border-b-2 transition-all duration-300 relative ${
-                    activeTab === " watchlist"
+                    activeTab === "watchlist"
                       ? "text-[#f47521] border-[#f47521]"
                       : "text-gray-400 border-transparent hover:text-white hover:border-gray-600"
                   }`}
@@ -329,40 +329,32 @@ export default function Profile() {
                   <span className="ml-2 text-sm font-normal text-gray-500">
                     ({watchlist.length})
                   </span>
-                </button>
+              </button>
               </div>
             </div>
 
-            <AnimatePresence>
-              {activeTab === "favorites" ? (
-                <motion.div
-                  key={activeTab}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                {activeTab === "favorites" ? (
                   <UserAnimeList
                     data={favorites}
                     isLoading={isListLoading}
                     listType="favorites"
                   />
-                </motion.div>
-              ) : (
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                  >
-                    <UserAnimeList
-                      data={watchlist}
-                      isLoading={isListLoading}
-                      listType="watchlist"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              )}
+                ) : (
+                  <UserAnimeList
+                    data={watchlist}
+                    isLoading={isListLoading}
+                    listType="watchlist"
+                  />
+                )}
+              </motion.div>
             </AnimatePresence>
           </div>
         </div>
@@ -371,7 +363,7 @@ export default function Profile() {
       {/* Edit Profile Modal */}
       <AnimatePresence>
         {isEditModalOpen && (
-          <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -386,14 +378,14 @@ export default function Profile() {
                   className="w-28 h-28 object-contain drop-shadow-2xl"
                 />
               </div>
-              <button
+          <button
                 type="button"
                 onClick={handleCloseEditModal}
                 className="absolute top-2 right-3 text-[#f47521] bg-transparent hover:text-white text-2xl font-bold focus:outline-none z-10"
                 aria-label="Close"
               >
                 &times;
-              </button>
+          </button>
               <form
                 onSubmit={handleEditFormSubmit}
                 className="bg-gray-950 rounded-2xl shadow-xl w-full p-6 border border-[#f47521]"
@@ -430,7 +422,7 @@ export default function Profile() {
                   />
                 </div>
                 <div className="flex gap-4">
-                  <button
+          <button
                     disabled={isUpdatingAccount}
                     type="submit"
                     className="w-full py-3 rounded-lg bg-[#f47521] text-white font-semibold transition-colors hover:bg-[#e65a0a]"
@@ -442,22 +434,22 @@ export default function Profile() {
                     ) : (
                       "Save"
                     )}
-                  </button>
-                </div>
+          </button>
+        </div>
               </form>
             </motion.div>
-          </div>
+      </div>
         )}
       </AnimatePresence>
 
       {/* Delete Confirmation Modal */}
       <AnimatePresence>
         {isDeleteModalOpen && (
-          <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5 }}
               className="relative w-full max-w-md mt-12"
             >
@@ -508,15 +500,15 @@ export default function Profile() {
                     {isDeletingAccount ? (
                       <div className="flex items-center justify-center gap-2">
                         <LoadingAnimation size={16} />
-                      </div>
-                    ) : (
+                </div>
+              ) : (
                       "Delete My Account"
                     )}
                   </button>
                 </div>
               </div>
-            </motion.div>
-          </div>
+        </motion.div>
+      </div>
         )}
       </AnimatePresence>
     </>

@@ -159,10 +159,23 @@ export default function Search() {
             <p className="text-xl text-gray-400 font-light">
               Search through thousands of anime titles
             </p>
+          
+            
           </div>
 
+
+          {
+            isInputFocused && (
+              <div className="max-w-2xl text-center mx-auto">
+                <div className="relative text-lg text-gray-500 font-light group">
+                <div>Press Enter For Full Search Results</div>
+                </div>
+              </div>
+            )
+          }
           {/* Professional Search Bar */}
           <div className="max-w-2xl mx-auto">
+            
             <div className="relative group">
               {/* Search Input Container */}
               <div className="relative">
@@ -253,7 +266,7 @@ export default function Search() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.4 }}
-            className="max-w-2xl mx-auto px-6 -mt-8 relative z-20"
+            className="max-w-2xl mx-auto px-6 -mt-14 relative z-20"
           >
             <div className="bg-gray-900 border border-white/10 rounded-xl shadow-2xl backdrop-blur-md max-h-96 overflow-y-auto scrollbar-hide">
               {showLoading ? (

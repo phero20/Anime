@@ -1,23 +1,32 @@
+// Greeting.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import greet from '../assets/greet.gif'; 
 
-export default function Greeting({greetMessage}) {
+export default function Greeting({ greetMessage }) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="w-full h-full flex flex-col items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden"
     >
+    
       
-      <img src={greet} alt="Welcome" className="w-64 h-64 object-contain" />
-      <h1 className="text-2xl md:text-3xl font-semibold text-[#f47521] text-center mb-2 tracking-tight" style={{textShadow: '0 2px 16px #23252688'}}>
-          {greetMessage}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+        className="z-10 flex flex-col items-center"
+      >
+        <img src={greet} alt="Welcome" className="w-56 h-56 object-contain" />
+        <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-2" style={{textShadow: '0 2px 10px rgba(0,0,0,0.5)'}}>
+            {greetMessage}
         </h1>
-        <p className="text-[#e0e0e0] text-base text-center opacity-80 font-normal mt-2 max-w-xs">
+        <p className="text-gray-300 text-lg text-center mt-2">
           We're glad you're here.
         </p>
+      </motion.div>
     </motion.div>
   );
 }

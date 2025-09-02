@@ -72,11 +72,11 @@ export const deleteUser = createAsyncThunk(
 // Thunk for updating user profile (username)
 export const updateUser = createAsyncThunk(
   'auth/updateUser',
-  async ({token, username}) => {
+  async ({ token, username, userId }) => {
     try {
       const response = await axios.put(
         `${backendUrl}/api/auth/update`,
-        { username },
+        { username, userId },
         {
           headers: {
             Authorization: `Bearer ${token}`
