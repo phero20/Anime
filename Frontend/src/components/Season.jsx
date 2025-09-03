@@ -330,7 +330,7 @@ export default function Season({ data }) {
                                                         {
                                                             genres.map((genre) => (
                                                                 <span onClick={
-                                                                    () => navigate(`/producer/${genre.replace(/\s+/g, '-')
+                                                                    () => navigate(`/genre/${genre.replace(/\s+/g, '-')
                                                                         }`)
                                                                 }
                                                                     key={genre}
@@ -554,7 +554,7 @@ export default function Season({ data }) {
                                                             {
                                                                 genres.map((genre) => (
                                                                     <span onClick={
-                                                                        () => navigate(`/producer/${genre.replace(/\s+/g, '-')
+                                                                        () => navigate(`/genre/${genre.replace(/\s+/g, '-')
                                                                             }`)
                                                                     }
                                                                         key={genre}
@@ -577,6 +577,7 @@ export default function Season({ data }) {
                                                             {
                                                                 producers.map((producer) => (
                                                                     <span onClick={
+                                                                      
                                                                         () => navigate(`/producer/${producer.replace(/\s+/g, '-')
                                                                             }`)
                                                                     }
