@@ -29,6 +29,10 @@ export default function Navbar() {
   const activeSection = useSelector((state) => state.ui.activeSection);
   const user = useSelector(selectUser);
 
+  // Ref for scrolling to sections
+  const categoryRef = useRef(null);
+  const genreRef = useRef(null);
+
   const navItems = ["Home", "Trending", "Latests", "Upcomings"];
   const moreItems = [
     "Top10",
@@ -450,15 +454,16 @@ export default function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
               onClick={() => setMenuOpen(false)}
             />
             
             {/* Mobile Menu Panel */}
             <motion.div 
-              className="mobile-menu absolute top-0 left-0 w-80 max-w-[85vw] h-full bg-[#0a0a0a]/98 backdrop-blur-xl border-r border-white/10"
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
+              className="mobile-menu absolute top-0 left-0 w-[80vw] h-full bg-[#0a0a0a]/40 backdrop-blur-xl border-r border-white/10 flex flex-col"
+              initial={{ x: "-100%" ,opacity: 0}}
+              animate={{ x: 0,opacity: 1}}
+              exit={{ x: "-100%",opacity: 0 }}
               transition={{ 
                 type: "spring", 
                 stiffness: 300, 
@@ -466,7 +471,7 @@ export default function Navbar() {
               }}
             >
               {/* Mobile Menu Header */}
-              <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <div className="flex items-center justify-between p-6 border-b border-white/10 flex-shrink-0">
                 <div className="text-xl font-bold text-white">
                   AnimeHub
                 </div>
@@ -479,128 +484,144 @@ export default function Navbar() {
                 </button>
               </div>
 
-              {/* Mobile Menu Content */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                
-                {/* Main Navigation */}
-                <div>
-                  <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                    Navigation
-                  </h3>
-                  <div className="space-y-1">
-                    {[...navItems, ...moreItems].map((item) => (
-                      <button
-                        key={item}
-                        onClick={() => handleNavItemClick(item.toLowerCase())}
-                        className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-500 capitalize font-medium ${
-                          !isCategoryPage && !isGenrePage && isHomepage && activeSection === item.toLowerCase()
-                            ? "text-[#f47521] bg-[#f47521]/10" 
-                            : "text-white hover:text-[#f47521] hover:bg-white/5"
-                        }`}
-                      >
-                        {item}
-                      </button>
-                    ))}
+              {/* Mobile Menu Content - Scrollable */}
+              <div className="flex-1 overflow-y-auto overscroll-contain">
+                <div className="p-6 space-y-6 min-h-full w-full">
+                  
+                  {/* Main Navigation */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-[#f47521] uppercase tracking-wider mb-3">
+                      Navigation
+                    </h3>
+                    <div className="space-y-1">
+                      {[...navItems, ...moreItems].map((item) => (
+                        <button
+                          key={item}
+                          onClick={() => handleNavItemClick(item.toLowerCase())}
+                          className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-500 capitalize font-medium ${
+                            !isCategoryPage && !isGenrePage && isHomepage && activeSection === item.toLowerCase()
+                              ? "text-[#f47521] bg-[#f47521]/10" 
+                              : "text-white hover:text-[#f47521] hover:bg-white/5"
+                          }`}
+                        >
+                          {item}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* Categories */}
-                <div>
-                  <button
-                    onClick={() => setCategoryOpen((prev) => !prev)}
-                    className="flex items-center justify-between w-full text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3"
-                  >
-                    Categories
-                    <FaChevronDown 
-                      size={12} 
-                      className={`transition-transform duration-500 ${categoryOpen ? 'rotate-180' : ''}`} 
-                    />
-                  </button>
-                  
-                  <AnimatePresence>
-                    {categoryOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="grid grid-cols-1 gap-1">
-                          {categoryItems.map((item) => (
-                            <NavLink
-                              key={item}
-                              to={`/category/${item.toLowerCase()}`}
-                              onClick={() => setMenuOpen(false)}
-                              className={({ isActive }) => `px-4 py-3 rounded-lg transition-all duration-500 capitalize font-medium ${
-                                isActive ? "text-[#f47521] bg-[#f47521]/10" : "text-white hover:text-[#f47521] hover:bg-white/5"
-                              }`}
-                            >
-                              {item.replace(/-/g, " ")}
-                            </NavLink>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                  {/* Categories */}
+                  <div ref={categoryRef}>
+                    <button
+                      onClick={() => {
+                        setCategoryOpen((prev) => !prev);
+                        setGenreOpen(false); // Close genre when category opens
+                        // Scroll to category section after a short delay
+                        setTimeout(() => {
+                          if (!categoryOpen && categoryRef.current) {
+                            categoryRef.current.scrollIntoView({ 
+                              behavior: 'smooth', 
+                              block: 'start' 
+                            });
+                          }
+                        }, 300);
+                      }}
+                      className={`flex items-center justify-between w-full text-lg font-semibold text-[#f47521] uppercase tracking-wider mb-3 transition-all duration-500 `}
+                    >
+                      <span className={`${isCategoryPage ? "border-b-2 border-[#f47521]" : ""}`}> Categories</span>
+                     
+                      <FaChevronDown 
+                        size={12} 
+                        className={`transition-transform duration-500 ${categoryOpen ? 'rotate-180' : ''}`} 
+                      />
+                    </button>
+                    
+                    <AnimatePresence>
+                      {categoryOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="grid grid-cols-2 gap-1 pb-2">
+                            {categoryItems.map((item) => (
+                              <NavLink
+                                key={item}
+                                to={`/category/${item.toLowerCase()}`}
+                                onClick={() => setMenuOpen(false)}
+                                className={({ isActive }) => `block px-4 py-3 rounded-lg transition-all duration-500 capitalize text-sm font-medium ${
+                                  isActive ? "text-[#f47521] bg-[#f47521]/10" : "text-white hover:text-[#f47521] hover:bg-white/5"
+                                }`}
+                              >
+                                {item.replace(/-/g, " ")}
+                              </NavLink>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
 
-                {/* Genres */}
-                <div>
-                  <button
-                    onClick={() => setGenreOpen((prev) => !prev)}
-                    className="flex items-center justify-between w-full text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3"
-                  >
-                    Genres
-                    <FaChevronDown 
-                      size={12} 
-                      className={`transition-transform duration-500 ${genreOpen ? 'rotate-180' : ''}`} 
-                    />
-                  </button>
-                  
-                  <AnimatePresence>
-                    {genreOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="overflow-hidden max-h-60 overflow-y-auto"
-                      >
-                        <div className="grid grid-cols-2 gap-1">
-                          {genres.map((item) => (
-                            <NavLink
-                              key={item}
-                              to={`/genre/${item.toLowerCase()}`}
-                              onClick={() => setMenuOpen(false)}
-                              className={({ isActive }) => `px-3 py-2 rounded-lg transition-all duration-500 capitalize text-sm font-medium ${
-                                isActive ? "text-[#f47521] bg-[#f47521]/10" : "text-white hover:text-[#f47521] hover:bg-white/5"
-                              }`}
-                            >
-                              {item.replace(/-/g, " ")}
-                            </NavLink>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {/* Genres */}
+                  <div ref={genreRef}>
+                    <button
+                      onClick={() => {
+                        setGenreOpen((prev) => !prev);
+                        setCategoryOpen(false); // Close category when genre opens
+                        // Scroll to genre section after a short delay
+                        setTimeout(() => {
+                          if (!genreOpen && genreRef.current) {
+                            genreRef.current.scrollIntoView({ 
+                              behavior: 'smooth', 
+                              block: 'start' 
+                            });
+                          }
+                        }, 300);
+                      }}
+                      className={`flex items-center justify-between w-full text-lg text-[#f47521] font-semibold uppercase tracking-wider mb-3 `}
+                    >
+                      <span className={`${ isGenrePage ? "border-b-2 border-[#f47521]" : ""}`}> Genres</span>
+                     
+                      <FaChevronDown 
+                        size={12} 
+                        className={`transition-transform duration-500 ${genreOpen ? 'rotate-180' : ''}`} 
+                      />
+                    </button>
+                    
+                    <AnimatePresence>
+                      {genreOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="grid grid-cols-2 gap-1 pb-2">
+                            {genres.map((item) => (
+                              <NavLink
+                                key={item}
+                                to={`/genre/${item.toLowerCase()}`}
+                                onClick={() => setMenuOpen(false)}
+                                className={({ isActive }) => `block px-3 py-2 rounded-lg transition-all duration-500 capitalize text-sm font-medium ${
+                                  isActive ? "text-[#f47521] bg-[#f47521]/10" : "text-white hover:text-[#f47521] hover:bg-white/5"
+                                }`}
+                              >
+                                {item.replace(/-/g, " ")}
+                              </NavLink>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
               </div>
 
               {/* Mobile Menu Footer */}
-              {!user && (
-                <div className="p-6 border-t border-white/10">
-                  <button
-                    onClick={() => {
-                      setMenuOpen(false);
-                      setShowLoginModal(true);
-                    }}
-                    className="w-full px-4 py-3 bg-[#f47521] hover:bg-[#e65a0a] text-white rounded-lg font-medium transition-all duration-500"
-                  >
-                    Sign In
-                  </button>
-                </div>
-              )}
+              
             </motion.div>
           </motion.div>
         )}
