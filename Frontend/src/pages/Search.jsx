@@ -238,6 +238,7 @@ export default function Search() {
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
               onClick={handleCloseFilter}
             />
+
             
             <motion.div 
               className="relative z-10 w-full flex justify-center"
@@ -284,10 +285,10 @@ export default function Search() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.9 }}
                       onClick={() => navigate(`/anime/${suggestion.id}`)}
-                      className="flex items-center gap-4 px-6 py-4 hover:bg-white/5 cursor-pointer transition-all duration-200 border-b border-white/5 last:border-b-0 group"
+                      className="flex items-center gap-4 px-4 py-4 hover:bg-white/5 cursor-pointer transition-all duration-200 border-b border-white/5 last:border-b-0 group"
                     >
                       {/* Anime Thumbnail */}
-                      <div className="relative w-14 h-20 flex-shrink-0 overflow-hidden rounded-lg">
+                      <div className="relative w-16 h-20 flex-shrink-0 overflow-hidden rounded-lg">
                         <img
                           src={suggestion.poster}
                           alt={suggestion.title || suggestion.name}
@@ -303,7 +304,7 @@ export default function Search() {
                       
                       {/* Anime Information */}
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-white font-semibold text-base group-hover:text-[#f47521] transition-colors duration-200 line-clamp-1">
+                        <h4 className="text-white font-semibold text-base group-hover:text-[#f47521] transition-colors duration-200">
                           {suggestion.title || suggestion.name}
                         </h4>
                         

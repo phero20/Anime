@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from "react-redux";
 
 import Dropdown from './Dropdown';
-
+import formgirl from '../assets/formgirl.png'
 
 const TYPES = [ "Most-Favorite",
   "Most-Popular",
@@ -59,6 +59,13 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
 
   return (
     <div className="bg-gray-950 rounded-2xl shadow-2xl w-full max-w-2xl px-3 py-6 mx-2 sm:p-8 relative border border-[#f47521]/80">
+       <div className="absolute left-1/2 -top-[4.8rem] transform -translate-x-1/2 z-20">
+                <img 
+                  src={formgirl} 
+                  alt="Anime Girl" 
+                  className="w-28 h-28 object-contain drop-shadow-2xl"
+                />
+              </div>
         <button
           className="absolute top-4 right-4 text-[#f47521] text-2xl sm:text-3xl hover:text-[#f47521]/80 focus:outline-none"
           onClick={onClose}
