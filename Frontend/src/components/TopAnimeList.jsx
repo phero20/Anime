@@ -1,12 +1,12 @@
 import React from 'react';
 import Title from './Title';
-import {MdLiveTv} from "react-icons/md";
+import { MdLiveTv } from "react-icons/md";
 import { FaPlay } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { MdVideoLibrary } from "react-icons/md";
 
-
-export default function TopAnimeList({top10Animes}) {
-  const navigate = useNavigate();
+export default function TopAnimeList({ top10Animes }) {
+    const navigate = useNavigate();
 
     const top10AnimesData = [
         {
@@ -22,48 +22,69 @@ export default function TopAnimeList({top10Animes}) {
     ];
 
     return (
-        <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-6 text-white font-['Crunchyroll_Atyp',_sans-serif] bg-[#030303]">
-           <div className='w-full flex justify-center'> <Title name="Top 10" anime={"Animes"} className="mb-6"/> </div>
-            
+        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 text-white font-['Crunchyroll_Atyp',_sans-serif]">
+            <div className='w-full flex justify-center mb-8'> <Title name="Top 10" anime={"Animes"} /> </div>
+
             {top10AnimesData.map((section, idx) => (
-                <div key={idx} className="mb-10" data-aos="zoom-out-up">
-                    <h2 className="text-[#f47521] text-lg font-semibold mb-4 border-b border-gray-700 pb-1">
-                        {section.name}
-                    </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div key={idx} className="mb-12" data-aos="zoom-out-up">
+                    <div className="flex items-center gap-3 mb-6 border-b border-gray-700 pb-2">
+                        <div className="h-8 w-1 bg-[#f47521] rounded-full"></div>
+                        <h2 className="text-[#f47521] text-xl sm:text-2xl font-bold">
+                            {section.name}
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                         {section.data.map((anime, i) => (
                             <div
                                 key={i}
                                 onClick={() => navigate(`/anime/${anime.id}`)}
-                                className="flex items-center w-full hover:scale-105 hover:bg-gray-900/90 transition-all duration-500 cursor-pointer bg-black rounded-md overflow-hidden p-2 group"
+                                className="group cursor-pointer bg-gray-900/20 hover:bg-gray-900/40 hover:border border-[#f47521]/50 rounded-xl p-2 transition-transform duration-500"
                             >
-                                {/* Image */}
-                                <div className="w-28 h-20 rounded-md overflow-hidden shrink-0 relative">
-                                    <img
-                                        src={anime.poster}
-                                        alt={anime.name}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-150"
-                                    />
-                                    {/* Play Button Overlay */}
-                                    <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                                       
-                                            <FaPlay className="text-[#f47521]" size={20} />
+                                <div className="flex items-center gap-3 sm:gap-4">
+                                    {/* Rank Number */}
+                                    {/* <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-[#f47521]/20 border border-[#f47521]/30 rounded-lg flex items-center justify-center">
+                                        <span className="text-[#f47521] font-bold text-sm sm:text-base">{i + 1}</span>
+                                    </div> */}
+                                    
+                                    {/* Image */}
+                                    <div className="w-28 h-20 rounded-lg overflow-hidden shrink-0 relative">
+                                        <img
+                                            src={anime.poster}
+                                            alt={anime.name}
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                        />
+                                        {/* Play Button Overlay */}
+                                        <div className="absolute inset-0 bg-gray-950/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg">
+                                            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-[#f47521]/10 border border-[#f47521]/50 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300">
+                                                <FaPlay className="text-[#f47521] ml-0.5" size={12} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Info */}
+                                    <div className="flex-grow min-w-0">
+                                        <h3 className="text-sm font-bold text-white group-hover:text-[#f47521] transition-colors duration-300 line-clamp-2 leading-tight mb-1">
+                                            {anime.name}
+                                        </h3>
                                         
-                                    </div>
-                                </div>
-                                {/* Info */}
-                                <div className="ml-4 flex-grow">
-                                    <h3 className="text-sm font-semibold break-words leading-snug">
-                                        {anime.name}
-                                    </h3>
-                                    <div className="text-xs flex gap-1 text-[#f47521]">
-                                        <MdLiveTv/>
-                                        {anime.episodes ? `${anime.episodes.sub} Episodes` : ''}
-                                    </div>
-                                    <div className="text-xs text-gray-400">
-                                        {anime.episodes?.sub && 'Sub'}
-                                        {anime.episodes?.sub && anime.episodes?.dub && ' | '}
-                                        {anime.episodes?.dub && 'Dub'}
+                                        {/* Episode Badges */}
+                                        <div className="flex flex-wrap gap-1 sm:gap-2 mb-2">
+                                            {anime.episodes?.sub && (
+                                                <div className="flex items-center gap-1 bg-gray-800/60 px-2 py-1 rounded-md">
+                                                    <MdVideoLibrary className="text-[#f47521]" size={10} />
+                                                    <span className="text-xs text-gray-300">SUB {anime.episodes.sub}</span>
+                                                </div>
+                                            )}
+                                            {anime.episodes?.dub && (
+                                                <div className="flex items-center gap-1 bg-gray-800/60 px-2 py-1 rounded-md">
+                                                    <MdVideoLibrary className="text-[#f47521]" size={10} />
+                                                    <span className="text-xs text-gray-300">DUB {anime.episodes.dub}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        
+                                      
                                     </div>
                                 </div>
                             </div>

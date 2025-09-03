@@ -599,7 +599,7 @@ export default function Season({ data }) {
                                         <img src={poster}
                                             alt={name}
                                         className="w-full h-auto rounded-lg shadow-2xl transform group-hover:scale-150 transition-all duration-500" />
-                                      <div className="absolute inset-0 w-full text-[#f47521]  bg-gray-950/70 opacity-0 hover:opacity-100 transition-all duration-500 h-full flex justify-center items-center">
+                                      <div className="absolute inset-0 w-full text-[#f47521]  bg-gray-950/80 opacity-0 hover:opacity-100 transition-all duration-500 h-full flex justify-center items-center">
                                     <div 
                                     onClick={
                                         () => {
@@ -609,7 +609,7 @@ export default function Season({ data }) {
                                             dispatch(setEpisodeImage(poster));
                                         }
                                     }
-                                    className="hover:scale-110 cursor-pointer transition-all duration-500"><FaPlay size={35} /></div>  
+                                    className="hover:scale-110 cursor-pointer rounded-full p-3 text-[#f47521] cursor-pointer border border-[#f47521]/50 hover:text-[#f47521] bg-[#f47521]/10 transition-all duration-500"><FaPlay size={25} /></div>  
                                       </div>
                                     </div>
                                     <h1 className="text-4xl mt-2 text-center font-black leading-tight text-[#f47521] drop-shadow-lg">

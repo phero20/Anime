@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import Title from "./Title";
-import { FaHeart, FaBookmark } from "react-icons/fa";
-import { MdLiveTv } from "react-icons/md";
+import { FaHeart, FaBookmark, FaPlay } from "react-icons/fa";
+import { MdVideoLibrary,MdVerified ,MdSecurity} from "react-icons/md";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -96,37 +96,90 @@ export default function AnimeCards({
   const renderCard = (item, index) => (
     <Link to={`/anime/${item.id}`} key={index}>
       <div {...(!scroll ? { 'data-aos': 'zoom-out-up' ,'data-aos-offset':'120' } : {})}
-        className={`group cursor-pointer relative overflow-hidden snap-start flex-shrink-0 hover:shadow-xl transition-shadow ${scroll ? "min-w-[140px] sm:min-w-[160px] md:min-w-[180px] lg:min-w-[200px] xl:min-w-[220px]" : "w-full"}`}
+        className={`group cursor-pointer relative overflow-hidden snap-start flex-shrink-0 transition-all duration-300 ${scroll ? "min-w-[140px] sm:min-w-[180px] md:min-w-[200px] lg:min-w-[230px] xl:min-w-[270px]" : "w-full"}`}
       >
-        <div className="relative overflow-hidden">
-          <div className="w-full h-[200px] sm:h-[240px] md:h-[280px] lg:h-[320px] xl:h-[360px] rounded-lg overflow-hidden">
-            <img src={item.poster} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-150" />
-          </div>
-          <div className="px-2 sm:px-3 py-2">
-            <h3 className="text-xs sm:text-sm font-semibold text-[#f47521] w-full line-clamp-2">{item.name}</h3>
-            <div className="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">
-              {item.episodes?.sub && item.episodes?.dub ? "Sub | Dub" : item.episodes?.sub ? "Sub" : item.episodes?.dub ? "Dub" : ""}
-            </div>
-          </div>
-          <div className="absolute inset-0 bg-gray-900/90 h-[200px] sm:h-[240px] md:h-[280px] lg:h-[320px] xl:h-[360px] rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-center items-center p-2 sm:p-3 space-y-2 text-center">
-            <p className="text-sm sm:text-base text-[#f47521] font-semibold line-clamp-3 leading-snug">{item.type || item.name}</p>
-            <div className="flex flex-col gap-1 sm:gap-2 text-xs sm:text-sm text-gray-200">
-              {item.season && <span>Season {item.season}</span>}
-              {item.episodes?.sub && (
-                <span className="flex gap-1 items-center justify-center">
-                  <MdLiveTv className="text-[#f47521]" size={14} />
-                  <span>{item.episodes.sub} Eps</span>
-                </span>
+        {/* Crunchyroll-style Card Container */}
+        <div className="relative overflow-hidden group-hover:border-[#f47521]/50 transition-all duration-500">
+          
+          {/* Image Container - Crunchyroll aspect ratio */}
+          <div className="relative w-full aspect-[2/3] rounded-md overflow-hidden">
+            <img 
+              src={item.poster} 
+              alt={item.name} 
+              className="w-full h-full object-cover rounded-md transition-transform duration-500 group-hover:scale-150" 
+            />
+              {item.rating && (
+                <div className=" flex items-center gap-1 absolute top-3 right-3 p-1 text-sm rounded-md bg-gray-950/50 backdrop-blur-sm">
+                  <MdSecurity className="text-[#f47521]" size={14} />
+                  <span>{item.rating}</span>
+                </div>
               )}
+            {/* Hover Overlay */}
+            <div className="absolute inset-0 rounded-md flex justify-center items-center bg-gray-950/80 opacity-0 group-hover:opacity-100 transition-all duration-500">
+              {/* Top Action Buttons */}
+              <div className="absolute bottom-3 left-3 flex gap-3" onClick={(e) => e.preventDefault()}>
+                <button 
+                  type="button" 
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToFavorites(item); }} 
+                  className="w-6 h-6 md:h-10 md:w-10  flex items-center justify-center rounded-full bg-gray-900/80 backdrop-blur-sm border text-gray-400 border-[#f47521] hover:text-[#f47521] hover:bg-[#f47521]/10 transition-all duration-300" 
+                  title="Add to Favorites"
+                >
+                  <FaHeart className="text-xs md:text-base"  />
+                </button>
+                <button 
+                  type="button" 
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToWatchlist(item); }} 
+                  className="w-6 h-6 md:h-10 md:w-10 flex items-center justify-center rounded-full bg-gray-900/80 backdrop-blur-sm border text-gray-400 border-[#f47521] hover:text-[#f47521] hover:bg-[#f47521]/10 transition-all duration-300" 
+                  title="Add to Watchlist"
+                >
+                  <FaBookmark  className="text-xs md:text-base" />
+                </button>
+              </div>
+
+              {/* Bottom Info on Hover */}
+              <div className="absolute top-3 left-1 right-0 p-3">
+                <div className="space-y-1">
+                {item.type && (
+                    <span className="md:inline-block bg-[#f47521]/20 text-[#f47521] px-2 py-1 rounded text-xs font-medium border border-[#f47521]/30">
+                      {item.type}
+                    </span>
+                  )}
+                  {item.episodes?.sub && (
+                    <div className="hidden md:flex items-center gap-1 text-sm text-gray-300">
+                      <MdVideoLibrary className="text-[#f47521]" size={12} />
+                      <span>Sub | {item.episodes.sub} Episodes</span>
+                    </div>
+                  )}
+                  {item.episodes?.dub && (
+                    <div className="hidden md:flex items-center gap-1 text-sm text-gray-300">
+                      <MdVideoLibrary className="text-[#f47521]" size={12} />
+                      <span>Dub | {item.episodes.dub} Episodes</span>
+                    </div>
+                  )}
+                 
+                  
+                </div>         
+              </div>
+            
+              <div className="hover:scale-110 rounded-full p-3 text-[#f47521] cursor-pointer border border-[#f47521]/50 hover:text-[#f47521] bg-[#f47521]/10 transition-all duration-500"><FaPlay className="text-xs md:text-lg" /> </div>
             </div>
-            {item.rating && <span className="text-xs sm:text-sm text-gray-200">Rated: {item.rating}</span>}
-            <div className="absolute left-3 bottom-3 flex gap-2" onClick={(e) => e.preventDefault()}>
-              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToFavorites(item); }} className="w-8 h-8 flex items-center justify-center rounded-full bg-[#f47521] text-white shadow-lg hover:bg-[#e65a0a] transition-colors" title="Add to Favorites">
-                <FaHeart size={14} />
-              </button>
-              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToWatchlist(item); }} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-white shadow-lg hover:bg-gray-700 transition-colors" title="Add to Watchlist">
-                <FaBookmark size={14} />
-              </button>
+          </div>
+          
+          {/* Content Section - Always Visible */}
+          <div className="p-3 space-y-2">
+            {/* Title */}
+            <h3 className="text-sm font-bold text-white group-hover:text-[#f47521] transition-colors duration-300 line-clamp-2 leading-tight">
+              {item.name}
+            </h3>
+            
+            {/* Episode Info - Always Visible */}
+            <div className="flex items-center justify-between text-xs text-gray-400">
+              <div className="flex items-center gap-2">
+                {item.episodes?.sub && <span>Sub</span>}
+                {item.episodes?.sub && item.episodes?.dub && <span>|</span>}
+                {item.episodes?.dub && <span>Dub</span>}
+              </div>
+             
             </div>
           </div>
         </div>
@@ -149,12 +202,12 @@ export default function AnimeCards({
             navigation={{ nextEl: `.swiper-next-${navId}`, prevEl: `.swiper-prev-${navId}`}}
             onSwiper={(swiper) => { swiperRef.current = swiper; }}
             slidesPerView="auto"
-            spaceBetween={35}
+            spaceBetween={30}
             allowTouchMove={true}
             className="pb-4 scroll-smooth rounded-2xl bg-transparent relative z-10"
           >
             {swiperData.map((item, index) => (
-              <SwiperSlide key={index} className="!w-[140px] sm:!w-[160px] md:!w-[180px] lg:!w-[200px] xl:!w-[220px] flex-shrink-0 snap-start">
+              <SwiperSlide key={index} className="!w-[140px] sm:!w-[180px] md:!w-[200px] lg:!w-[230px] xl:!w-[270px] flex-shrink-0 snap-start">
                 {renderCard(item, index % safeData.length)}
               </SwiperSlide>
             ))}

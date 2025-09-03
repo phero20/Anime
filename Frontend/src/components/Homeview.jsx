@@ -12,6 +12,7 @@ import { useToast } from './Toast';
 
 export default function Homeview({AnimeData, loading}) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const timeoutRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -143,11 +144,21 @@ export default function Homeview({AnimeData, loading}) {
   }, []);
 
   const nextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
+      setTimeout(() => setIsTransitioning(false), 50);
+    }, 200);
   };
 
   const goToSlide = (index) => {
-    setCurrentIndex(index);
+    if (index !== currentIndex) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentIndex(index);
+        setTimeout(() => setIsTransitioning(false), 50);
+      }, 200);
+    }
     resetTimeout();
   };
 
@@ -155,7 +166,7 @@ export default function Homeview({AnimeData, loading}) {
     clearTimeout(timeoutRef.current);
     
     // Use CSS animation for smooth progress
-    const duration = 5000; // 9 seconds
+    const duration = 5000; 
     
     timeoutRef.current = setTimeout(nextSlide, duration);
   };
@@ -191,16 +202,24 @@ export default function Homeview({AnimeData, loading}) {
 
   return (
     <div className="relative min-h-screen bg-black text-white font-['Crunchyroll_Atyp',_sans-serif] overflow-hidden">
+      {/* Transition Black Overlay */}
+    
+      
       {/* Background Image with Parallax Effect */}
       <div className="absolute inset-0 w-full h-full">
         <img
           src={currentSlide.poster}
           alt={`${currentSlide.name} Poster`}
-          className="w-full h-full object-cover transition-all duration-1000 ease-in-out transform scale-105 animate-ken-burns"
+          className="w-full h-full object-cover transition-all duration-1000 ease-in-out transform animate-ken-burns"
           style={{
             animation: 'kenBurns 15s ease-in-out infinite alternate'
           }}
         />
+          <div 
+        className={`absolute inset-0 bg-black transition-opacity duration-500 ${
+          isTransitioning ? 'opacity-70' : 'opacity-0 pointer-events-none'
+        }`}
+      />
         
         {/* Enhanced Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-black/40 to-transparent opacity-90" />
@@ -235,7 +254,7 @@ export default function Homeview({AnimeData, loading}) {
                   dispatch(clearEpisodeImage());
                   dispatch(setEpisodeImage(currentSlide.poster));
                 }}
-                className="group flex items-center gap-2 bg-[#f47521] text-white font-bold px-3 py-2 rounded-lg transition-all duration-300 text-sm hover:bg-[#e65a0a]"
+                className="group flex items-center gap-2 bg-[#f47521] text-black font-bold px-3 py-2 rounded-lg transition-all duration-500 text-sm hover:bg-[#ff6600]"
               >
                 <FaPlay size={12} />
                 <span>Watch Now</span>
@@ -244,18 +263,18 @@ export default function Homeview({AnimeData, loading}) {
               <button 
                 title="Add to Watchlist" 
                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToWatchlist(currentSlide); }}
-                className="group flex items-center gap-2 bg-transparent border border-[#f47521] text-white px-3 py-2 rounded-lg text-sm transition-all duration-300 hover:bg-[#f47521]"
+                className="group flex items-center gap-2 bg-transparent border border-[#f47521] text-[#f47521] hover:text-black px-3 py-2 rounded-lg text-sm transition-all duration-500 hover:bg-[#ff6600]"
               >
-                <RiBookmarkLine size={14} className="text-[#f47521] group-hover:text-white" />
-                <span>Add to List</span>
+                <RiBookmarkLine size={14} className="text-[#f47521] group-hover:text-black" />
+                <span>Add to Watchlist</span>
               </button>
 
               <button 
                title="Add to Favorites"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToFavorites(currentSlide); }}
-                className="group flex items-center justify-center h-9 w-9 bg-transparent border border-[#f47521] text-[#f47521] rounded-lg transition-all duration-300 hover:bg-[#f47521] hover:text-white"
+                className="group flex items-center justify-center h-9 w-9 bg-transparent border border-[#f47521] text-[#f47521] rounded-lg transition-all duration-500 hover:bg-[#ff6600] hover:text-black"
               >
-                <RiAddFill size={16} className="transform group-hover:rotate-90 transition-transform duration-300" />
+                <RiAddFill size={16} className="transform group-hover:rotate-90 transition-transform duration-500" />
               </button>
             </div>
 
@@ -268,7 +287,7 @@ export default function Homeview({AnimeData, loading}) {
                   className="group relative"
                 >
                   <div
-                    className={`transition-all duration-300 rounded-full relative overflow-hidden ${
+                    className={`transition-all duration-500 rounded-full relative overflow-hidden ${
                       index === currentIndex
                         ? "bg-gray-600 scale-110"
                         : "bg-gray-700 hover:bg-gray-600"

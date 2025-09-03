@@ -245,7 +245,7 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -10, scale: 0.8 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute top-full -right-4 mt-3 w-48 py-4 gap-4 flex flex-col bg-gray-950 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl"
+                      className="absolute top-full -right-4 mt-4 w-48 py-4 gap-4 flex flex-col bg-gray-950 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl"
                     >
                       {moreItems.map((item) => (
                         <button
@@ -305,7 +305,7 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -10, scale: .8 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute top-full -right-4 mt-3 bg-gray-950 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl  w-max min-w-[300px] p-4"
+                      className="absolute top-full -right-4 mt-4 bg-gray-950 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl  w-max min-w-[300px] p-4"
                     >
                       <div className="grid grid-cols-3 gap-x-14 gap-y-7 transition-all duration-300">
                         {categoryItems.map((item) => (
@@ -367,7 +367,7 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -10, scale: 0.8 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute top-full -right-12 mt-3 bg-gray-950 pb-4 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl p-4 max-h-[39rem] w-max min-w-[300px] overflow-y-auto scrollbar-hide"
+                      className="absolute top-full -right-12 mt-4 bg-gray-950 pb-4 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl p-4 max-h-[39rem] w-max min-w-[300px] overflow-y-auto scrollbar-hide"
                     >
                       <div className="grid grid-cols-5 gap-x-14 gap-y-7">
                         {genres.map((item) => (
