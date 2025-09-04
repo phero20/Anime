@@ -24,9 +24,11 @@
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
     "react-infinite-scroll-component": "^6.1.0",
+    "react-markdown": "^10.1.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.2",
     "react-scroll": "^1.9.3",
+    "remark-gfm": "^4.0.1",
     "swiper": "^11.2.10"
   },
   "devDependencies": {

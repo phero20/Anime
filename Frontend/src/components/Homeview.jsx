@@ -236,9 +236,9 @@ export default function Homeview({AnimeData, loading}) {
           <div className="flex flex-col items-center mb-28 sm:mb-0 md:items-start justify-center h-full max-w-2xl lg:max-w-3xl mx-auto md:mx-0">
             
             {/* Title */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight mb-4 sm:mb-6 text-center md:text-left animate-title-fade-in">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-4 sm:mb-6 text-center md:text-left animate-title-fade-in">
               <span className="text-[#f47521]">
-                {currentSlide.name}
+                {currentSlide.name.length > 50 ? currentSlide.name.slice(0,40)+'...' :  currentSlide.name }
               </span>
             </h1>
             

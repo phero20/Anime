@@ -60,10 +60,11 @@ export default function Home() {
 
     const sections1 = [
         {
-            id: "trending",
-            data: AnimeData?.data?.data?.trendingAnimes,
-            name: "Trending"
-        }, {
+            id: "popular",
+            data: AnimeData?.data?.data?.mostPopularAnimes,
+            name: "Most Popular"
+        },
+       {
             id: "latests",
             data: AnimeData?.data?.data?.latestEpisodeAnimes,
             name: "Latest Episode"
@@ -80,10 +81,10 @@ export default function Home() {
             data: AnimeData?.data?.data?.topAiringAnimes,
             name: "Top Airing"
         }, {
-            id: "popular",
-            data: AnimeData?.data?.data?.mostPopularAnimes,
-            name: "Most Popular"
-        }, {
+            id: "trending",
+            data: AnimeData?.data?.data?.trendingAnimes,
+            name: "Trending"
+        },  {
             id: "favorite",
             data: AnimeData?.data?.data?.mostFavoriteAnimes,
             name: "Most Favorite"

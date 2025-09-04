@@ -132,10 +132,8 @@ export default function Episodes() {
     {/* Video Player Section - Now at the top */}
     <div className="w-full bg-black">
       <div className="w-full max-w-[100%] mx-auto">
-        <div className="relative w-full bg-gray-900/60 rounded"
-          style={
-            { aspectRatio: '16/5' }
-          }>
+        <div className="relative w-full bg-gray-900/60 rounded h-56  md:h-[32rem]"
+          >
           {
             selectedServer.server && EpisodeStreamLinks?.data?.data ? (
               <VideoPlayer streamData={

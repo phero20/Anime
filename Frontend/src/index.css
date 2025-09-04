@@ -108,3 +108,54 @@
   text-shadow: none;
 }
 
+/* AI Chat Markdown Styling */
+.ai-chat-content h1 {
+  @apply text-2xl font-bold text-[#f47521] mt-4 mb-3;
+}
+
+.ai-chat-content h2 {
+  @apply text-xl font-bold text-white mt-4 mb-3;
+}
+
+.ai-chat-content h3 {
+  @apply text-lg font-bold text-[#f47521] mt-4 mb-2;
+}
+
+.ai-chat-content p {
+  @apply mb-2 leading-relaxed;
+}
+
+.ai-chat-content ul {
+  @apply mb-3 space-y-1;
+}
+
+.ai-chat-content li {
+  @apply flex items-start gap-2;
+}
+
+.ai-chat-content li::before {
+  content: "•";
+  @apply text-[#f47521] mt-1 flex-shrink-0;
+}
+
+.ai-chat-content strong {
+  @apply font-bold text-white;
+}
+
+.ai-chat-content table {
+  @apply w-full border-collapse border border-gray-600 my-4;
+}
+
+.ai-chat-content th,
+.ai-chat-content td {
+  @apply border border-gray-600 px-3 py-2 text-left;
+}
+
+.ai-chat-content th {
+  @apply bg-gray-700 font-semibold text-[#f47521];
+}
+
+.ai-chat-content tr:nth-child(even) {
+  @apply bg-gray-800/30;
+}
+

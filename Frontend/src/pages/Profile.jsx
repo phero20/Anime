@@ -371,7 +371,7 @@ export default function Profile() {
               transition={{ duration: 0.5 }}
               className="relative w-full max-w-sm mt-12"
             >
-              <div className="absolute left-1/2 -top-[4.8rem] transform -translate-x-1/2 z-20">
+              <div className="absolute left-[51%] -top-[4.5rem] transform -translate-x-1/2 z-20">
                 <img
                   src={formgirl}
                   alt="Anime Girl"
@@ -453,7 +453,7 @@ export default function Profile() {
               transition={{ duration: 0.5 }}
               className="relative w-full max-w-md mt-12"
             >
-              <div className="absolute left-1/2 -top-[4.8rem] transform -translate-x-1/2 z-20">
+              <div className="absolute left-[51%] -top-[4.5rem] transform -translate-x-1/2 z-20">
                 <img
                   src={formgirl}
                   alt="Anime Girl"

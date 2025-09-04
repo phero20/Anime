@@ -1,5 +1,5 @@
 // AOS removed
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Route, Routes, useLocation} from 'react-router-dom';
 import './App.css';
 import Category from './pages/Category';
@@ -18,11 +18,14 @@ import Search from './pages/Search';
 import { setUser } from './redux/apifetch/AuthSlicer';
 import Profile from './pages/Profile';
 import ToastContainer from './components/Toast';
+import AiChat from './components/AiChat';
+import { FaRobot } from 'react-icons/fa';
 
 
 function App() {
     const dispatch = useDispatch();
     const location = useLocation();
+    const [isChatOpen, setIsChatOpen] = useState(false);
 
     useEffect(() => {
         dispatch(fetchAnimeData());
@@ -85,6 +88,21 @@ function App() {
                 </Routes>
             </AnimatePresence>
             <Footer/>
+            
+            {/* Floating AI Chat Button */}
+            <button
+                onClick={() => setIsChatOpen(true)}
+                className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-[#f47521] hover:bg-[#ff6600] text-black rounded-full shadow-2xl hover:shadow-[#f47521]/25 transition-all duration-300 flex items-center justify-center group hover:scale-110"
+                title="AI Chat Assistent"
+            >
+                <FaRobot size={24} className="group-hover:scale-110 transition-transform duration-500" />
+            </button>
+
+            {/* AI Chat Component */}
+            <AiChat 
+                isOpen={isChatOpen} 
+                onClose={() => setIsChatOpen(false)} 
+            />
             
         </>
     );

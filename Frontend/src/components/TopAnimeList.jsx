@@ -48,7 +48,7 @@ export default function TopAnimeList({ top10Animes }) {
                             <div
                                 key={i}
                                 onClick={() => navigate(`/anime/${anime.id}`)}
-                                className="group cursor-pointer bg-gray-900/20 hover:bg-gray-900/40 hover:border border-[#f47521]/50 rounded-xl p-2 transition-all duration-500"
+                                className="group cursor-pointer hover:bg-gray-900/55 hover:border border-[#f47521]/50 rounded-xl p-2 transition-all duration-500"
                             >
                                 <div className="flex items-center gap-3 sm:gap-4">
                                   

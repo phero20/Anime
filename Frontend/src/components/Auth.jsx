@@ -82,7 +82,7 @@ export default function Auth({ onClose, showGreeting, setShowGreeting }) {
             className="w-full max-w-md"
           >
             <div className="relative mt-12">
-              <div className="absolute left-1/2 -top-[4.8rem] transform -translate-x-1/2 z-20">
+              <div className="absolute left-1/2 -top-[4.5rem] transform -translate-x-1/2 z-20">
                 <img 
                   src={formgirl} 
                   alt="Anime Girl" 
