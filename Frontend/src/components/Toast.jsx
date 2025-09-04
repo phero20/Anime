@@ -2,7 +2,7 @@ import React from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { FaCheckCircle, FaExclamationTriangle, FaSpinner, FaInfoCircle, FaTimes } from 'react-icons/fa';
-
+import formgirl2 from '../assets/formgirl2.png';
 // Toast Message Component with the correct design and a functional close button
 const ToastMessage = ({ t, title, message, description, type }) => {
   const getIcon = () => {
@@ -37,8 +37,9 @@ const ToastMessage = ({ t, title, message, description, type }) => {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-      className={`flex items-start w-full max-w-sm p-4 bg-gray-900 border-l-4 rounded-r-lg shadow-lg font-['Crunchyroll_Atyp',_sans-serif] ${getBorderColor()}`}
+      className={`relative flex items-start w-full max-w-sm p-4 bg-gray-900 border-l-4 rounded-r-lg shadow-lg font-['Crunchyroll_Atyp',_sans-serif] ${getBorderColor()}`}
     >
+      <img src={formgirl2} alt="" className='absolute -top-9 left-[40%] w-[4.2rem]'/>
       <div className="flex-shrink-0 mt-0.5">{getIcon()}</div>
       <div className="ml-4 flex-1">
         {title && <h4 className="font-semibold text-sm text-white">{title}</h4>}

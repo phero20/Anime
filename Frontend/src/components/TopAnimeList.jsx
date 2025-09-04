@@ -4,6 +4,7 @@ import { MdLiveTv } from "react-icons/md";
 import { FaPlay } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { MdVideoLibrary } from "react-icons/md";
+import { motion } from 'framer-motion';
 
 export default function TopAnimeList({ top10Animes }) {
     const navigate = useNavigate();
@@ -21,12 +22,20 @@ export default function TopAnimeList({ top10Animes }) {
         },
     ];
 
+
     return (
         <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 text-white font-['Crunchyroll_Atyp',_sans-serif]">
             <div className='w-full flex justify-center mb-8'> <Title name="Top 10" anime={"Animes"} /> </div>
 
             {top10AnimesData.map((section, idx) => (
-                <div key={idx} className="mb-12" data-aos="zoom-out-up">
+                <motion.div key={idx}
+                id={idx}
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -40 }}
+                viewport={{ once: false, margin: "-80px" }}
+                transition={{ duration: .6 }}
+                className="mb-12">
                     <div className="flex items-center gap-3 mb-6 border-b border-gray-700 pb-2">
                         <div className="h-8 w-1 bg-[#f47521] rounded-full"></div>
                         <h2 className="text-[#f47521] text-xl sm:text-2xl font-bold">
@@ -39,20 +48,15 @@ export default function TopAnimeList({ top10Animes }) {
                             <div
                                 key={i}
                                 onClick={() => navigate(`/anime/${anime.id}`)}
-                                className="group cursor-pointer bg-gray-900/20 hover:bg-gray-900/40 hover:border border-[#f47521]/50 rounded-xl p-2 transition-transform duration-500"
+                                className="group cursor-pointer bg-gray-900/20 hover:bg-gray-900/40 hover:border border-[#f47521]/50 rounded-xl p-2 transition-all duration-500"
                             >
                                 <div className="flex items-center gap-3 sm:gap-4">
-                                    {/* Rank Number */}
-                                    {/* <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-[#f47521]/20 border border-[#f47521]/30 rounded-lg flex items-center justify-center">
-                                        <span className="text-[#f47521] font-bold text-sm sm:text-base">{i + 1}</span>
-                                    </div> */}
-                                    
-                                    {/* Image */}
+                                  
                                     <div className="w-28 h-20 rounded-lg overflow-hidden shrink-0 relative">
                                         <img
                                             src={anime.poster}
                                             alt={anime.name}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-150"
                                         />
                                         {/* Play Button Overlay */}
                                         <div className="absolute inset-0 bg-gray-950/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg">
@@ -90,7 +94,7 @@ export default function TopAnimeList({ top10Animes }) {
                             </div>
                         ))}
                     </div>
-                </div>
+                </motion.div>
             ))}
         </div>
     );

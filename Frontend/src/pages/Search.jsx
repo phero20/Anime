@@ -150,7 +150,7 @@ export default function Search() {
           <div className="absolute inset-0 "></div>
         </div>
         
-        <div className="relative z-10 max-w-6xl mx-auto px-6 py-16">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 pt-16">
           {/* Search Section */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
@@ -210,7 +210,7 @@ export default function Search() {
                     )}
                     
                     <button
-                      className="flex items-center gap-2 px-4 py-2 bg-[#f47521] hover:bg-[#e65a0a] text-white rounded-xl font-medium transition-all duration-200 hover:shadow-lg"
+                      className="flex items-center gap-2 px-4 py-2 bg-[#f47521] hover:bg-[#ff6600] text-black rounded-xl font-medium transition-all duration-200 hover:shadow-lg"
                       onClick={handleOpenFilter}
                     >
                       <FiFilter className="text-sm" />
@@ -267,7 +267,7 @@ export default function Search() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.4 }}
-            className="max-w-2xl mx-auto px-6 -mt-14 relative z-20"
+            className="max-w-2xl mx-auto px-6 mt-2 relative z-20"
           >
             <div className="bg-gray-900 border border-white/10 rounded-xl shadow-2xl backdrop-blur-md max-h-96 overflow-y-auto scrollbar-hide">
               {showLoading ? (
@@ -348,11 +348,12 @@ export default function Search() {
       {showResults && searchResult && (
         <div className="max-w-7xl mx-auto px-6 py-12">
           {/* Results Header */}
-          <div className="mb-8">
-            <div className="flex md:flex-row flex-col md:items-center max-md:gap-3 justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">
+          <div className="mb-1">
+            <div className="flex md:flex-row flex-col md:items-center max-md:gap-3 justify-between mb-1">
+              <h2 className="text-2xl flex gap-2 items-center font-bold text-[#f47521]">
+              <div className="w-1 h-6 bg-[#f47521] rounded-full"></div>
                 Search Results
-                <span className="ml-3 text-lg font-normal text-gray-400">
+                <span className="ml-1 text-lg font-normal text-gray-400">
                   ({searchResult.length} found)
                 </span>
               </h2>
@@ -405,7 +406,7 @@ export default function Search() {
           </div>
 
           {/* Results Grid */}
-          <div className="border-t border-white/10 pt-8">
+          <div className="border-t border-white/10">
             <AnimeCards data={searchResult} />
           </div>
         </div>

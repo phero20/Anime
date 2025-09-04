@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { setEpisodeImage, clearEpisodeImage } from '../redux/apifetch/GetanimeDataSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../redux/apifetch/AuthSlicer';
+import { setShowAuthModel } from '../redux/apifetch/uiSlice';
 import { addToFavorites, addToWatchlist } from '../redux/apifetch/userAnime';
 import { useToast } from './Toast';
 
@@ -26,6 +27,7 @@ export default function Season({ data }) {
     const handleAddToFavorites = async (item) => {
         if (!user) {
             error('Please login to add to favorites');
+            dispatch(setShowAuthModel(true));
             return;
         }
 
@@ -59,6 +61,7 @@ export default function Season({ data }) {
     const handleAddToWatchlist = async (item) => {
         if (!user) {
             error('Please login to add to watchlist');
+            dispatch(setShowAuthModel(true));
             return;
         }
         try {

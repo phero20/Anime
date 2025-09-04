@@ -1,5 +1,4 @@
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+// AOS removed
 import React, {useEffect} from 'react';
 import {Route, Routes, useLocation} from 'react-router-dom';
 import './App.css';
@@ -26,21 +25,9 @@ function App() {
     const location = useLocation();
 
     useEffect(() => {
-        AOS.init({duration: 600, once: false, easing: 'ease-in-out', mirror: true});
-
-        const handleScroll = () => {
-            AOS.refresh();
-        };
-
-        window.addEventListener('scroll', handleScroll, {passive: true});
-        return() => window.removeEventListener('scroll', handleScroll);
-     },[]);
-
-    useEffect(() => {
         dispatch(fetchAnimeData());
     }, [dispatch]);
 
-    // Check localStorage for user data on app initialization
     useEffect(() => {
         const userData = localStorage.getItem('user');
         if (userData) {
@@ -49,7 +36,7 @@ function App() {
                 dispatch(setUser(parsedUser));
             } catch (error) {
                 console.error('Error parsing user data from localStorage:', error);
-                localStorage.removeItem('user'); // Remove invalid data
+                localStorage.removeItem('user'); 
             }
         }
     }, [dispatch]);

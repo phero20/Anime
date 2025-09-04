@@ -9,24 +9,26 @@ import {
 } from "react-icons/fa";
 import { RiBookmarkFill } from "react-icons/ri";
 import { Link as ScrollLink, scroller } from "react-scroll";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { NavLink, useNavigate, useLocation ,Link} from "react-router-dom";
 import { selectUser } from "../redux/apifetch/AuthSlicer";
+import { setShowAuthModel } from "../redux/apifetch/uiSlice";
 import Auth from "./Auth";
 
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [genreOpen, setGenreOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const [showGreeting, setShowGreeting] = useState(false);
 
   const activeSection = useSelector((state) => state.ui.activeSection);
+  const showauthmodel = useSelector((state) => state.ui.showauthmodel);
   const user = useSelector(selectUser);
 
   // Ref for scrolling to sections
@@ -143,10 +145,18 @@ export default function Navbar() {
         }
       });
     } else {
-      scroller.scrollTo(section, {
-        smooth: true,
-        duration: 900,
-        offset: -80
+      // AOS removed - no longer needed
+      
+      setTimeout(() => {
+        const targetElement = document.getElementById(section);
+        
+        if (targetElement) {
+          scroller.scrollTo(section, {
+            smooth: true,
+            duration: 900,
+            offset: -120
+          });
+        }
       });
     }
     setMenuOpen(false);
@@ -194,7 +204,7 @@ export default function Navbar() {
                 <button
                   key={item}
                   onClick={() => handleNavItemClick(item.toLowerCase())}
-                  className={`px-4 py-2 text-lg font-medium capitalize ${
+                  className={`px-4 py-1 text-lg font-medium capitalize ${
                     !isCategoryPage && !isGenrePage && isHomepage && activeSection === item.toLowerCase()
                       ? "text-[#f47521] border-b-2 border-[#f47521]" : "text-white hover:border-b-2 hover:text-[#f47521] hover:border-[#f47521]"
                   }`}
@@ -221,7 +231,7 @@ export default function Navbar() {
                 }}
               >
                 <button
-                  className={`flex items-center gap-2 px-4 py-2 text-lg font-medium ${
+                  className={`flex items-center gap-2 px-4 py-1 text-lg font-medium ${
                     !isCategoryPage && !isGenrePage && isHomepage && moreItems.map((i) => i.toLowerCase()).includes(activeSection)
                       ? "text-[#f47521] border-b-2 border-[#f47521]" : "text-white hover:border-b-2 hover:text-[#f47521] hover:border-[#f47521]"
                   }`}
@@ -282,7 +292,7 @@ export default function Navbar() {
                 }}
               >
                 <button
-                  className={`flex items-center gap-2 px-4 py-2 text-lg font-medium ${
+                  className={`flex items-center gap-2 px-4 py-1 text-lg font-medium ${
                     isCategoryPage ? "text-[#f47521] border-b-2 border-[#f47521]" : "text-white hover:border-b-2 hover:text-[#f47521] hover:border-[#f47521]"
                   }`}
                   onClick={() => {
@@ -344,7 +354,7 @@ export default function Navbar() {
                 }}
               >
                 <button
-                  className={`flex items-center gap-2 px-4 py-2 text-lg font-medium  ${
+                  className={`flex items-center gap-2 px-4 py-1 text-lg font-medium  ${
                     isGenrePage ? "text-[#f47521] border-b-2 border-[#f47521]" : "text-white hover:border-b-2 hover:text-[#f47521] hover:border-[#f47521]"
                   }`}
                   onClick={() => {
@@ -405,7 +415,7 @@ export default function Navbar() {
               <NavLink 
                 to="/saved" 
                 className={({ isActive }) => `p-2 rounded-full transition-all duration-500 ${
-                  isActive ? 'text-[#f47521] ring-2 ring-[#f47521] bg-[#f47521]/10' : 'text-white hover:text-[#f47521] hover:ring-[#f47521]'
+                  isActive ? 'text-[#f47521] ring-2 ring-[#f47521] bg-[#f47521]/10' : 'text-white hover:text-[#f47521] hover:ring-[#ff6600]'
                 }`}
               >
                 <RiBookmarkFill size={18} />
@@ -416,7 +426,7 @@ export default function Navbar() {
                 <NavLink 
                   to="/profile" 
                   className={({ isActive }) => `p-[0.10rem] rounded-full transition-all duration-500 ${
-                    isActive ? 'ring-2 ring-[#f47521]' : 'hover:ring-2 hover:ring-[#f47521]'
+                    isActive ? 'ring-2 ring-[#f47521]' : 'hover:ring-2 hover:ring-[#ff6600]'
                   }`}
                 >
                   <img 
@@ -427,8 +437,8 @@ export default function Navbar() {
                 </NavLink>
               ) : (
                 <button 
-                  onClick={() => setShowLoginModal(true)}
-                  className="px-4 py-2 bg-[#f47521] hover:bg-[#e65a0a] text-white rounded-lg text-sm font-medium transition-all duration-500 hover:shadow-lg"
+                  onClick={() => dispatch(setShowAuthModel(true))}
+                  className="px-4 py-2 bg-[#f47521] hover:bg-[#ff6600] text-black rounded-lg text-sm font-medium transition-all duration-500 hover:shadow-lg"
                 >
                   Sign In
                 </button>
@@ -629,7 +639,7 @@ export default function Navbar() {
 
       {/* Auth Modal */}
       <AnimatePresence>
-        {showLoginModal && (
+        {showauthmodel && (
           <motion.div 
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
@@ -639,7 +649,7 @@ export default function Navbar() {
           >
             <motion.div 
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-              onClick={() => setShowLoginModal(false)}
+              onClick={() => dispatch(setShowAuthModel(false))}
             />
             
             <motion.div 
@@ -653,7 +663,7 @@ export default function Navbar() {
               }}
             >
               <Auth 
-                onClose={() => setShowLoginModal(false)} 
+                onClose={() => dispatch(setShowAuthModel(false))} 
                 showGreeting={showGreeting} 
                 setShowGreeting={setShowGreeting} 
               />

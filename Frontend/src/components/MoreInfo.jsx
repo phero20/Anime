@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { FaPlay, FaChevronLeft, FaChevronRight, FaUsers, FaVideo, FaTv } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import LoadingAnimation from "./LoadingAnimation";
+import { motion } from "framer-motion";
 
 export default function MoreInfo({ data }) {
   // Move all hooks before any early returns
@@ -61,7 +62,13 @@ export default function MoreInfo({ data }) {
 
         {/* Seasons Section */}
         {seasons.length > 0 && (
-          <div data-aos="zoom-out-up" className="bg-gray-900/10 backdrop-blur-[.1px] border border-gray-700/50 rounded-xl p-6 md:px-8 px-3">
+          <motion.div 
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -40 }}
+          viewport={{ once: false, margin: "-80px" }}
+          transition={{ duration: .6}}   
+          className="bg-gray-900/10 backdrop-blur-[.1px] border border-gray-700/50 rounded-xl p-6 md:px-8 px-3">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-[#f47521] rounded-full"></div>
               <FaTv className="text-[#f47521]" size={24} />
@@ -132,12 +139,18 @@ export default function MoreInfo({ data }) {
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Promotional Videos Section */}
         {promotionalVideos.length > 0 && (
-          <div className="bg-gray-900/10 backdrop-blur-[.1px] border border-gray-700/50 rounded-xl py-6 md:px-8 px-2" data-aos="zoom-out-up">
+          <motion.div 
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -40 }}
+          viewport={{ once: false, margin: "-80px" }}
+          transition={{ duration: .6}}
+          className="bg-gray-900/10 backdrop-blur-[.1px] border border-gray-700/50 rounded-xl py-6 md:px-8 px-2">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-[#f47521] rounded-full"></div>
               <FaVideo className="text-[#f47521]" size={24} />
@@ -205,12 +218,19 @@ export default function MoreInfo({ data }) {
                 </a>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Characters & Voice Actors Section */}
         {charactersVoiceActors.length > 0 && (
-          <div className="bg-gray-900/10 backdrop-blur-[.1px] border border-gray-700/50 rounded-xl p-6" data-aos="zoom-out-up">
+              <motion.div 
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              viewport={{ once: false, margin: "-80px" }}
+              transition={{ duration: .6}}
+            
+          className="bg-gray-900/10 backdrop-blur-[.1px] border border-gray-700/50 rounded-xl p-6">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-[#f47521] rounded-full"></div>
               <FaUsers className="text-[#f47521]" size={24} />
@@ -267,7 +287,7 @@ export default function MoreInfo({ data }) {
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
     </section>

@@ -7,6 +7,7 @@ import TopAnimeList from '../components/TopAnimeList';
 import MiddlePosters from '../components/MiddlePosters';
 import { useLocation } from 'react-router-dom';
 import { scroller } from 'react-scroll';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
     const {AnimeData, loading} = useSelector((state) => state.AnimeData);
@@ -86,7 +87,11 @@ export default function Home() {
             id: "favorite",
             data: AnimeData?.data?.data?.mostFavoriteAnimes,
             name: "Most Favorite"
-        }, {
+        }
+    ];
+
+    const sections3 = [
+         {
             id: "completed",
             data: AnimeData?.data?.data?.latestCompletedAnimes,
             name: "Latest Completed"
@@ -134,46 +139,107 @@ export default function Home() {
           setTimeout(() => {
             scroller.scrollTo(section, {
               smooth: true,
-              duration: 800,
+              duration: 900,
               offset: 0,
             });
-          }, 150);
+          });
         }
     }, [location]);
 
     return (
         <div className="text-white scroll-smooth w-full overflow-hidden">
-            <div id="home" data-aos="zoom-out-up" data-aos-offset="0">
+            <motion.div 
+                id="home"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: .6 }}
+            >
                 <Homeview AnimeData={AnimeData} loading={loading}/>
-            </div>
+            </motion.div>
 
             {sections1.map((item, index) => (
-                <section key={index} data-aos="zoom-out-up" data-aos-offset="0" id={item.id}>
+                <motion.section 
+                    key={index} 
+                    id={item.id}
+                    initial={{ opacity: 0, y: 60 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -40 }}
+                    viewport={{ once: false, margin: "-80px" }}
+                    transition={{ duration: .6, delay: index * 0.1 }}
+                >
                     <AnimeCards data={item.data} name={item.name} scroll={true}/>
-                </section>
+                </motion.section>
             ))}
 
-            <div data-aos="zoom-out-up" data-aos-offset="0">
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                viewport={{ once: false, margin: "-80px" }}
+                transition={{ duration: .6 }}
+            >
                 <MiddlePosters data={poster1Data}/>
-            </div>
+            </motion.div>
 
-            <section id="top10" data-aos-offset="0">
+            <motion.section 
+                id="top10"
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -40 }}
+                viewport={{ once: false, margin: "-80px" }}
+                transition={{ duration: .6 }}
+            >
                 <TopAnimeList top10Animes={top10Animes}/>
-            </section>
+            </motion.section>
             
-            <div data-aos="zoom-out-up" data-aos-offset="0">
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                viewport={{ once: false, margin: "-80px" }}
+                transition={{ duration: .6 }}
+            >
                 <MiddlePosters data={poster2Data}/>
-            </div>
+            </motion.div>
             
             {sections2.map((item, index) => (
-                <section key={index} data-aos="zoom-out-up" data-aos-offset="0" id={item.id}>
+                <motion.section 
+                    key={index} 
+                    id={item.id}
+                    initial={{ opacity: 0, y: 60 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -40 }}
+                    viewport={{ once: false, margin: "-80px" }}
+                    transition={{ duration: .6, delay: index * 0.1 }}
+                >
                     <AnimeCards data={item.data} name={item.name} scroll={true}/>
-                </section>
+                </motion.section>
             ))}
             
-            <div data-aos="zoom-out-up" data-aos-offset="0">
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                viewport={{ once: false, margin: "-80px" }}
+                transition={{ duration: .6 }}
+            >
                 <MiddlePosters data={poster3Data}/>
-            </div>
+            </motion.div>
+
+            {sections3.map((item, index) => (
+                <motion.section 
+                    key={index} 
+                    id={item.id}
+                    initial={{ opacity: 0, y: 60 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -40 }}
+                    viewport={{ once: false, margin: "-80px" }}
+                    transition={{ duration: .6, delay: index * 0.1 }}
+                >
+                    <AnimeCards data={item.data} name={item.name} scroll={true}/>
+                </motion.section>
+            ))}
         </div>
     );
 }

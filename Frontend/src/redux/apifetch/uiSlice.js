@@ -4,13 +4,17 @@ const uiSlice = createSlice({
   name: 'ui',
   initialState: {
     activeSection: 'home',
+    showauthmodel: false,
   },
   reducers: {
     setActiveSection: (state, action) => {
       state.activeSection = action.payload;
     },
+    setShowAuthModel: (state, action) => {
+      state.showauthmodel = action.payload;
+    },
   },
 });
 
-export const { setActiveSection } = uiSlice.actions;
+export const { setActiveSection, setShowAuthModel } = uiSlice.actions;
 export default uiSlice.reducer;

@@ -6,6 +6,7 @@ import Season from '../components/Season';
 import MoreInfo from '../components/MoreInfo';
 import AnimeCards from '../components/AnimeCards'
 import LoadingAnimation from '../components/LoadingAnimation';
+import { motion } from 'framer-motion';
 
 
 export default function Anime() {
@@ -34,19 +35,40 @@ export default function Anime() {
 
     return (
         <div className='w-full overflow-hidden'>
-            <div data-aos="zoom-out-up">
+            <motion.div 
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              viewport={{ once: false, margin: "-80px" }}
+              transition={{ duration: .6}}
+            >
                 <Season data={data}/>
-            </div>
+            </motion.div>
            
+          
             <MoreInfo data={data}/>
-
-            <div data-aos="zoom-out-up">
+           
+            <motion.div 
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              viewport={{ once: false, margin: "-80px" }}
+              transition={{ duration: .6}}
+              className='mt-10'
+            >
                 <AnimeCards data={relatedAnimes} name={'Related'} scroll={true}  />
-            </div>
+            </motion.div>
 
-            <div data-aos="zoom-out-up">
+            <motion.div 
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              viewport={{ once: false }}
+              transition={{ duration: .6}}
+              className='mt-5'
+            >
                 <AnimeCards data={recommendedAnimes} name={'Recommended'} scroll={true}  />
-            </div>
+            </motion.div>
         </div>
     )
 }

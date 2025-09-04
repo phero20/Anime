@@ -310,7 +310,7 @@ export default function Profile() {
                       : "text-gray-400 border-transparent hover:text-white hover:border-gray-600"
                   }`}
                 >
-                  <FaStar className="inline mr-2" />
+                  <FaHeart className="inline mr-2" />
                   Favorites
                   <span className="ml-2 text-sm font-normal text-gray-500">
                     ({favorites.length})

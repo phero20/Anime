@@ -52,7 +52,7 @@ const VideoPlayer = ({ streamData, onReady }) => {
   };
 
   return (
-    <div className="relative w-full bg-gray-900" style={{ aspectRatio: '16/9' }}>
+    <div className="relative w-full bg-gray-900">
       {/* Video Placeholder - Main Content */}
       <div className="w-full h-full flex items-center justify-center relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
         <div className="text-center z-10">

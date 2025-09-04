@@ -4,13 +4,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchEpisodesData, fetchEpisodesServerData, fetchEpisodesStreamLink } from '../redux/apifetch/GetanimeDataSlice';
 import {
   FaPlay,
-  FaEye,
   FaServer,
   FaClosedCaptioning,
   FaMicrophone,
   FaVolumeUp,
   FaSearch
 } from 'react-icons/fa';
+import { MdVideoLibrary } from 'react-icons/md';
 import { AnimatePresence, motion } from 'framer-motion';
 import VideoPlayer from '../components/VideoPlayer';
 import LoadingAnimation from '../components/LoadingAnimation';
@@ -121,20 +121,20 @@ export default function Episodes() {
   if (episodesLoading) {
     return (
       <div className='w-full overflow-hidden'>
-      <div className="w-full min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="w-full min-h-screen bg-black text-white flex items-center justify-center">
           <LoadingAnimation />
+        </div>
       </div>
-  </div>
     );
   }
 
   return (<div className="min-h-screen mt-1 bg-black text-white font-['Crunchyroll_Atyp',_sans-serif] pt-16">
     {/* Video Player Section - Now at the top */}
     <div className="w-full bg-black">
-      <div className="w-full max-w-7xl mx-auto">
-        <div className="relative w-full bg-gray-900"
+      <div className="w-full max-w-[100%] mx-auto">
+        <div className="relative w-full bg-gray-900/60 rounded"
           style={
-            { aspectRatio: '16/9' }
+            { aspectRatio: '16/5' }
           }>
           {
             selectedServer.server && EpisodeStreamLinks?.data?.data ? (
@@ -168,16 +168,21 @@ export default function Episodes() {
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f47521] mb-2">
+        <div className='flex gap-2'>
+        <div className="w-1 h-10 bg-[#f47521] rounded-full"></div>
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-200 mb-3">
           {
             selectedEpisode?.title
           } </h1>
+        </div>
+    
         <div className="flex items-center gap-4 text-gray-400 text-sm">
 
           {
             selectedEpisode && (
-              <span className="bg-gray-800 flex gap-2 px-2 py-1 rounded text-xs">
-                <FaEye className="text-[#f47521]"
+              
+              <span className="bg-gray-800/60 flex gap-2 px-2 py-2 rounded-md text-xs">
+                <MdVideoLibrary className="text-[#f47521]"
                   size={16} />
                 Episode {
                   selectedEpisode.number
@@ -188,28 +193,28 @@ export default function Episodes() {
 
       {/* Server Selection Section */}
       {selectedEpisode && (
-        <div className="mb-8 cursor-pointer"  onClick={() => setShowServerSelection(v => !v)}>
+        <div className="mb-8 cursor-pointer" onClick={() => setShowServerSelection(v => !v)}>
           {/* Current Server Info */}
-          <div className="bg-gray-900/70 rounded-xl px-4 py-3 flex items-center justify-between mb-2 shadow border border-gray-800">
+          <div className="bg-gray-900/50 backdrop-blur-[.1px] border border-gray-700/50 rounded-xl px-4 py-3 flex items-center justify-between mb-2 shadow">
             <div className="flex flex-col" >
               <div className='flex w-full items-center gap-3'>
                 <FaServer className="text-[#f47521] text-lg" />
                 <span className="font-bold text-white text-base uppercase">{selectedServer.server ? selectedServer.server.serverName : 'Select Server'}</span>
                 {selectedServer.type && (
-                  <span className="ml-2 bg-gray-800 text-xs text-white px-2 py-0.5 rounded font-semibold uppercase tracking-wide">
+                  <span className="ml-2 bg-gray-800/60 text-xs text-white px-2 py-0.5 rounded font-semibold uppercase tracking-wide">
                     {selectedServer.type === 'sub' ? 'SUB' : 'DUB'}
                   </span>
 
                 )}
               </div>
 
-              <div  className="text-gray-300 text-xs mt-2">
+              <div className="text-gray-300 text-xs mt-2">
                 If current server doesn't work please try other servers beside, click to change.
               </div>
             </div>
             <button
-              className={`text-gray-400 hover:text-[#f47521] transition-all duration-200 transform ${showServerSelection ? 'rotate-180' : ''}`}
-             
+              className={`text-[#f47521] hover:text-[#f47521] transition-all duration-200 transform ${showServerSelection ? 'rotate-180' : ''}`}
+
               title="Show/hide server selection"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -229,7 +234,7 @@ export default function Episodes() {
                 style={{ overflow: 'hidden' }}
               >
 
-                <div className="bg-gray-900/70 rounded-xl px-4 py-4 shadow border border-gray-800">
+                <div className="bg-gray-900/50 backdrop-blur-[.1px] border border-gray-700/50 rounded-xl px-4 py-4 shadow">
                   {/* Subtitles Section */}
                   <div className="mb-3">
                     <div className="flex items-center gap-2 mb-2">
@@ -249,10 +254,10 @@ export default function Episodes() {
                                 window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
                               }, 100)
                             }}
-                            className={`w-full px-0 py-2 rounded-md font-semibold uppercase text-sm transition-all duration-200
+                            className={`w-full px-0 py-2 font-semibold uppercase text-sm backdrop-blur-sm border-2 border-[#f47521]/50 hover:border-[#f47521] rounded-lg transition-all duration-300
                                                                 ${selectedServer.server?.serverId === server.serverId && selectedServer.type === 'sub'
-                                ? 'bg-[#f47521] text-white'
-                                : 'bg-gray-800 text-gray-200 hover:bg-gray-700 transition-all duration-500 hover:text-[#f47521]'}
+                                ? 'bg-[#f47521] hover:bg-[#ff6600] text-black'
+                                : '  hover:bg-[#ff6600]/10 text-[#f47521] bg-gray-900/80 backdrop-blur-sm border-2 border-[#f47521]/20 hover:border-[#f47521] rounded-lg transition-all duration-300'}
                                                               `}
                           >
                             {server.serverName}
@@ -284,9 +289,9 @@ export default function Episodes() {
                             }}
                             className={`w-full px-0 py-2 rounded-md font-semibold uppercase text-sm transition-all duration-200
                                                                 ${selectedServer.server?.serverId === server.serverId && selectedServer.type === 'dub'
-                                ? 'bg-[#f47521] text-white'
-                                : 'bg-gray-800 text-gray-200 hover:bg-gray-700 transition-all duration-500 hover:text-[#f47521]'}
-                                                              `}
+                                ? 'bg-[#f47521] hover:bg-[#ff6600] text-black'
+                                : '  hover:bg-[#ff6600]/10 text-[#f47521] bg-gray-900/80 backdrop-blur-sm border-2 border-[#f47521]/20 hover:border-[#f47521] rounded-lg transition-all duration-300'}
+                                                                                                `}
                           >
                             {server.serverName}
                           </button>
@@ -306,12 +311,13 @@ export default function Episodes() {
       {/* Episodes List Section */}
       <div>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
-          <div className='flex flex-col gap-2'>
+          <div className='flex flex-col gap-2 max-w-32'>
             <h2 className="text-xl text-[#f47521] font-semibold"> Episodes </h2>
             {
-              totalEpisodes && (<span className="bg-gray-800 w-32 flex gap-2 justify-center px-2 py-1 rounded text-xs">
-                <FaEye className="text-[#f47521]"
-                  size={16} />  Episode {
+              totalEpisodes && ( <span className="bg-gray-800/60 flex gap-2 px-2 py-2 rounded-md text-xs text-gray-400">
+                <MdVideoLibrary className="text-[#f47521]"
+                  size={16} />
+                Episodes {
                   totalEpisodes
                 } </span>)
             }
@@ -334,7 +340,7 @@ export default function Episodes() {
             {totalEpisodes > 100 && (
               <div className="relative dropdown-container w-40 h-9">
                 <div
-                  className="bg-gray-900 border-2 border-gray-700 text-gray-200 px-3 py-1.5 rounded-xl hover:border-[#f47521] cursor-pointer transition-all duration-300 flex items-center justify-between w-40 h-9"
+                  className="bg-gray-900/70 border-2 border-gray-700/50 text-gray-200 px-3 py-1.5 rounded-xl hover:border-[#f47521] cursor-pointer transition-all duration-300 flex items-center justify-between w-40 h-9"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
                   <span className="text-gray-200 text-sm truncate">
@@ -346,7 +352,7 @@ export default function Episodes() {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 8-8-8" />
                   </svg>
                 </div>
                 {/* Dropdown Menu */}
@@ -359,11 +365,11 @@ export default function Episodes() {
                       exit={{ height: 0, opacity: 0, y: -10 }}
                       transition={{ duration: 0.40, ease: [0.4, 0, 0.2, 1] }}
                       style={{ overflow: 'hidden' }}
-                      className="absolute top-full left-0 right-0 px-1.5 py-1.5 mt-2 bg-gray-950 border-2 border-gray-700 rounded-xl z-50 shadow-2xl w-40"
+                      className="absolute top-full left-0 right-0 px-1.5 py-1.5 mt-2 bg-gray-900/60 backdrop-blur-sm border-2 border-[#f47521]/50 hover:border-[#f47521] rounded-xl z-50 shadow-2xl w-40 transition-colors duration-500"
                     >
                       <div
-                        className={`px-2 py-2.5 hover:bg-gray-800 text-gray-200 hover:text-[#f47521] cursor-pointer transition-all duration-500 rounded-md text-sm ${!selectedEpisodeRange ? 'bg-[#f47521] text-white' : ''
-                          }`}
+                       className={`px-2 py-2.5 rounded-md cursor-pointer transition-colors duration-500 border-[#f47521]/20 text-sm ${!selectedEpisodeRange ? 'bg-[#f47521] hover:bg-[#ff6600] text-black my-1' : 'hover:bg-[#f47521]/20 hover:text-[#f47521]'
+                       }`}
                         onClick={() => {
                           setSelectedEpisodeRange(null);
                           setIsDropdownOpen(false);
@@ -374,7 +380,7 @@ export default function Episodes() {
                       {episodeRanges.map((range) => (
                         <div
                           key={range.label}
-                          className={`px-2 py-2.5 hover:bg-gray-800 text-gray-200 hover:text-[#f47521] rounded-md cursor-pointer transition-all duration-500 text-sm ${selectedEpisodeRange?.label === range.label ? 'bg-[#f47521]/60 text-white' : ''
+                          className={`px-2 py-2.5 rounded-md cursor-pointer transition-colors duration-500 border-[#f47521]/20 text-sm ${selectedEpisodeRange?.label === range.label ? 'bg-[#f47521] hover:bg-[#ff6600] text-black my-1' : 'hover:bg-[#f47521]/20 hover:text-[#f47521]'
                             }`}
                           onClick={() => {
                             setSelectedEpisodeRange(range);
@@ -431,7 +437,7 @@ export default function Episodes() {
                 {/* Info */}
                 <div className="flex-1 flex flex-col justify-center px-2 py-1 min-w-0">
                   <div className="flex items-center gap-1 w-full min-w-0">
-                    <span className="text-sm w-6 flex-shrink-0">{episode.number}.</span>
+                 
                     <span className="text-sm truncate">{episode.title}</span>
                   </div>
                 </div>
@@ -443,3 +449,4 @@ export default function Episodes() {
   </div>
   );
 }
+

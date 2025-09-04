@@ -43,7 +43,7 @@ const Category = () => {
 
     if (!animes || animes.length === 0) {
         return (
-            <div className='w-full overflow-hidden'>
+            <div className='w-screen overflow-hidden'>
                 <div className="w-full min-h-screen bg-black text-white flex items-center justify-center">
                     <LoadingAnimation />
                 </div>
