@@ -29,6 +29,7 @@ import ToastContainer, { showToast } from "../components/Toast";
 import LoadingAnimation from "../components/LoadingAnimation";
 import formgirl from "../assets/formgirl.png";
 import UserAnimeList from "../components/UserAnimeList";
+import { setShowAuthModel } from '../redux/apifetch/uiSlice';
 
 export default function Profile() {
   const user = useSelector(selectUser);
@@ -160,6 +161,7 @@ export default function Profile() {
   const handleLogout = () => {
     dispatch(clearUser());
     localStorage.removeItem("user");
+    
     navigate("/");
   };
 
@@ -193,20 +195,11 @@ export default function Profile() {
   };
 
   if (!user) {
-    return (
-      <div className="flex items-center justify-center mt-16 min-h-screen bg-black/90">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-[#f47521] mb-2">
-            Not Signed In
-          </h2>
-          <p className="text-gray-300">Please log in to view your profile.</p>
-        </div>
-      </div>
-    );
+    dispatch(setShowAuthModel(true));
   }
 
-  const avatarInitial = user.username
-    ? user.username.charAt(0).toUpperCase()
+  const avatarInitial = user?.username
+    ? user?.username?.charAt(0).toUpperCase()
     : "👤";
 
   return (
@@ -216,9 +209,9 @@ export default function Profile() {
         {/* Profile Background Banner with User's Avatar */}
         <div className="relative w-full h-48 md:h-64 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
           <div className="absolute inset-0 bg-black/40">
-            {user.avatar && (
+            {user?.avatar && (
               <img
-                src={user.avatar}
+                src={user?.avatar}
                 alt="Profile Background"
                 className="w-full h-full object-cover opacity-60"
               />
@@ -232,9 +225,9 @@ export default function Profile() {
             <div className="relative flex flex-col items-center md:flex-row md:items-end -mt-16 md:-mt-20">
               <div className="relative flex-shrink-0">
                 <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gray-800 border-4 border-black overflow-hidden flex items-center justify-center">
-                  {user.avatar ? (
+                  {user?.avatar ? (
                     <img
-                      src={user.avatar}
+                      src={user?.avatar}
                       alt="avatar"
                       className="w-full h-full object-cover"
                     />
@@ -248,9 +241,9 @@ export default function Profile() {
               <div className="w-full flex flex-col md:flex-row items-center md:items-end justify-center md:justify-between mt-4 md:ml-6">
                 <div className="text-center md:text-left">
                   <h1 className="text-3xl md:text-4xl font-bold text-white">
-                    {user.username}
+                    {user?.username}
                   </h1>
-                  <p className="text-gray-400">{user.email}</p>
+                  <p className="text-gray-400">{user?.email}</p>
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0">
                   <button

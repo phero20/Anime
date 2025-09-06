@@ -20,7 +20,7 @@ export default function Greeting({ greetMessage }) {
         className="z-10 flex flex-col items-center"
       >
         <img src={greet} alt="Welcome" className="w-56 h-56 object-contain" />
-        <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-2" style={{textShadow: '0 2px 10px rgba(0,0,0,0.5)'}}>
+        <h1 className="text-3xl md:text-4xl font-bold text-[#f47521] text-center mb-2" style={{textShadow: '0 2px 10px rgba(0,0,0,0.5)'}}>
             {greetMessage}
         </h1>
         <p className="text-gray-300 text-lg text-center mt-2">

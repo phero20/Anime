@@ -125,7 +125,7 @@ function App() {
             <Footer />
 
             <div className="fixed bottom-12 right-0 lg:right-10 xl:right-16 z-40">
-                <div className="relative group">
+                <div className="relative group transform hover:scale-110 hover:-translate-y-4 transition-transform duration-300">
                     <button
                         onClick={() => setIsChatOpen(true)}
                         className="relative w-14 lg:w-16 xl:w-24 flex items-center justify-center hover:scale-105 transition-all duration-300"
@@ -134,7 +134,7 @@ function App() {
                         <img
                             src={aigirl}
                             alt="AI Assistant"
-                            className="w-full h-full object-contain transform hover:scale-110 hover:-translate-y-4 transition-transform duration-300"
+                            className="w-full h-full object-contain"
                         />
                     </button>
 
@@ -146,7 +146,7 @@ function App() {
                                 animation: 'fadeInOut 4s ease-in-out'
                             }}
                         >
-                            <div className="bg-gray-900/90 text-white text-xs py-2 px-4 rounded-lg shadow-lg 
+                            <div className="bg-gray-900/80 text-[#f47521] text-xs py-2 px-4 rounded-lg shadow-lg 
                             border border-[#f47521]/20 whitespace-nowrap animate-bounce">
                                 Hi {user?.username ? user?.username : ''
                                 }, I'm your AI Chat Assistant!

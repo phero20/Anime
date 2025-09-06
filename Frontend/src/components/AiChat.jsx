@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { 
   FaRobot, 
   FaUser, 
+  FaArrowUp,
   FaPaperPlane,      
   FaTrash,
   FaTimes,   // Regular paragraphsrash,
@@ -587,7 +588,7 @@ export default function AiChat({ isOpen, onClose }) {
                     {loading ? (
                       <FaSpinner className="animate-spin" size={16} />
                     ) : (
-                      <FaPaperPlane size={16} />
+                      <FaArrowUp size={16} />
                     )}
                   </button>
                 </div>

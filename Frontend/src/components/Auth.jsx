@@ -52,7 +52,7 @@ export default function Auth({ onClose, showGreeting, setShowGreeting }) {
 
     const action = isLogin ? signInUser : signupUser;
     const credentials = isLogin ? { email: formData.email, password: formData.password } : { ...formData };
-    
+
     const result = await dispatch(action(credentials));
 
     if (action.fulfilled.match(result)) {
@@ -83,9 +83,9 @@ export default function Auth({ onClose, showGreeting, setShowGreeting }) {
           >
             <div className="relative mt-12">
               <div className="absolute left-1/2 -top-[4.5rem] transform -translate-x-1/2 z-20">
-                <img 
-                  src={formgirl} 
-                  alt="Anime Girl" 
+                <img
+                  src={formgirl}
+                  alt="Anime Girl"
                   className="w-28 h-28 object-contain drop-shadow-2xl"
                 />
               </div>
@@ -95,9 +95,9 @@ export default function Auth({ onClose, showGreeting, setShowGreeting }) {
                     <FaTimes size={20} />
                   </button>
                 )}
-                
+
                 <div className="text-center mb-6 mt-4">
-                  <h1 className="text-3xl font-bold text-white mb-2">{isLogin ? 'Welcome Back!' : 'Join Us!'}</h1>
+                  <h1 className="text-3xl font-bold text-[#f47521] mb-2">{isLogin ? 'Welcome Back!' : 'Join Us!'}</h1>
                   <p className="text-gray-400 text-sm">{isLogin ? 'Sign in to continue your journey' : 'Create an account to get started'}</p>
                 </div>
 
@@ -139,8 +139,8 @@ export default function Auth({ onClose, showGreeting, setShowGreeting }) {
                     </button>
                   </div>
 
-                  <motion.button whileTap={{ scale: 0.98 }} type="submit" disabled={loading} className="w-full bg-gradient-to-r from-[#f47521] to-[#e65a0a] text-black font-bold py-3 px-4 rounded-lg transition-all shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center min-h-[52px]">
-                    {loading ? <LoadingAnimation size={10}/> : (isLogin ? 'Sign In' : 'Create Account')}
+                  <motion.button whileTap={{ scale: 0.98 }} type="submit" disabled={loading} className="w-full bg-[#f47521] text-black font-bold py-3 px-4 rounded-lg transition-all shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center min-h-[52px] hover:bg-[#ff6600]">
+                    {loading ? <LoadingAnimation size={10} /> : (isLogin ? 'Sign In' : 'Create Account')}
                   </motion.button>
                 </form>
 
