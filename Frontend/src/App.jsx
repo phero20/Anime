@@ -22,7 +22,7 @@ import AiChat from './components/AiChat';
 import { FaRobot } from 'react-icons/fa';
 import aigirl from './assets/aigirl.png';
 import { useSelector } from 'react-redux';
-
+import {useNavigate} from 'react-router-dom';
 
 function App() {
     const dispatch = useDispatch();
@@ -30,6 +30,26 @@ function App() {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [showGreeting, setShowGreeting] = useState(true);
     const user = useSelector(selectUser);
+
+
+     const navigate = useNavigate();
+    
+   
+    useEffect(() => {
+        const handleBackButton = (e) => {
+            if (isChatOpen) {
+                e.preventDefault();
+                setIsChatOpen(false);
+            }
+        };
+
+        window.addEventListener('popstate', handleBackButton);
+        
+        return () => {
+            window.removeEventListener('popstate', handleBackButton);
+        };
+    }, [isChatOpen]);
+
 
     // Control greeting visibility
     useEffect(() => {
@@ -104,7 +124,7 @@ function App() {
             </AnimatePresence>
             <Footer />
 
-            <div className="fixed bottom-1 right-0 lg:right-10 xl:right-16 z-40">
+            <div className="fixed bottom-12 right-0 lg:right-10 xl:right-16 z-40">
                 <div className="relative group">
                     <button
                         onClick={() => setIsChatOpen(true)}
@@ -121,16 +141,16 @@ function App() {
 
                     {showGreeting && (
                         <div
-                            className="absolute bottom-full right-0 mb-2"
+                            className="absolute bottom-full right-0 mb-1"
                             style={{
                                 animation: 'fadeInOut 4s ease-in-out'
                             }}
                         >
-                            <div className="bg-gray-900/90 text-white text-sm py-2 px-4 rounded-lg shadow-lg 
+                            <div className="bg-gray-900/90 text-white text-xs py-2 px-4 rounded-lg shadow-lg 
                             border border-[#f47521]/20 whitespace-nowrap animate-bounce">
                                 Hi {user?.username ? user?.username : ''
-                                }, I'm your anime assistant!
-                                <div className="absolute bottom-0 right-24 transform translate-y-full">
+                                }, I'm your AI Chat Assistant!
+                                <div className="absolute bottom-1 right-20 transform translate-y-full">
                                     <div className="w-2 h-2 bg-gray-900/90 border-r border-b border-[#f47521]/20 rotate-45" />
                                 </div>
                             </div>

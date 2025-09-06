@@ -1,3 +1,5 @@
+
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -15,11 +17,13 @@ import {
   sendChatMessage, 
   addUserMessage, 
   clearMessages, 
+  clearChatHistory,
   finishTyping,
   selectMessages, 
   selectChatLoading, 
   selectChatError, 
-  selectIsTyping 
+  selectIsTyping ,
+  fetchChatHistory
 } from '../redux/apifetch/aiChatSlice';
 import { selectUser } from '../redux/apifetch/AuthSlicer';
 import { setShowAuthModel } from '../redux/apifetch/uiSlice';
@@ -44,6 +48,15 @@ export default function AiChat({ isOpen, onClose }) {
   const loading = useSelector(selectChatLoading);
   const chatError = useSelector(selectChatError);
   const isTyping = useSelector(selectIsTyping);
+
+
+
+  useEffect(() => {
+    if (isOpen && user) {
+      dispatch(fetchChatHistory(user.token));
+    }
+  }, [isOpen, user, dispatch]);
+
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -109,15 +122,14 @@ export default function AiChat({ isOpen, onClose }) {
     const userMessage = message.trim();
     setMessage('');
     
-   
-    dispatch(addUserMessage(userMessage));
-    
     try {
-     
-      const formattedHistory = messages.map(msg => ({
-        role: msg.role,
-        content: msg.content
-      }));
+      // Filter out date headers and format messages for API
+      const formattedHistory = messages
+        .filter(msg => msg.type !== 'dateHeader' && msg.role && msg.content)
+        .map(msg => ({
+          role: msg.role,
+          content: msg.content
+        }));
       
      
       await dispatch(sendChatMessage({
@@ -128,13 +140,15 @@ export default function AiChat({ isOpen, onClose }) {
       
     } catch (err) {
       console.error('Chat error:', err);
-      error(err || 'Failed to send message');
+      const errorMessage = typeof err === 'string' ? err : err?.message || 'Failed to send message';
+      error(errorMessage);
     }
   };
 
   const handleClearChat = () => {
-    dispatch(clearMessages());
-    success('Chat cleared successfully');
+    dispatch(clearChatHistory(user.token));
+    dispatch(clearMessages(user.token));
+    success('Chat Deleted successfully');
   };
 
   const handleCopyMessage = (messageId, content) => {
@@ -261,23 +275,39 @@ export default function AiChat({ isOpen, onClose }) {
           const cells = line.split('|').filter(cell => cell.trim());
           if (line.includes('---')) {
             return (
-              <tr key={index} className="border-b border-gray-700">
-                {cells.map((cell, cellIndex) => (
-                  <th key={cellIndex} className="px-4 py-2 text-[#f47521] !important "style={{ color: '#f47521' }}>
-                    {cell.replace(/-/g, '')}
-                  </th>
-                ))}
-              </tr>
+              <div className="overflow-x-auto">
+                <div className="inline-block min-w-full align-middle">
+                  <div className="overflow-hidden">
+                    <table className="min-w-full divide-y divide-gray-700">
+                      <tr key={index} className="border-b border-gray-700">
+                        {cells.map((cell, cellIndex) => (
+                          <th key={cellIndex} className="px-4 py-2 text-[#f47521] whitespace-nowrap text-left text-sm font-semibold" style={{ color: '#f47521' }}>
+                            {cell.replace(/-/g, '')}
+                          </th>
+                        ))}
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
             );
           }
           return (
-            <tr key={index}>
-              {cells.map((cell, cellIndex) => (
-                <td key={cellIndex} className="px-4 py-2 border-b border-gray-700/50">
-                  {formatInlineText(cell.trim())}
-                </td>
-              ))}
-            </tr>
+            <div className="overflow-x-auto">
+              <div className="inline-block min-w-full align-middle">
+                <div className="overflow-hidden">
+                  <table className="min-w-full divide-y divide-gray-700">
+                    <tr key={index}>
+                      {cells.map((cell, cellIndex) => (
+                        <td key={cellIndex} className="px-4 py-2 border-b border-gray-700/50 whitespace-normal text-sm">
+                          {formatInlineText(cell.trim())}
+                        </td>
+                      ))}
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
           );
         }
         
@@ -381,7 +411,7 @@ export default function AiChat({ isOpen, onClose }) {
               <button
                 onClick={handleClearChat}
                 className="p-2 text-gray-400 hover:text-[#f47521] transition-colors duration-300"
-                title="Clear chat"
+                title="Delete chat"
               >
                 <FaTrash size={14} />
               </button>
@@ -446,7 +476,7 @@ export default function AiChat({ isOpen, onClose }) {
                           </div>
                         )}
                         
-                        <div className={`max-w-[80%] ${msg.role === 'user' ? 'order-first' : ''}`}>
+                        <div className={`max-w-[90%] ${msg.role === 'user' ? 'order-first' : ''}`}>
                           <div
                             className={`p-3 rounded-2xl ${
                               msg.role === 'user'
@@ -484,7 +514,7 @@ export default function AiChat({ isOpen, onClose }) {
                                 )}
                                 <button
                                   onClick={() => handleCopyMessage(msg.id, msg.content)}
-                                  className="p-1 hover:bg-white/10 rounded transition-colors duration-200"
+                                  className="p-[0.3rem] hover:bg-white/10 rounded transition-colors duration-200"
                                   title="Copy message"
                                 >
                                   {copiedMessageId === msg.id ? (
@@ -530,14 +560,12 @@ export default function AiChat({ isOpen, onClose }) {
                 )}
               </div>
 
-              {/* Error Display */}
-              {chatError && (
-                <div className="px-4 py-2 bg-red-900/20 border-t border-red-500/30">
-                  <p className="text-red-400 text-sm">{chatError}</p>
-                </div>
-              )}
-
-              {/* Input Form */}
+          {/* Error Display */}
+          {chatError && typeof chatError === 'string' && (
+            <div className="px-4 py-2 bg-red-900/20 border-t border-red-500/30">
+              <p className="text-red-400 text-sm">{chatError}</p>
+            </div>
+          )}              {/* Input Form */}
               <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-700/50">
                 <div className="flex gap-3">
                   <div className="flex-1 relative">

@@ -1,11 +1,20 @@
-// aiChatRoute.js
 import express from 'express';
 import verifyToken from '../middlewares/verifyToken.js';
-import { getGroqChatCompletion } from '../controllers/aiChatController.js'; // Correctly import the controller
+import { 
+    getGroqChatCompletion, 
+    getChatHistory, 
+    clearChatHistory 
+} from '../controllers/aiChatController.js';
 
 const aiChatRouter = express.Router();
 
-// The route now uses the imported controller function
+
 aiChatRouter.post('/chat', verifyToken, getGroqChatCompletion);
+
+
+aiChatRouter.get('/history', verifyToken, getChatHistory);
+
+
+aiChatRouter.delete('/history', verifyToken, clearChatHistory);
 
 export default aiChatRouter;
