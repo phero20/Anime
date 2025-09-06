@@ -1,31 +1,46 @@
 // AOS removed
-import React, {useEffect, useState} from 'react';
-import {Route, Routes, useLocation} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import Category from './pages/Category';
 import Genre from './pages/Genre';
 import Home from './pages/Home';
-import {AnimatePresence} from 'framer-motion';
-import {useDispatch} from 'react-redux';
+import { AnimatePresence } from 'framer-motion';
+import { useDispatch } from 'react-redux';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import PageWrapper from './components/PageWrapper';
 import Anime from './pages/Anime';
 import Producer from './pages/Producer'
-import {fetchAnimeData} from './redux/apifetch/GetanimeDataSlice';
+import { fetchAnimeData } from './redux/apifetch/GetanimeDataSlice';
 import Episodes from './pages/Episodes';
 import Search from './pages/Search';
-import { setUser } from './redux/apifetch/AuthSlicer';
+import { setUser, selectUser } from './redux/apifetch/AuthSlicer';
 import Profile from './pages/Profile';
 import ToastContainer from './components/Toast';
 import AiChat from './components/AiChat';
 import { FaRobot } from 'react-icons/fa';
+import aigirl from './assets/aigirl.png';
+import { useSelector } from 'react-redux';
 
 
 function App() {
     const dispatch = useDispatch();
     const location = useLocation();
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const [showGreeting, setShowGreeting] = useState(true);
+    const user = useSelector(selectUser);
+
+    // Control greeting visibility
+    useEffect(() => {
+        const toggleGreeting = () => {
+            setShowGreeting(true);
+            setTimeout(() => setShowGreeting(false), 4000); // Hide after 3 seconds
+        };
+        toggleGreeting();
+        const intervalId = setInterval(toggleGreeting, 10000);
+        return () => clearInterval(intervalId);
+    }, []);
 
     useEffect(() => {
         dispatch(fetchAnimeData());
@@ -39,7 +54,7 @@ function App() {
                 dispatch(setUser(parsedUser));
             } catch (error) {
                 console.error('Error parsing user data from localStorage:', error);
-                localStorage.removeItem('user'); 
+                localStorage.removeItem('user');
             }
         }
     }, [dispatch]);
@@ -47,63 +62,89 @@ function App() {
     return (
         <>
             <ToastContainer />
-            <Navbar/>
+            <Navbar />
             <AnimatePresence mode="wait">
                 <Routes location={location}
                     key={
                         location.pathname
-                }>
+                    }>
                     <Route path="/"
                         element={
-                            <PageWrapper><Home/></PageWrapper>
-                        }/>
+                            <PageWrapper><Home /></PageWrapper>
+                        } />
                     <Route path="/category/:name"
                         element={
-                            <PageWrapper><Category/></PageWrapper>
-                        }/>
+                            <PageWrapper><Category /></PageWrapper>
+                        } />
                     <Route path="/genre/:name"
                         element={
-                            <PageWrapper><Genre/></PageWrapper>
-                        }/>
+                            <PageWrapper><Genre /></PageWrapper>
+                        } />
                     <Route path="/anime/:id"
                         element={
-                            <PageWrapper><Anime/></PageWrapper>
-                        }/>
+                            <PageWrapper><Anime /></PageWrapper>
+                        } />
                     <Route path="/producer/:name"
                         element={
-                            <PageWrapper><Producer/></PageWrapper>
-                        }/>
+                            <PageWrapper><Producer /></PageWrapper>
+                        } />
                     <Route path="/episodes/:id"
                         element={
-                            <PageWrapper><Episodes/></PageWrapper>
-                        }/>
-                        <Route path="/search"
+                            <PageWrapper><Episodes /></PageWrapper>
+                        } />
+                    <Route path="/search"
                         element={
-                            <PageWrapper><Search/></PageWrapper>
-                        }/>
-                          <Route path="/profile"
+                            <PageWrapper><Search /></PageWrapper>
+                        } />
+                    <Route path="/profile"
                         element={
-                            <PageWrapper><Profile/></PageWrapper>
-                        }/>
+                            <PageWrapper><Profile /></PageWrapper>
+                        } />
                 </Routes>
             </AnimatePresence>
-            <Footer/>
-            
-            {/* Floating AI Chat Button */}
-            <button
-                onClick={() => setIsChatOpen(true)}
-                className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-[#f47521] hover:bg-[#ff6600] text-black rounded-full shadow-2xl hover:shadow-[#f47521]/25 transition-all duration-300 flex items-center justify-center group hover:scale-110"
-                title="AI Chat Assistent"
-            >
-                <FaRobot size={24} className="group-hover:scale-110 transition-transform duration-500" />
-            </button>
+            <Footer />
 
-            {/* AI Chat Component */}
-            <AiChat 
-                isOpen={isChatOpen} 
-                onClose={() => setIsChatOpen(false)} 
+            <div className="fixed bottom-1 right-0 lg:right-10 xl:right-16 z-40">
+                <div className="relative group">
+                    <button
+                        onClick={() => setIsChatOpen(true)}
+                        className="relative w-14 lg:w-16 xl:w-24 flex items-center justify-center hover:scale-105 transition-all duration-300"
+                        title="AI Chat Assistant"
+                    >
+                        <img
+                            src={aigirl}
+                            alt="AI Assistant"
+                            className="w-full h-full object-contain transform hover:scale-110 hover:-translate-y-4 transition-transform duration-300"
+                        />
+                    </button>
+
+
+                    {showGreeting && (
+                        <div
+                            className="absolute bottom-full right-0 mb-2"
+                            style={{
+                                animation: 'fadeInOut 4s ease-in-out'
+                            }}
+                        >
+                            <div className="bg-gray-900/90 text-white text-sm py-2 px-4 rounded-lg shadow-lg 
+                            border border-[#f47521]/20 whitespace-nowrap animate-bounce">
+                                Hi {user?.username ? user?.username : ''
+                                }, I'm your anime assistant!
+                                <div className="absolute bottom-0 right-24 transform translate-y-full">
+                                    <div className="w-2 h-2 bg-gray-900/90 border-r border-b border-[#f47521]/20 rotate-45" />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+
+            <AiChat
+                isOpen={isChatOpen}
+                onClose={() => setIsChatOpen(false)}
             />
-            
+
         </>
     );
 }

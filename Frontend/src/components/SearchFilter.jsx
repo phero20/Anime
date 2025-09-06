@@ -59,7 +59,7 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
 
   return (
     <div className="bg-gray-950 rounded-2xl shadow-2xl w-full max-w-2xl px-3 py-6 mx-2 sm:p-8 relative border border-[#f47521]/80">
-       <div className="absolute left-1/2 -top-[4.8rem] transform -translate-x-1/2 z-20">
+       <div className="absolute left-1/2 -top-[4.5rem] transform -translate-x-1/2 z-20">
                 <img 
                   src={formgirl} 
                   alt="Anime Girl" 

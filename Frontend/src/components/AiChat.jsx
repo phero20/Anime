@@ -4,9 +4,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { 
   FaRobot, 
   FaUser, 
-  FaPaperPlane, 
-  FaTimes, 
+  FaPaperPlane,      
   FaTrash,
+  FaTimes,   // Regular paragraphsrash,
   FaSpinner,
   FaRegCopy,
   FaCheck
@@ -25,6 +25,7 @@ import { selectUser } from '../redux/apifetch/AuthSlicer';
 import { setShowAuthModel } from '../redux/apifetch/uiSlice';
 import { useToast } from './Toast';
 import formgirl from '../assets/formgirl.png'
+import aigirl from '../assets/aigirl.png'
 
 export default function AiChat({ isOpen, onClose }) {
   const dispatch = useDispatch();
@@ -44,12 +45,10 @@ export default function AiChat({ isOpen, onClose }) {
   const chatError = useSelector(selectChatError);
   const isTyping = useSelector(selectIsTyping);
 
-  // Auto scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping, typingContent]);
 
-  // Typewriter effect for AI messages
   const startTypewriterEffect = useCallback((content, messageId) => {
     setTypingMessageId(messageId);
     setTypingContent('');
@@ -61,18 +60,17 @@ export default function AiChat({ isOpen, onClose }) {
       if (index < words.length) {
         setTypingContent(prev => prev + (index > 0 ? ' ' : '') + words[index]);
         index++;
-        typingTimeoutRef.current = setTimeout(typeNextWord, 50); // Adjust speed here
+        typingTimeoutRef.current = setTimeout(typeNextWord, 40); 
       } else {
         setTypingMessageId(null);
         setTypingContent('');
-        dispatch(finishTyping(messageId)); // Mark as finished typing
+        dispatch(finishTyping(messageId)); 
       }
     };
     
     typeNextWord();
   }, [dispatch]);
 
-  // Clean up typing timeout on unmount
   useEffect(() => {
     return () => {
       if (typingTimeoutRef.current) {
@@ -81,7 +79,7 @@ export default function AiChat({ isOpen, onClose }) {
     };
   }, []);
 
-  // Trigger typewriter effect for new AI messages
+
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
     if (lastMessage && lastMessage.role === 'assistant' && lastMessage.isTyping) {
@@ -89,7 +87,7 @@ export default function AiChat({ isOpen, onClose }) {
     }
   }, [messages, startTypewriterEffect]);
 
-  // Focus input when chat opens
+  
   useEffect(() => {
     if (isOpen) {
       inputRef.current?.focus();
@@ -111,17 +109,17 @@ export default function AiChat({ isOpen, onClose }) {
     const userMessage = message.trim();
     setMessage('');
     
-    // Add user message immediately
+   
     dispatch(addUserMessage(userMessage));
     
     try {
-      // Format history for backend (only send role and content)
+     
       const formattedHistory = messages.map(msg => ({
         role: msg.role,
         content: msg.content
       }));
       
-      // Send to AI
+     
       await dispatch(sendChatMessage({
         message: userMessage,
         history: formattedHistory,
@@ -162,16 +160,16 @@ export default function AiChat({ isOpen, onClose }) {
     });
   };
 
-  // Custom markdown formatter for better AI responses
+  
   const formatMessage = (content) => {
     if (!content) return '';
     
-    // Clean up common formatting issues
+  
     let formatted = content
-      // Remove excessive asterisks and underscores
+   
       .replace(/\*{3,}/g, '**')
       .replace(/_{3,}/g, '__')
-      // Clean up table formatting
+    
       .replace(/\|[\s-|]*\|/g, (match) => {
         const parts = match.split('|').filter(part => part.trim());
         if (parts.length === 1 && parts[0].includes('-')) {
@@ -179,75 +177,129 @@ export default function AiChat({ isOpen, onClose }) {
         }
         return match;
       })
-      // Fix bullet points
+     
       .replace(/^[\s]*•[\s]*/gm, '• ')
       .replace(/^[\s]*\*[\s]*/gm, '• ')
-      // Clean up headers
+    
       .replace(/^#{4,}/gm, '###')
       .replace(/^#{1,2}[\s]*/gm, (match) => match.replace(/\s+/, ' '))
-      // Remove excessive line breaks
+   
       .replace(/\n{3,}/g, '\n\n')
-      // Clean up bold text
+      
       .replace(/\*\*([^*]+)\*\*/g, '**$1**')
-      // Clean up italic text
+    
       .replace(/\*([^*]+)\*/g, '*$1*');
 
     return formatted;
   };
 
-  // Simple markdown renderer
+ 
+  const formatInlineText = (text) => {
+ 
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+     
+        const innerText = part.slice(2, -2);
+       
+        return (
+          <strong key={index} className="font-bold text-[#f47521] !important" style={{ color: '#f47521' }}>
+            {formatItalicText(innerText)}
+          </strong>
+        );
+      }
+ 
+      return formatItalicText(part);
+    });
+  };
+
+ 
+  const formatItalicText = (text) => {
+    if (!text.includes('*')) return text;
+    const parts = text.split(/(\*[^*]+\*)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('*') && part.endsWith('*') && !part.startsWith('**')) {
+        const innerText = part.slice(1, -1);
+        return <em key={index} className="italic text-gray-300">{innerText}</em>;
+      }
+      return part;
+    });
+  };
+
+
   const renderMarkdown = (content) => {
     const formatted = formatMessage(content);
     
     return formatted
       .split('\n')
       .map((line, index) => {
-        // Headers
+     
         if (line.startsWith('### ')) {
           return (
-            <h3 key={index} className="text-lg font-bold text-[#f47521] mt-4 mb-2">
+            <h3 key={index} className="text-lg font-bold text-[#f47521] !important mt-4 mb-3" style={{ color: '#f47521' }}>
               {line.replace('### ', '')}
             </h3>
           );
         }
         if (line.startsWith('## ')) {
           return (
-            <h2 key={index} className="text-xl font-bold text-white mt-4 mb-3">
+            <h2 key={index} className="text-xl font-bold text-[#f47521] !important mt-4 mb-3" style={{ color: '#f47521' }}>
               {line.replace('## ', '')}
             </h2>
           );
         }
         if (line.startsWith('# ')) {
           return (
-            <h1 key={index} className="text-2xl font-bold text-[#f47521] mt-4 mb-3">
+            <h1 key={index} className="text-2xl font-bold text-[#f47521] !important mt-4 mb-3" style={{ color: '#f47521' }}>
               {line.replace('# ', '')}
             </h1>
           );
         }
         
-        // Tables
-        if (line.includes('|') && line.includes('---')) {
-          return null; // Skip table separator lines
+       
+        if (line.includes('|')) {
+          const cells = line.split('|').filter(cell => cell.trim());
+          if (line.includes('---')) {
+            return (
+              <tr key={index} className="border-b border-gray-700">
+                {cells.map((cell, cellIndex) => (
+                  <th key={cellIndex} className="px-4 py-2 text-[#f47521] !important "style={{ color: '#f47521' }}>
+                    {cell.replace(/-/g, '')}
+                  </th>
+                ))}
+              </tr>
+            );
+          }
+          return (
+            <tr key={index}>
+              {cells.map((cell, cellIndex) => (
+                <td key={cellIndex} className="px-4 py-2 border-b border-gray-700/50">
+                  {formatInlineText(cell.trim())}
+                </td>
+              ))}
+            </tr>
+          );
         }
         
-        // List items
+    
         if (line.startsWith('• ') || line.startsWith('- ')) {
+          const content = line.replace(/^[•-]\s*/, ''); 
           return (
             <div key={index} className="flex items-start gap-2 mb-1">
               <span className="text-[#f47521] mt-1">•</span>
-              <span className="flex-1">{line.replace(/^[•-]\s*/, '')}</span>
+              <span className="flex-1">{formatInlineText(content)}</span>
             </div>
           );
         }
         
-        // Bold text
+       
         if (line.includes('**')) {
           const parts = line.split(/(\*\*[^*]+\*\*)/g);
           return (
             <p key={index} className="mb-2">
               {parts.map((part, partIndex) => 
                 part.startsWith('**') && part.endsWith('**') ? (
-                  <strong key={partIndex} className="font-bold text-white">
+                  <strong key={partIndex} className="font-bold text-[#f47521] !important" style={{ color: '#f47521' }}>
                     {part.slice(2, -2)}
                   </strong>
                 ) : (
@@ -258,16 +310,16 @@ export default function AiChat({ isOpen, onClose }) {
           );
         }
         
-        // Regular paragraphs
+      
         if (line.trim()) {
           return (
             <p key={index} className="mb-2 leading-relaxed">
-              {line}
+              {formatInlineText(line)}
             </p>
           );
         }
         
-        // Empty lines
+       
         return <br key={index} />;
       });
   };
@@ -280,7 +332,7 @@ export default function AiChat({ isOpen, onClose }) {
         className="fixed inset-0 z-50 flex items-end justify-end"
         onClick={onClose}
       >
-        {/* Mobile Overlay */}
+      
         <motion.div 
           className="fixed inset-0 bg-black/50 backdrop-blur-[3px]"
           initial={{ opacity: 0 }}
@@ -310,13 +362,17 @@ export default function AiChat({ isOpen, onClose }) {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[#f47521]/10 to-[#f47521]/5 border-b border-gray-700/50">
+          <div className="flex items-center justify-between p-4 bg-[#f47521]/10 border-b border-gray-700/50">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#f47521]/20 rounded-full flex items-center justify-center">
-                <FaRobot className="text-[#f47521]" size={20} />
+              <div className="relative w-10 h-10 bg-[#f47521]/20 rounded-full flex items-center justify-center overflow-hidden">
+                 <img 
+                        src={formgirl} 
+                        alt="AI Assistant" 
+                        className="absolute top-2 left-[0.10rem] w-full"
+                      />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">Ani-Bot</h3>
+                <h3 className="text-lg font-bold text-[#f47521]">Ani-Bot</h3>
                 <p className="text-xs text-gray-400">Your anime expert assistant</p>
               </div>
             </div>
@@ -343,11 +399,15 @@ export default function AiChat({ isOpen, onClose }) {
               <div className="flex-1 overflow-y-auto scrollbar-custom p-2 space-y-4 min-h-0">
                 {messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
-                    <div className="w-20 h-20 bg-[#f47521]/10 rounded-full flex items-center justify-center">
-                      <FaRobot className="text-[#f47521]" size={32} />
+                    <div className="relative overflow-hidden w-20 h-20 bg-[#f47521]/10 rounded-full flex items-center justify-center">
+                      <img 
+                        src={formgirl} 
+                        alt="AI Assistant" 
+                        className="absolute top-4 left-1 w-full"
+                      />
                     </div>
                     <div>
-                      <h4 className="text-xl font-bold text-white mb-2">Welcome to Ani-Bot!</h4>
+                      <h4 className="text-xl font-bold text-[#f47521] mb-2">Welcome to Ani-Bot!</h4>
                       <p className="text-gray-400 max-w-md">
                         I'm your anime expert assistant. Ask me about anime recommendations, 
                         character analysis, plot discussions, or anything anime-related!
@@ -381,8 +441,8 @@ export default function AiChat({ isOpen, onClose }) {
                         className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
                         {msg.role === 'assistant' && (
-                          <div className="w-6 h-6  flex items-center justify-center flex-shrink-0">
-                            <img src={formgirl} alt="" />
+                          <div className="relative w-7 h-7 bg-gray-700/50 rounded-full overflow-hidden border-2 border-[#f47521]/30 flex items-center justify-center flex-shrink-0">
+                            <img src={formgirl} alt="" className='absolute top-1 left-[.10rem]'/>
                           </div>
                         )}
                         
@@ -439,7 +499,7 @@ export default function AiChat({ isOpen, onClose }) {
                         </div>
                         
                         {msg.role === 'user' && (
-                          <div className="w-6 h-6 bg-gray-700/50 rounded-full overflow-hidden border-2 border-[#f47521]/30 flex items-center justify-center flex-shrink-0">
+                          <div className="w-7 h-7 bg-gray-700/50 rounded-full overflow-hidden border-2 border-[#f47521]/30 flex items-center justify-center flex-shrink-0">
                             <img src={user?.avatar} alt="" />
                           </div>
                         )}
@@ -482,7 +542,7 @@ export default function AiChat({ isOpen, onClose }) {
                 <div className="flex gap-3">
                   <div className="flex-1 relative">
                     <input
-                      ref={inputRef}
+                      // ref={inputRef}
                       type="text"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
