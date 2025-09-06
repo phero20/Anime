@@ -124,7 +124,7 @@ function App() {
             </AnimatePresence>
             <Footer />
 
-            <div className="fixed bottom-12 right-0 lg:right-10 xl:right-16 z-40">
+            <div className="fixed bottom-4 right-0 lg:right-10 z-40">
                 <div className="relative group transform hover:scale-110 hover:-translate-y-4 transition-transform duration-300">
                     <button
                         onClick={() => setIsChatOpen(true)}
@@ -146,7 +146,7 @@ function App() {
                                 animation: 'fadeInOut 4s ease-in-out'
                             }}
                         >
-                            <div className="bg-gray-900/80 text-[#f47521] text-xs py-2 px-4 rounded-lg shadow-lg 
+                            <div className="bg-gray-900/80 backdrop-blur-sm text-[#f47521] text-xs py-2 px-4 rounded-lg shadow-lg 
                             border border-[#f47521]/20 whitespace-nowrap animate-bounce">
                                 Hi {user?.username ? user?.username : ''
                                 }, I'm your AI Chat Assistant!

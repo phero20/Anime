@@ -37,7 +37,7 @@ const ToastMessage = ({ t, title, message, description, type }) => {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-      className={`relative flex items-start w-full max-w-sm p-4 bg-gray-900 border-l-4 rounded-r-lg shadow-lg font-['Crunchyroll_Atyp',_sans-serif] ${getBorderColor()}`}
+      className={`relative mt-6 flex items-start w-full max-w-sm p-4 bg-gray-900 border-l-4 rounded-r-lg shadow-lg font-['Crunchyroll_Atyp',_sans-serif] ${getBorderColor()}`}
     >
       <img src={formgirl2} alt="" className='absolute -top-9 left-[40%] w-[4.2rem]'/>
       <div className="flex-shrink-0 mt-0.5">{getIcon()}</div>
@@ -91,7 +91,7 @@ export const showToast = {
 
 // Toast container
 export const ToastContainer = () => {
-  return <Toaster position="bottom-right" gutter={16} />;
+  return <Toaster position="top-right" gutter={10} />;
 };
 
 // Hook for easy usage
