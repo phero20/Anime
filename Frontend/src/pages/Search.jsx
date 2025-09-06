@@ -142,7 +142,7 @@ export default function Search() {
   const showLoading = loading || isSearching;
 
   return (
-    <div className="min-h-screen bg-[#0b0b0b] text-white mt-10">
+    <div className="min-h-screen bg-black text-white mt-10">
       {/* Professional Header Section */}
       <div className="relative overflow-hidden">
         {/* Subtle background pattern */}
@@ -183,7 +183,7 @@ export default function Search() {
                 
                 <div className="relative flex items-center">
                   <div className="absolute left-6 z-10">
-                    <FaSearch className="text-gray-400 text-lg" />
+                    <FaSearch className="text-[#f47521] text-lg" />
                   </div>
                   
                   <input
@@ -273,7 +273,7 @@ export default function Search() {
               {showLoading ? (
                 <div className="p-8 flex justify-center">
                   <div className="flex items-center gap-3 text-gray-400">
-                    <LoadingAnimation size={24} />
+                    <LoadingAnimation />
                   </div>
                 </div>
               ) : (
@@ -339,7 +339,7 @@ export default function Search() {
       {resultsLoading && showResults === false && (
         <div className="flex justify-center py-16">
           <div className="flex items-center gap-3 text-gray-400">
-           <LoadingAnimation size={24} />
+           <LoadingAnimation />
           </div>
         </div>
       )}
@@ -414,9 +414,9 @@ export default function Search() {
 
       {/* No Results State */}
       {showResults && searchResult && searchResult.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <MdOutlineSentimentDissatisfied className="text-6xl text-gray-600 mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">No Results Found</h3>
+        <div className="flex flex-col items-center justify-center pb-20 text-center">
+          <MdOutlineSentimentDissatisfied className="text-6xl  mb-4 text-[#f47521]" />
+          <h3 className="text-xl font-semibold text-[#f47521] mb-2">No Results Found</h3>
           <p className="text-gray-400 max-w-md">
             Try adjusting your search terms or filters to find what you're looking for.
           </p>

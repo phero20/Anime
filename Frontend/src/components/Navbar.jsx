@@ -14,6 +14,7 @@ import { NavLink, useNavigate, useLocation ,Link} from "react-router-dom";
 import { selectUser } from "../redux/apifetch/AuthSlicer";
 import { setShowAuthModel } from "../redux/apifetch/uiSlice";
 import Auth from "./Auth";
+import logo from "../assets/logo.png";
 
 export default function Navbar() {
   const location = useLocation();
@@ -35,11 +36,11 @@ export default function Navbar() {
   const categoryRef = useRef(null);
   const genreRef = useRef(null);
 
-  const navItems = ["Home", "Trending", "Latests", "Upcomings"];
+  const navItems = ["Home", "Popular", "Latests", "Upcomings"];
   const moreItems = [
     "Top10",
     "Airing",
-    "Popular",
+    "Trending",
     "Favorite",
     "Completed"
   ];
@@ -192,7 +193,7 @@ export default function Navbar() {
               
               <Link to="/" className="flex items-center gap-2">
                 <div className="text-2xl font-bold text-white hover:text-[#f47521] transition-colors duration-500">
-                  AnimeHub
+                  <img src={logo} alt="" className="w-28 rotate-[7deg]" />
                 </div>
               </Link>
             </div>
@@ -481,9 +482,9 @@ export default function Navbar() {
               }}
             >
               {/* Mobile Menu Header */}
-              <div className="flex items-center justify-between p-6 border-b border-white/10 flex-shrink-0">
+              <div className="flex items-center justify-between px-6 overflow-hidden border-b border-white/10 flex-shrink-0">
                 <div className="text-xl font-bold text-white">
-                  AnimeHub
+                   <img src={logo} alt="" className="w-20 h-28 rotate-[7deg]" />
                 </div>
                 <button 
                   onClick={() => setMenuOpen(false)}

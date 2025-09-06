@@ -52,11 +52,6 @@ export default function AiChat({ isOpen, onClose }) {
 
 
 
-  useEffect(() => {
-    if (isOpen && user) {
-      dispatch(fetchChatHistory(user.token));
-    }
-  }, [isOpen, user, dispatch]);
 
 
   useEffect(() => {
@@ -294,10 +289,10 @@ export default function AiChat({ isOpen, onClose }) {
             );
           }
           return (
-            <div className="overflow-x-auto">
-              <div className="inline-block min-w-full align-middle">
-                <div className="overflow-hidden">
-                  <table className="min-w-full divide-y divide-gray-700">
+            <div key={index} className="overflow-x-auto">
+              <div key={index} className="inline-block min-w-full align-middle">
+                <div key={index} className="overflow-hidden">
+                  <table key={index} className="min-w-full divide-y divide-gray-700">
                     <tr key={index}>
                       {cells.map((cell, cellIndex) => (
                         <td key={cellIndex} className="px-4 py-2 border-b border-gray-700/50 whitespace-normal text-sm">

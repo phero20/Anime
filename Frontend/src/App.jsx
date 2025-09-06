@@ -6,7 +6,6 @@ import Category from './pages/Category';
 import Genre from './pages/Genre';
 import Home from './pages/Home';
 import { AnimatePresence } from 'framer-motion';
-import { useDispatch } from 'react-redux';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import PageWrapper from './components/PageWrapper';
@@ -21,9 +20,9 @@ import ToastContainer from './components/Toast';
 import AiChat from './components/AiChat';
 import { FaRobot } from 'react-icons/fa';
 import aigirl from './assets/aigirl.png';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import {useNavigate} from 'react-router-dom';
-
+import { fetchChatHistory } from './redux/apifetch/aiChatSlice';
 function App() {
     const dispatch = useDispatch();
     const location = useLocation();
@@ -34,16 +33,29 @@ function App() {
 
      const navigate = useNavigate();
     
+
+
+       useEffect(() => {
+         if (user) {
+           dispatch(fetchChatHistory(user.token));
+         }
+       }, [isChatOpen, user, dispatch]);
    
     useEffect(() => {
-        const handleBackButton = (e) => {
+        const handleBackButton = (event) => {
             if (isChatOpen) {
-                e.preventDefault();
+                event.preventDefault();
+                window.history.pushState(null, '');
                 setIsChatOpen(false);
             }
         };
 
         window.addEventListener('popstate', handleBackButton);
+        
+        // Handle initial state
+        if (isChatOpen) {
+            window.history.pushState({ chat: true }, '');
+        }
         
         return () => {
             window.removeEventListener('popstate', handleBackButton);
@@ -127,7 +139,10 @@ function App() {
             <div className="fixed bottom-4 right-0 lg:right-10 z-40">
                 <div className="relative group transform hover:scale-110 hover:-translate-y-4 transition-transform duration-300">
                     <button
-                        onClick={() => setIsChatOpen(true)}
+                        onClick={() => {
+                            window.history.pushState({ chat: true }, '');
+                            setIsChatOpen(true);
+                        }}
                         className="relative w-14 lg:w-16 xl:w-24 flex items-center justify-center hover:scale-105 transition-all duration-300"
                         title="AI Chat Assistant"
                     >

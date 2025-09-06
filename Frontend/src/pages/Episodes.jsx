@@ -132,7 +132,7 @@ export default function Episodes() {
     {/* Video Player Section - Now at the top */}
     <div className="w-full bg-black">
       <div className="w-full max-w-[100%] mx-auto">
-        <div className="relative w-full bg-gray-900/60 rounded h-56  md:h-[32rem]"
+        <div className="relative w-full rounded h-80 md:h-[32rem]"
           >
           {
             selectedServer.server && EpisodeStreamLinks?.data?.data ? (
@@ -140,10 +140,13 @@ export default function Episodes() {
                 EpisodeStreamLinks.data.data
               } />
             ) : selectedServer.server ? (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#f47521] mx-auto mb-4"></div>
-                  <p className="text-gray-400">Loading video...</p>
+              <div className="group flex items-center justify-center h-full w-full overflow-hidden relative">
+                <div className="relative text-center transition-all duration-700 transform group-hover:scale-150">
+                 <img src={EpisodeImage} alt="" className='w-full h-80 md:h-full'/>
+                </div>
+                <div className="absolute inset-0 bg-gray-950/70 backdrop-blur-[1px] flex items-center justify-center">
+                  <LoadingAnimation />
+                  <p className='absolute top-0 bottom-0 flex items-center justify-center'><span className='mt-32 text-[#f47521] font-medium'>Loading Vedio...</span></p>
                 </div>
               </div>
             ) : (

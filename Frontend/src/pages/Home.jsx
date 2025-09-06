@@ -167,7 +167,7 @@ export default function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -40 }}
                     viewport={{ once: false, margin: "-80px" }}
-                    transition={{ duration: .6, delay: index * 0.1 }}
+                    transition={{ duration: .6}}
                 >
                     <AnimeCards data={item.data} name={item.name} scroll={true}/>
                 </motion.section>
@@ -212,7 +212,7 @@ export default function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -40 }}
                     viewport={{ once: false, margin: "-80px" }}
-                    transition={{ duration: .6, delay: index * 0.1 }}
+                    transition={{ duration: .6 }}
                 >
                     <AnimeCards data={item.data} name={item.name} scroll={true}/>
                 </motion.section>
@@ -236,7 +236,7 @@ export default function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -40 }}
                     viewport={{ once: false, margin: "-80px" }}
-                    transition={{ duration: .6, delay: index * 0.1 }}
+                    transition={{ duration: .6 }}
                 >
                     <AnimeCards data={item.data} name={item.name} scroll={true}/>
                 </motion.section>

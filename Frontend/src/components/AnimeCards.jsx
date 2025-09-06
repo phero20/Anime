@@ -301,12 +301,7 @@ export default function AnimeCards({
                 <LoadingAnimation />
               </div>
             }
-            endMessage={
-              <div className="col-span-full text-center py-8 text-gray-400">
-                <p className="text-lg font-medium">You've reached the end!</p>
-                <p className="text-sm mt-2">No more anime to load</p>
-              </div>
-            }
+           
             className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 lg:gap-6"
             style={{ overflow: 'visible' }}
           >

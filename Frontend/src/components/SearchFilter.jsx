@@ -145,6 +145,17 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
               placeholder="Any Rating"
             />
           </div>
+
+           <div>
+          <label className="block text-xs sm:text-sm mb-1 font-semibold text-[#f47521]">Score</label>
+
+            <Dropdown
+              options={[{ value: '', label: 'Any' }, ...toOptions(SCORES, true)]}
+              value={localFilters.score}
+              onChange={v => handleChange('score', v)}
+              placeholder="Any Score"
+            />
+          </div>
           {/* Start Date */}
           <div>
             <label className="block text-xs sm:text-sm mb-1 font-semibold text-[#f47521]">Start Date</label>
@@ -170,16 +181,7 @@ export default function SearchFilter({ open, onClose, onApply, filters }) {
             />
           </div>
           {/* Score */}
-          <div>
-          <label className="block text-xs sm:text-sm mb-1 font-semibold text-[#f47521]">Score</label>
-
-            <Dropdown
-              options={[{ value: '', label: 'Any' }, ...toOptions(SCORES, true)]}
-              value={localFilters.score}
-              onChange={v => handleChange('score', v)}
-              placeholder="Any Score"
-            />
-          </div>
+         
         </div>
         <div className="flex justify-end mt-4 sm:mt-8 gap-2 sm:gap-3">
           {/* <button
