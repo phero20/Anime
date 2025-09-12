@@ -103,6 +103,7 @@ export default function Episodes() {
   // Fetch stream link when episode or server changes
   useEffect(() => {
     if (selectedEpisode?.episodeId && selectedServer.server && selectedServer.type) {
+      console.log('fetchng expisode')
       dispatch(fetchEpisodesStreamLink({ episodeId: selectedEpisode.episodeId, server: selectedServer.server.serverName, category: selectedServer.type }));
     }
   }, [selectedEpisode, selectedServer, dispatch]);
@@ -131,8 +132,9 @@ export default function Episodes() {
   return (<div className="min-h-screen mt-1 bg-black text-white font-['Crunchyroll_Atyp',_sans-serif] pt-16">
     {/* Video Player Section - Now at the top */}
     <div className="w-full bg-black">
-      <div className="w-full max-w-[100%] mx-auto">
-        <div className="relative w-full rounded h-80 md:h-[32rem]"
+      <div className="w-full max-w-screen-lg py-4 mx-auto">
+        <div className="relative w-full aspect-video"
+        // style={{ aspectRatio: '16 / 9' }} 
           >
           {
             selectedServer.server && EpisodeStreamLinks?.data?.data ? (

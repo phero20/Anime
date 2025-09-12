@@ -68,12 +68,13 @@ export const fetchEpisodesServerData = createAsyncThunk(
 export const fetchEpisodesStreamLink = createAsyncThunk(
   'AnimeData/fetchEpisodesStreamLink',
   async ({ episodeId, server, category }) => {
-    console.log(episodeId, server, category);
+  
     const response = await axios.post(`${backendUrl}/api/anime/episodes-stream-links`, {
       episodeId: episodeId,
       server: server,
       category: category
     });
+      console.log(response);
     return response.data;
   }
 );
