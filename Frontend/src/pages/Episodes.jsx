@@ -129,9 +129,9 @@ export default function Episodes() {
     );
   }
 
-  return (<div className="min-h-screen mt-1 bg-black text-white font-['Crunchyroll_Atyp',_sans-serif] pt-16">
+  return (<div className="min-h-screen mt-1 text-white font-['Crunchyroll_Atyp',_sans-serif] pt-16">
     {/* Video Player Section - Now at the top */}
-    <div className="w-full bg-black">
+    <div className="w-full ">
       <div className="w-full max-w-screen-lg py-4 mx-auto">
         <div className="relative w-full aspect-video"
         // style={{ aspectRatio: '16 / 9' }} 
@@ -146,7 +146,7 @@ export default function Episodes() {
                 <div className="relative text-center transition-all duration-700 transform group-hover:scale-150">
                  <img src={EpisodeImage} alt="" className='w-full h-80 md:h-full'/>
                 </div>
-                <div className="absolute inset-0 bg-gray-950/70 backdrop-blur-[1px] flex items-center justify-center">
+                <div className="absolute inset-0  backdrop-blur-[1px] flex items-center justify-center">
                   <LoadingAnimation />
                   <p className='absolute top-0 bottom-0 flex items-center justify-center'><span className='mt-32 text-[#f47521] font-medium'>Loading Vedio...</span></p>
                 </div>
