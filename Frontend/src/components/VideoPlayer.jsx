@@ -14,13 +14,14 @@ const plyrDefaultOptions = {
     'duration',
     'mute',
     'volume',
+    'captions',
     'settings',
     'fullscreen'
   ],
-  settings: ['quality', 'speed'],
+  settings: ['captions', 'quality', 'speed'],
   quality: {
-    default: 'auto',
-    options: ['auto', '1080p', '720p', '480p', '360p']
+    default: 720,
+    options: [1080, 720, 480, 360, 'auto']
   },
   speed: {
     selected: 1,
@@ -28,7 +29,7 @@ const plyrDefaultOptions = {
   },
   keyboard: { focused: true, global: false },
   tooltips: { controls: true, seek: true },
-  captions: { active: false, update: false, language: 'auto' },
+  captions: { active: true, update: true, language: 'auto' },
   fullscreen: { enabled: true, fallback: true, iosNative: false },
   storage: { enabled: true, key: 'plyr' },
   hideControls: true,
@@ -45,6 +46,12 @@ export default function VideoPlayer({ streamData }) {
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
   const [isReady, setIsReady] = useState(false);
+  const [availableQualities, setAvailableQualities] = useState([]);
+  const [currentQuality, setCurrentQuality] = useState('720p');
+  const [showQualityMenu, setShowQualityMenu] = useState(false);
+  const [captionsEnabled, setCaptionsEnabled] = useState(false);
+  const [availableSubtitles, setAvailableSubtitles] = useState([]);
+  const [showControls, setShowControls] = useState(true);
 
   const initializePlayer = useCallback(async () => {
     if (!streamData || !containerRef.current) {
@@ -162,14 +169,57 @@ export default function VideoPlayer({ streamData }) {
         hls.loadSource(sourceUrl);
         hls.attachMedia(videoElement);
 
-        // Wait for manifest to be parsed
+        // Wait for manifest to be parsed and set up quality control
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
           console.log('HLS manifest parsed successfully');
+          
+          // Set default quality to 720p if available
+          const levels = hls.levels;
+          if (levels && levels.length > 0) {
+            // Find 720p level or closest match
+            const targetHeight = 720;
+            let bestLevel = 0;
+            let closestDiff = Math.abs(levels[0].height - targetHeight);
+            
+            for (let i = 1; i < levels.length; i++) {
+              const diff = Math.abs(levels[i].height - targetHeight);
+              if (diff < closestDiff) {
+                closestDiff = diff;
+                bestLevel = i;
+              }
+            }
+            
+            // Set the quality level (disable auto-switching)
+            hls.currentLevel = bestLevel;
+            console.log(`Set default quality to: ${levels[bestLevel].height}p`);
+          }
+        });
+        
+        // Handle subtitle/caption tracks
+        hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, () => {
+          const tracks = hls.subtitleTracks;
+          console.log('Available subtitle tracks:', tracks);
+        });
+        
+        hls.on(Hls.Events.SUBTITLE_TRACK_LOADED, (event, data) => {
+          console.log('Subtitle track loaded:', data);
         });
       } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
         // Native HLS support (Safari)
         const sourceUrl = streamData.sources?.[0]?.url || streamData.sources?.[0]?.file;
         videoElement.src = sourceUrl;
+        
+        // Handle text tracks for Safari
+        videoElement.addEventListener('loadedmetadata', () => {
+          const textTracks = videoElement.textTracks;
+          if (textTracks && textTracks.length > 0) {
+            console.log('Text tracks available:', textTracks.length);
+            // Don't auto-show, let user control via captions button
+            for (let i = 0; i < textTracks.length; i++) {
+              textTracks[i].mode = 'disabled';
+            }
+          }
+        });
       } else {
         setError('HLS is not supported in this browser.');
         setIsLoading(false);
@@ -187,6 +237,87 @@ export default function VideoPlayer({ streamData }) {
           container: null // Use default container behavior
         }
       });
+      
+      // Set up HLS.js integration for quality control
+      if (hlsRef.current) {
+        const hls = hlsRef.current;
+        
+        // Handle quality changes from Plyr settings
+        player.on('qualitychange', (event) => {
+          const quality = event.detail.quality;
+          console.log('Quality change requested:', quality);
+          
+          if (quality === 'auto') {
+            hls.currentLevel = -1; // Auto quality
+            console.log('Quality set to: Auto');
+          } else {
+            // Find the level index for the requested quality
+            const levels = hls.levels;
+            const levelIndex = levels.findIndex(level => level.height === parseInt(quality));
+            if (levelIndex !== -1) {
+              hls.currentLevel = levelIndex;
+              console.log(`Quality set to: ${quality}p`);
+            }
+          }
+        });
+        
+        // Wait for levels to be available and update quality options
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          const levels = hls.levels;
+          if (levels && levels.length > 0) {
+            console.log('Available quality levels:', levels.map(l => `${l.height}p`));
+            
+            // Set available qualities for custom UI
+            const qualities = ['Auto', ...levels.map(level => `${level.height}p`)];
+            setAvailableQualities(qualities);
+            
+            // Always show captions control
+            setAvailableSubtitles([{ name: 'Default Subtitles', lang: 'en' }]);
+            
+            // Set default to 720p if available
+            const has720p = levels.some(level => level.height === 720);
+            if (has720p) {
+              const level720Index = levels.findIndex(level => level.height === 720);
+              hls.currentLevel = level720Index;
+              setCurrentQuality('720p');
+              console.log('Set default quality to: 720p');
+            } else {
+              setCurrentQuality('Auto');
+            }
+          }
+        });
+        
+        // Handle subtitle/caption tracks
+        hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, () => {
+          const subtitleTracks = hls.subtitleTracks;
+          console.log('All subtitle tracks:', subtitleTracks);
+          
+          // Always show captions control if we have any tracks or enable it by default
+          setAvailableSubtitles([{ name: 'Default Subtitles', lang: 'en' }]);
+          
+          if (subtitleTracks && subtitleTracks.length > 0) {
+            console.log('Subtitle tracks available:', subtitleTracks.length);
+            setAvailableSubtitles(subtitleTracks);
+            
+            // Add subtitle tracks to video element
+            subtitleTracks.forEach((track, index) => {
+              const textTrack = videoElement.addTextTrack(
+                'subtitles', 
+                track.name || `Subtitle ${index + 1}`, 
+                track.lang || 'en'
+              );
+              textTrack.mode = 'disabled'; // Start disabled, user can enable via captions
+            });
+          }
+        });
+        
+        // Handle subtitle track changes
+        hls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, (event, data) => {
+          console.log('Subtitle track switched:', data);
+        });
+      }
+      
+      // Remove Plyr caption handlers since we're using custom controls
       playerRef.current = player;
       
       // Ensure player container fits within bounds
@@ -263,6 +394,47 @@ export default function VideoPlayer({ streamData }) {
     }
   }, [streamData]);
 
+  // Handle quality change
+  const handleQualityChange = useCallback((quality) => {
+    if (!hlsRef.current) return;
+    
+    const hls = hlsRef.current;
+    const levels = hls.levels;
+    
+    if (quality === 'Auto') {
+      hls.currentLevel = -1; // Auto quality
+      setCurrentQuality('Auto');
+      console.log('Quality set to: Auto');
+    } else {
+      const targetHeight = parseInt(quality.replace('p', ''));
+      const levelIndex = levels.findIndex(level => level.height === targetHeight);
+      if (levelIndex !== -1) {
+        hls.currentLevel = levelIndex;
+        setCurrentQuality(quality);
+        console.log(`Quality set to: ${quality}`);
+      }
+    }
+    setShowQualityMenu(false);
+  }, []);
+
+  // Handle captions toggle
+  const handleCaptionsToggle = useCallback(() => {
+    if (!hlsRef.current) return;
+    
+    const hls = hlsRef.current;
+    const newCaptionsState = !captionsEnabled;
+    
+    if (newCaptionsState && availableSubtitles.length > 0) {
+      hls.subtitleTrack = 0; // Enable first subtitle track
+      setCaptionsEnabled(true);
+      console.log('Captions enabled');
+    } else {
+      hls.subtitleTrack = -1; // Disable subtitles
+      setCaptionsEnabled(false);
+      console.log('Captions disabled');
+    }
+  }, [captionsEnabled, availableSubtitles]);
+
   const handleRetry = useCallback(() => {
     setRetryCount(prev => prev + 1);
     setError(null);
@@ -283,6 +455,18 @@ export default function VideoPlayer({ streamData }) {
       }
     };
   }, [initializePlayer]);
+
+  // Close quality menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showQualityMenu && !event.target.closest('.relative')) {
+        setShowQualityMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showQualityMenu]);
 
   return (
     <div className="relative w-full aspect-video bg-gray-900 overflow-hidden shadow-2xl border border-gray-700">
@@ -375,6 +559,63 @@ export default function VideoPlayer({ streamData }) {
               Buffering
             </div>
           </div>
+        </div>
+      )}
+      
+      {/* Custom Quality & Captions Controls - Always Visible */}
+      {streamData && !error && isReady && (
+        <div 
+          className="absolute top-4 right-4 z-20 flex gap-2"
+          onMouseEnter={() => setShowControls(true)}
+          onMouseLeave={() => setShowControls(true)}
+        >
+          {/* Quality Selector */}
+          {availableQualities.length > 0 && (
+            <div className="relative">
+              <button
+                onClick={() => setShowQualityMenu(!showQualityMenu)}
+                className="bg-black/80 hover:bg-black/90 text-white px-3 py-2 rounded-lg text-sm font-medium backdrop-blur-sm border border-gray-600 hover:border-[#f47521] transition-all duration-200 flex items-center gap-2 shadow-lg"
+              >
+                <span className="text-xs">🎬</span>
+                {currentQuality}
+              </button>
+              
+              {/* Quality Menu */}
+              {showQualityMenu && (
+                <div className="absolute top-full right-0 mt-2 bg-black/95 backdrop-blur-sm border border-gray-600 rounded-lg overflow-hidden min-w-[120px] shadow-xl">
+                  {availableQualities.map((quality) => (
+                    <button
+                      key={quality}
+                      onClick={() => handleQualityChange(quality)}
+                      className={`w-full px-4 py-2 text-left text-sm hover:bg-[#f47521]/20 transition-colors ${
+                        currentQuality === quality 
+                          ? 'bg-[#f47521]/30 text-[#f47521]' 
+                          : 'text-white'
+                      }`}
+                    >
+                      {quality}
+                      {currentQuality === quality && (
+                        <span className="float-right text-[#f47521]">✓</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* Captions Toggle - Always Show */}
+          <button
+            onClick={handleCaptionsToggle}
+            className={`px-3 py-2 rounded-lg text-sm font-medium backdrop-blur-sm border transition-all duration-200 flex items-center gap-2 shadow-lg ${
+              captionsEnabled
+                ? 'bg-[#f47521]/20 border-[#f47521] text-[#f47521]'
+                : 'bg-black/80 hover:bg-black/90 border-gray-600 hover:border-[#f47521] text-white'
+            }`}
+          >
+            <span className="text-xs">CC</span>
+            {captionsEnabled ? 'On' : 'Off'}
+          </button>
         </div>
       )}
     </div>
