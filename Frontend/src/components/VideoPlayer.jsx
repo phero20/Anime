@@ -52,6 +52,7 @@ export default function VideoPlayer({ streamData }) {
   const [captionsEnabled, setCaptionsEnabled] = useState(false);
   const [availableSubtitles, setAvailableSubtitles] = useState([]);
   const [showControls, setShowControls] = useState(true);
+  const [controlsTimeout, setControlsTimeout] = useState(null);
 
   const initializePlayer = useCallback(async () => {
     if (!streamData || !containerRef.current) {
@@ -271,8 +272,7 @@ export default function VideoPlayer({ streamData }) {
             const qualities = ['Auto', ...levels.map(level => `${level.height}p`)];
             setAvailableQualities(qualities);
             
-            // Always show captions control
-            setAvailableSubtitles([{ name: 'Default Subtitles', lang: 'en' }]);
+            // Don't set default subtitles here - wait for actual subtitle detection
             
             // Set default to 720p if available
             const has720p = levels.some(level => level.height === 720);
@@ -292,9 +292,6 @@ export default function VideoPlayer({ streamData }) {
           const subtitleTracks = hls.subtitleTracks;
           console.log('All subtitle tracks:', subtitleTracks);
           
-          // Always show captions control if we have any tracks or enable it by default
-          setAvailableSubtitles([{ name: 'Default Subtitles', lang: 'en' }]);
-          
           if (subtitleTracks && subtitleTracks.length > 0) {
             console.log('Subtitle tracks available:', subtitleTracks.length);
             setAvailableSubtitles(subtitleTracks);
@@ -308,6 +305,9 @@ export default function VideoPlayer({ streamData }) {
               );
               textTrack.mode = 'disabled'; // Start disabled, user can enable via captions
             });
+          } else {
+            // No subtitles available
+            setAvailableSubtitles([]);
           }
         });
         
@@ -419,17 +419,36 @@ export default function VideoPlayer({ streamData }) {
 
   // Handle captions toggle
   const handleCaptionsToggle = useCallback(() => {
-    if (!hlsRef.current) return;
+    if (!hlsRef.current || availableSubtitles.length === 0) return;
     
     const hls = hlsRef.current;
+    const videoElement = containerRef.current?.querySelector('video');
     const newCaptionsState = !captionsEnabled;
     
-    if (newCaptionsState && availableSubtitles.length > 0) {
+    if (newCaptionsState) {
+      // Enable captions
       hls.subtitleTrack = 0; // Enable first subtitle track
+      
+      // Also enable text tracks on video element
+      if (videoElement && videoElement.textTracks.length > 0) {
+        for (let i = 0; i < videoElement.textTracks.length; i++) {
+          videoElement.textTracks[i].mode = i === 0 ? 'showing' : 'disabled';
+        }
+      }
+      
       setCaptionsEnabled(true);
       console.log('Captions enabled');
     } else {
+      // Disable captions
       hls.subtitleTrack = -1; // Disable subtitles
+      
+      // Also disable text tracks on video element
+      if (videoElement && videoElement.textTracks.length > 0) {
+        for (let i = 0; i < videoElement.textTracks.length; i++) {
+          videoElement.textTracks[i].mode = 'disabled';
+        }
+      }
+      
       setCaptionsEnabled(false);
       console.log('Captions disabled');
     }
@@ -456,6 +475,42 @@ export default function VideoPlayer({ streamData }) {
     };
   }, [initializePlayer]);
 
+  // Auto-hide controls after 3 seconds
+  const resetControlsTimeout = useCallback(() => {
+    setShowControls(true);
+    
+    return setTimeout(() => {
+      setShowControls(false);
+      setShowQualityMenu(false); // Also close quality menu
+    }, 3000);
+  }, []);
+
+  // Show controls on mouse movement
+  useEffect(() => {
+    let timeout;
+    
+    const handleMouseMove = () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = resetControlsTimeout();
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('mousemove', handleMouseMove);
+      container.addEventListener('mouseenter', handleMouseMove);
+      
+      return () => {
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+        container.removeEventListener('mousemove', handleMouseMove);
+        container.removeEventListener('mouseenter', handleMouseMove);
+      };
+    }
+  }, [resetControlsTimeout]);
+
   // Close quality menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -467,6 +522,20 @@ export default function VideoPlayer({ streamData }) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showQualityMenu]);
+
+  // Initialize controls timeout when video is ready
+  useEffect(() => {
+    let timeout;
+    if (isReady && streamData && !error) {
+      timeout = resetControlsTimeout();
+    }
+    
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [isReady, streamData, error, resetControlsTimeout]);
 
   return (
     <div className="relative w-full aspect-video bg-gray-900 overflow-hidden shadow-2xl border border-gray-700">
@@ -562,12 +631,15 @@ export default function VideoPlayer({ streamData }) {
         </div>
       )}
       
-      {/* Custom Quality & Captions Controls - Always Visible */}
-      {streamData && !error && isReady && (
+      {/* Custom Quality & Captions Controls - Auto-hide */}
+      {streamData && !error && isReady && showControls && (
         <div 
-          className="absolute top-4 right-4 z-20 flex gap-2"
+          className="absolute top-4 right-4 z-20 flex gap-2 transition-opacity duration-300"
           onMouseEnter={() => setShowControls(true)}
-          onMouseLeave={() => setShowControls(true)}
+          onMouseLeave={() => {
+            const timeout = resetControlsTimeout();
+            setControlsTimeout(timeout);
+          }}
         >
           {/* Quality Selector */}
           {availableQualities.length > 0 && (
@@ -604,18 +676,20 @@ export default function VideoPlayer({ streamData }) {
             </div>
           )}
           
-          {/* Captions Toggle - Always Show */}
-          <button
-            onClick={handleCaptionsToggle}
-            className={`px-3 py-2 rounded-lg text-sm font-medium backdrop-blur-sm border transition-all duration-200 flex items-center gap-2 shadow-lg ${
-              captionsEnabled
-                ? 'bg-[#f47521]/20 border-[#f47521] text-[#f47521]'
-                : 'bg-black/80 hover:bg-black/90 border-gray-600 hover:border-[#f47521] text-white'
-            }`}
-          >
-            <span className="text-xs">CC</span>
-            {captionsEnabled ? 'On' : 'Off'}
-          </button>
+          {/* Captions Toggle - Only show if subtitles available */}
+          {availableSubtitles.length > 0 && (
+            <button
+              onClick={handleCaptionsToggle}
+              className={`px-3 py-2 rounded-lg text-sm font-medium backdrop-blur-sm border transition-all duration-200 flex items-center gap-2 shadow-lg ${
+                captionsEnabled
+                  ? 'bg-[#f47521]/20 border-[#f47521] text-[#f47521]'
+                  : 'bg-black/80 hover:bg-black/90 border-gray-600 hover:border-[#f47521] text-white'
+              }`}
+            >
+              <span className="text-xs">CC</span>
+              {captionsEnabled ? 'On' : 'Off'}
+            </button>
+          )}
         </div>
       )}
     </div>
