@@ -246,9 +246,7 @@ export const proxyStream = async (req, res) => {
 
 
 
-const proxyBaseUrl = process.env.SELF_URL || process.env.SELF_URL
-    ? `https://${process.env.SELF_URL}` 
-    : "http://localhost:6789";
+const proxyBaseUrl = process.env.SELF_URL || "http://localhost:6789";
 
     console.log(proxyBaseUrl)
 
