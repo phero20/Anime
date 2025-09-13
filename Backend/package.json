@@ -20,6 +20,7 @@
     "groq-sdk": "^0.32.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.3",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "url": "^0.11.4"
   }
 }

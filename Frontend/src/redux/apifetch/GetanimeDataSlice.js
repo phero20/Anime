@@ -1,13 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:6789';
 
 // Async thunk to fetch all anime data
 export const fetchAnimeData = createAsyncThunk(
   'AnimeData/fetchAnimeData',
   async () => {
+    console.log("running",backendUrl)
     const response = await axios.get(`${backendUrl}/api/anime/getdata`);
+    console.log(response.data)
     return response.data;
   }
 );
@@ -99,6 +101,32 @@ export const fetchSearchResults = createAsyncThunk(
 );
 
 
+// Helper functions for localStorage
+const saveEpisodeImageToStorage = (image) => {
+  try {
+    localStorage.setItem('episodeImage', image);
+  } catch (error) {
+    console.error('Failed to save episode image to localStorage:', error);
+  }
+};
+
+const getEpisodeImageFromStorage = () => {
+  try {
+    return localStorage.getItem('episodeImage');
+  } catch (error) {
+    console.error('Failed to get episode image from localStorage:', error);
+    return null;
+  }
+};
+
+const clearEpisodeImageFromStorage = () => {
+  try {
+    localStorage.removeItem('episodeImage');
+  } catch (error) {
+    console.error('Failed to clear episode image from localStorage:', error);
+  }
+};
+
 const initialState = {
   AnimeData: null,
   CategoryAnimeData: null,
@@ -110,7 +138,7 @@ const initialState = {
   EpisodesServerData : null,
   CardAnimeData:null,
  EpisodeStreamLinks : null,
-  EpisodeImage:null,
+  EpisodeImage: getEpisodeImageFromStorage(),
   loading: false,
   error: null,
 };
@@ -121,9 +149,17 @@ const GetanimeDataSlice = createSlice({
   reducers: {
     setEpisodeImage: (state, action) => {
       state.EpisodeImage = action.payload;
+      saveEpisodeImageToStorage(action.payload);
     },
     clearEpisodeImage: (state) => {
       state.EpisodeImage = null;
+      clearEpisodeImageFromStorage();
+    },
+    loadEpisodeImageFromStorage: (state) => {
+      const storedImage = getEpisodeImageFromStorage();
+      if (storedImage) {
+        state.EpisodeImage = storedImage;
+      }
     },
     clearSearchSuggestions: (state) => {
       state.SearchSuggestionsData = null;
@@ -346,5 +382,5 @@ const GetanimeDataSlice = createSlice({
   },
 });
 
-export const { setEpisodeImage, clearEpisodeImage, clearSearchSuggestions, clearSearchResult, clearCategoryData, clearGenreData } = GetanimeDataSlice.actions;
+export const { setEpisodeImage, clearEpisodeImage, loadEpisodeImageFromStorage, clearSearchSuggestions, clearSearchResult, clearCategoryData, clearGenreData } = GetanimeDataSlice.actions;
 export default GetanimeDataSlice.reducer;

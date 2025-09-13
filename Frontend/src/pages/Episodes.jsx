@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchEpisodesData, fetchEpisodesServerData, fetchEpisodesStreamLink } from '../redux/apifetch/GetanimeDataSlice';
+import { fetchEpisodesData, fetchEpisodesServerData, fetchEpisodesStreamLink, loadEpisodeImageFromStorage } from '../redux/apifetch/GetanimeDataSlice';
 import {
   FaPlay,
   FaServer,
@@ -27,6 +27,7 @@ export default function Episodes() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [showServerSelection, setShowServerSelection] = useState(false);
+  const [streamFetchError, setStreamFetchError] = useState(null);
 
   const { EpisodesData, EpisodesServerData } = useSelector((state) => state.AnimeData);
   const episodes = EpisodesData?.data?.data?.episodes || [];
@@ -57,6 +58,13 @@ export default function Episodes() {
       dispatch(fetchEpisodesData(id));
     }
   }, [dispatch, id]);
+
+  // Load episode image from localStorage on component mount
+  useEffect(() => {
+    if (!EpisodeImage) {
+      dispatch(loadEpisodeImageFromStorage());
+    }
+  }, [dispatch, EpisodeImage]);
 
   useEffect(() => {
     if (currentEpisodes.length > 0 && currentEpisodes[0]?.episodeId) {
@@ -102,10 +110,44 @@ export default function Episodes() {
 
   // Fetch stream link when episode or server changes
   useEffect(() => {
-    if (selectedEpisode?.episodeId && selectedServer.server && selectedServer.type) {
-      console.log('fetchng expisode')
-      dispatch(fetchEpisodesStreamLink({ episodeId: selectedEpisode.episodeId, server: selectedServer.server.serverName, category: selectedServer.type }));
+    let retryCount = 0;
+    
+    async function fetchData() {
+      if (selectedEpisode?.episodeId && selectedServer.server && selectedServer.type) {
+        console.log('Fetching episode stream...');
+        setStreamFetchError(null);
+        
+        const response = await dispatch(fetchEpisodesStreamLink({ 
+          episodeId: selectedEpisode.episodeId, 
+          server: selectedServer.server.serverName, 
+          category: selectedServer.type 
+        }));
+        
+        console.log('Stream fetch response:', response.payload?.success);
+        
+        if (!response.payload?.success) {
+          console.log(`Stream fetch failed, retry attempt: ${retryCount + 1}`);
+          
+          if (retryCount < 3) { // Allow up to 4 total attempts (0, 1, 2, 3)
+            retryCount++;
+            // Retry after a short delay
+            setTimeout(() => {
+              fetchData();
+            }, 1000);
+          } else {
+            // After 4 failed attempts, show error
+            setStreamFetchError('Failed to load video stream after multiple attempts. Please try a different server.');
+          }
+        } else {
+          // Success - reset error
+          setStreamFetchError(null);
+        }
+      }
     }
+    
+    // Reset error when episode or server changes
+    setStreamFetchError(null);
+    fetchData();
   }, [selectedEpisode, selectedServer, dispatch]);
 
   const handleEpisodeClick = (episode) => {
@@ -137,22 +179,35 @@ export default function Episodes() {
         // style={{ aspectRatio: '16 / 9' }} 
           >
           {
-            selectedServer.server && EpisodeStreamLinks?.data?.data ? (
-              <VideoPlayer streamData={
-                EpisodeStreamLinks.data.data
-              } />
-            ) : selectedServer.server ? (
-              <div className="group flex items-center justify-center h-full w-full overflow-hidden relative">
-                <div className="relative text-center transition-all duration-700 transform group-hover:scale-150">
-                 <img src={EpisodeImage} alt="" className='w-full h-80 md:h-full'/>
-                </div>
-                <div className="absolute inset-0  backdrop-blur-[1px] flex items-center justify-center">
-                  <LoadingAnimation />
-                  <p className='absolute top-0 bottom-0 flex items-center justify-center'><span className='mt-32 text-[#f47521] font-medium'>Loading Vedio...</span></p>
-                </div>
+            selectedServer.server ? (
+              <div className="relative">
+                <VideoPlayer streamData={
+                  EpisodeStreamLinks?.data?.data || null
+                } />
+                {/* Stream Fetch Error Overlay */}
+                {streamFetchError && (
+                  <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center z-30">
+                    <div className="text-center max-w-md px-6">
+                      <div className="text-red-500 mx-auto mb-4 text-5xl">⚠️</div>
+                      <h3 className="text-xl font-semibold text-white mb-3">Stream Error</h3>
+                      <p className="text-gray-300 mb-6 leading-relaxed">{streamFetchError}</p>
+                      <button
+                        onClick={() => {
+                          setStreamFetchError(null);
+                        }}
+                        className="bg-[#f47521] hover:bg-[#ff6600] text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 mx-auto shadow-lg mb-4"
+                      >
+                        Try Again
+                      </button>
+                      <p className="text-gray-400 text-xs">
+                        Consider selecting a different server from the options below
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
-              <div className="flex items-center justify-center h-full">
+              <div className="flex items-center justify-center h-full bg-gray-900 rounded-lg border border-gray-700 aspect-video">
                 <div className="text-center">
                   <FaPlay className="text-gray-400 mx-auto mb-4"
                     size={48} />
