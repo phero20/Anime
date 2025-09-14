@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { FaPlay, FaPlus } from "react-icons/fa";
-import {RiBookmarkLine,RiAddFill} from "react-icons/ri"
+import {RiBookmarkLine,RiHeartLine} from "react-icons/ri"
 import { useNavigate } from "react-router-dom";
 import { useDispatch,useSelector } from 'react-redux';
 import { setEpisodeImage, clearEpisodeImage } from '../redux/apifetch/GetanimeDataSlice';
@@ -277,7 +277,7 @@ export default function Homeview({AnimeData, loading}) {
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToFavorites(currentSlide); }}
                 className="group flex items-center justify-center h-9 w-9 bg-transparent border border-[#f47521] text-[#f47521] rounded-lg transition-all duration-500 hover:bg-[#ff6600] hover:text-black"
               >
-                <RiAddFill size={16} className="transform group-hover:rotate-90 transition-transform duration-500" />
+                <RiHeartLine size={16} className="transform transition-transform duration-500" />
               </button>
             </div>
 

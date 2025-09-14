@@ -114,6 +114,35 @@ export const getUserAnimeLists = createAsyncThunk(
   }
 );
 
+export const addToHistory = createAsyncThunk(
+  'userAnime/addToHistory',
+  async ({ episodeId, server, category, EpisodeImage, animeId, token }) => {
+    try {
+      const response = await axios.post(
+        `${backendUrl}/api/userAnime/history`,
+        {
+          episodeId,
+          server,
+          category,
+          EpisodeImage,
+          animeId,
+          date: new Date(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.message || 'Failed to add to history';
+    }
+  }
+);
+
+
+
 const userAnimeSlice = createSlice({
   name: 'userAnime',
   initialState: {
@@ -174,6 +203,24 @@ const userAnimeSlice = createSlice({
         state.watchlist = state.watchlist.filter(
           anime => anime.id !== action.payload.animeId
         );
+      })
+
+
+      //add to history
+      .addCase(addToHistory.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.data = null;
+      })
+      .addCase(addToHistory.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+        state.error = null;
+      })
+      .addCase(addToHistory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+        state.data = null;
       });
   }
 });

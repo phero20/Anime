@@ -132,20 +132,20 @@ export default function Home() {
         return() => window.removeEventListener("scroll", handleScroll);
     }, [dispatch, sections]);
 
-    useEffect(() => {
-        if (location.state?.scrollTo) {
-          const section = location.state.scrollTo;
+    // useEffect(() => {
+    //     if (location.state?.scrollTo) {
+    //       const section = location.state.scrollTo;
       
-          // Delay to ensure DOM is ready
-          setTimeout(() => {
-            scroller.scrollTo(section, {
-              smooth: true,
-              duration: 900,
-              offset: 0,
-            });
-          });
-        }
-    }, [location]);
+    //       // Delay to ensure DOM is ready
+    //       setTimeout(() => {
+    //         scroller.scrollTo(section, {
+    //           smooth: true,
+    //           duration: 900,
+    //           offset: 0,
+    //         });
+    //       });
+    //     }
+    // }, [location]);
 
     return (
         <div className="text-white scroll-smooth w-full overflow-hidden">

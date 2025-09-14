@@ -1,5 +1,6 @@
 import User from '../models/authModel.js';
 import AnimeData from '../models/AnimeData.js';
+import Episode from '../models/EpisodeModel.js';
 
 // Add to favorites
 export const addToFavorites = async (req, res) => {
@@ -214,4 +215,41 @@ export const getUserAnimeLists = async (req, res) => {
             message: error.message || 'Error fetching anime lists'
         });
     }
+};
+
+
+export const addToHistory = async (req, res) => {
+  const { episodeId, server, category, EpisodeImage, animeId, date } = req.body;
+
+  let existingEpisode = await Episode.findOne({
+    animeId,
+    episodeId,
+    server,
+    category,
+  });
+
+  if (!existingEpisode) {
+    const newEpisode = new Episode({
+      animeId,
+      episodeId,
+      category,
+      server,
+      EpisodeImage,
+      date: date || new Date().toISOString().split("T")[0],
+    });
+    existingEpisode = await newEpisode.save();
+  }
+
+  const episodeData = existingEpisode.toObject();
+
+  const userId = req.body.userId;
+  if (userId) {
+    const user = await User.findById(userId);
+    if (user) {
+      user.history.push(existingEpisode._id);
+      await user.save();
+    }
+  }
+
+  return res.json({ success: true, episodeData });
 };

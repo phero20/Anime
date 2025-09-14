@@ -31,6 +31,11 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'AnimeData',
     default: []
+  }],
+   history: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Episode',
+    default: []
   }]
 }, {
   timestamps: true

@@ -193,7 +193,7 @@ export default function Navbar() {
               
               <Link to="/" className="flex items-center gap-2">
                 <div className="text-2xl font-bold text-white hover:text-[#f47521] transition-colors duration-500">
-                  <img src={logo} alt="" className="w-28 rotate-[7deg]" />
+                  <img src={logo} alt="" className="w-24 rotate-[3deg]" />
                 </div>
               </Link>
             </div>
@@ -482,9 +482,9 @@ export default function Navbar() {
               }}
             >
               {/* Mobile Menu Header */}
-              <div className="flex items-center justify-between px-6 overflow-hidden border-b border-white/10 flex-shrink-0">
+              <div className="flex items-center justify-between px-4 py-2 overflow-hidden border-b border-white/10 flex-shrink-0">
                 <div className="text-xl font-bold text-white">
-                   <img src={logo} alt="" className="w-20 h-28 rotate-[7deg]" />
+                   <img src={logo} alt="" className="w-24 rotate-[3deg]" />
                 </div>
                 <button 
                   onClick={() => setMenuOpen(false)}

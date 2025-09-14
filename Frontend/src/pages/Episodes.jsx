@@ -114,7 +114,6 @@ export default function Episodes() {
     
     async function fetchData() {
       if (selectedEpisode?.episodeId && selectedServer.server && selectedServer.type) {
-        console.log('Fetching episode stream...');
         setStreamFetchError(null);
         
         const response = await dispatch(fetchEpisodesStreamLink({ 
@@ -123,10 +122,8 @@ export default function Episodes() {
           category: selectedServer.type 
         }));
         
-        console.log('Stream fetch response:', response.payload?.success);
         
         if (!response.payload?.success) {
-          console.log(`Stream fetch failed, retry attempt: ${retryCount + 1}`);
           
           if (retryCount < 3) { // Allow up to 4 total attempts (0, 1, 2, 3)
             retryCount++;

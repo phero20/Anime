@@ -137,19 +137,19 @@ function App() {
             <Footer />
 
             <div className="fixed bottom-4 right-0 lg:right-10 z-40">
-                <div className="relative group transform hover:scale-110 hover:-translate-y-4 transition-transform duration-300">
+                <div className="relative group transform hover:-translate-y-2 transition-transform duration-700">
                     <button
                         onClick={() => {
                             window.history.pushState({ chat: true }, '');
                             setIsChatOpen(true);
                         }}
-                        className="relative w-14 lg:w-16 xl:w-24 flex items-center justify-center hover:scale-105 transition-all duration-300"
+                        className="relative w-12 lg:w-16 flex items-center justify-center hover:scale-105 transition-all duration-700"
                         title="AI Chat Assistant"
                     >
                         <img
                             src={aigirl}
                             alt="AI Assistant"
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain animate-img"
                         />
                     </button>
 
@@ -161,7 +161,7 @@ function App() {
                                 animation: 'fadeInOut 4s ease-in-out'
                             }}
                         >
-                            <div className="bg-gray-900/80 backdrop-blur-sm text-[#f47521] text-xs py-2 px-4 rounded-lg shadow-lg 
+                            <div className="bg-gray-900/80 backdrop-blur-sm text-[#f47521] text-xs py-2 px-2 rounded-lg shadow-lg 
                             border border-[#f47521]/20 whitespace-nowrap animate-bounce">
                                 Hi {user?.username ? user?.username : ''
                                 }, I'm your AI Chat Assistant!

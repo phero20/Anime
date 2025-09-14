@@ -74,9 +74,8 @@ export const fetchEpisodesStreamLink = createAsyncThunk(
     const response = await axios.post(`${backendUrl}/api/anime/episodes-stream-links`, {
       episodeId: episodeId,
       server: server,
-      category: category
+      category: category,
     });
-      console.log(response);
     return response.data;
   }
 );
