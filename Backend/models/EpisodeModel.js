@@ -20,10 +20,14 @@ const episodeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  date: {
-    type: Date,
-    default: Date.now
+  episodeNumber: {
+    type: String,
+    required: true,
   },
+  animeName: {
+    type: String,
+    required: true,
+  }
 });
 
 episodeSchema.index({ animeId: 1, episodeId: 1, category: 1, server: 1 }, { unique: true });

@@ -253,7 +253,7 @@ export default function Homeview({AnimeData, loading}) {
             <div className="flex flex-row items-center gap-2 mb-8 sm:mb-10 animate-buttons-fade-in">
               <button 
                 onClick={() => {
-                  navigate(`/episodes/${currentSlide.id}`);
+                  navigate(`/episodes/${currentSlide.id}/${currentSlide.name}`);
                   dispatch(clearEpisodeImage());
                   dispatch(setEpisodeImage(currentSlide.poster));
                 }}

@@ -13,6 +13,12 @@ const PORT = process.env.PORT || 6789;
 app.use(express.json());
 app.use(cors());
 connectDB();
+// Add middleware to log all requests to userAnime routes
+app.use('/api/userAnime', (req, res, next) => {
+  console.log(`🚀 UserAnime Route Hit: ${req.method} ${req.path}`);
+  next();
+});
+
 app.use('/api/anime',fetchDataRouter)
 app.use('/api/auth',authRouter)
 app.use('/api/userAnime',userAnimeRouter)

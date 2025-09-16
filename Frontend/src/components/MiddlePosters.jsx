@@ -49,14 +49,17 @@ export default function MiddlePosters({ data }) {
               src={posterData.poster}
               alt={posterData.name || "Anime poster"}
               className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-150 rounded-xl"
-              onClick={() => navigate(`/anime/${posterData.id}`)}
             />
             
             {/* Hover Overlay */}
-            <div className="absolute inset-0 bg-gray-950/80 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center rounded-xl">
+            <div
+            
+            className="absolute inset-0 bg-gray-950/80 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center rounded-xl">
               <div className="text-center space-y-4">
                 <div className="w-16 h-16 bg-[#f47521]/10 border border-[#f47521]/50 rounded-full hover:scale-110 transition-all duration-500 cursor-pointer flex items-center justify-center mx-auto shadow-xl">
-                  <FaPlay className="text-[#f47521] ml-1" size={20} />
+                  <FaPlay 
+                  onClick={() => navigate(`/anime/${posterData.id}`)}
+                  className="text-[#f47521] ml-1" size={20} />
                 </div>
                 <p className="text-[#f47521] font-semibold text-lg">Watch Now</p>
               </div>
@@ -120,7 +123,7 @@ export default function MiddlePosters({ data }) {
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={() => {
-                  navigate(`/episodes/${posterData.id}`);
+                  navigate(`/episodes/${posterData.id}/${posterData.name}`);
                   dispatch(clearEpisodeImage());
                   dispatch(setEpisodeImage(posterData.poster));
                 }}

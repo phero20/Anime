@@ -412,7 +412,7 @@ export default function Navbar() {
                 <FaSearch size={18} />
               </NavLink>
 
-              {/* Bookmarks Icon */}
+              {/* Bookmarks Icon
               <NavLink 
                 to="/saved" 
                 className={({ isActive }) => `p-2 rounded-full transition-all duration-500 ${
@@ -420,7 +420,7 @@ export default function Navbar() {
                 }`}
               >
                 <RiBookmarkFill size={18} />
-              </NavLink>
+              </NavLink> */}
               
               {/* User Profile / Login */}
               {user ? (

@@ -43,6 +43,8 @@ const UserAnimeCard = ({item, listType}) => {
         dispatch(setEpisodeImage(item.poster));
         navigate(`/episodes/${
             item.id
+        }/${
+            item.name
         }`);
     };
 
@@ -113,12 +115,12 @@ const UserAnimeCard = ({item, listType}) => {
 export default function UserAnimeList({data, isLoading, listType}) {
     const emptyState = {
         favorites: {
-            icon: <FaStar className="text-4xl text-gray-600"/>,
+            icon: <FaStar className="text-4xl text-[#f57421]"/>,
             title: "No Favorites Yet",
             message: "Start adding anime to your favorites to see them here!"
         },
         watchlist: {
-            icon: <FaBookmark className="text-4xl text-gray-600"/>,
+            icon: <FaBookmark className="text-4xl text-[#f57421]"/>,
             title: "Your Watchlist is Empty",
             message: "Add anime to your watchlist to see them here!"
         }

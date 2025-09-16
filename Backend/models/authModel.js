@@ -33,9 +33,15 @@ const userSchema = new mongoose.Schema({
     default: []
   }],
    history: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Episode',
-    default: []
+    episode: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Episode',
+      required: true
+    },
+    watchedAt: {
+      type: Date,
+      default: Date.now
+    }
   }]
 }, {
   timestamps: true

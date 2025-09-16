@@ -5,6 +5,8 @@ import Episode from "../models/EpisodeModel.js";
 import User from "../models/authModel.js";
 
 const backendUrl = process.env.BACKEND_URL;
+const proxyBaseUrl = process.env.SELF_URL || "http://localhost:6789";
+
 
 export const fetchHomeData = async (req, res) => {
   try {
@@ -116,14 +118,14 @@ export const fetchSearchResult = async (req, res) => {
 
 // Proxy endpoint for M3U8 streams to bypass CORS
 export const proxyStream = async (req, res) => {
+  const { url } = req.query; // Move this outside try block so it's accessible in catch
+  
   try {
-    const { url } = req.query;
-
     if (!url) {
       return res.status(400).json({ error: "URL parameter is required" });
     }
 
-    console.log("Proxying stream:", url);
+    // console.log("Proxying stream:", url);
 
     // Set CORS headers
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -145,29 +147,62 @@ export const proxyStream = async (req, res) => {
       return res.status(200).end();
     }
 
-    // Forward range headers for video seeking
+    // Try minimal headers first - some CDNs block requests with too many headers
     const headers = {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-      Referer: "https://hianime.to/",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "Accept": "*/*",
     };
+
+    // Only add referer if the URL domain suggests it might help
+    if (url.includes('hianime') || url.includes('aniwatch')) {
+      headers["Referer"] = "https://hianime.to/";
+    }
 
     if (req.headers.range) {
       headers.Range = req.headers.range;
     }
 
-    // Make request to original stream URL
-    const response = await axios({
-      method: "GET",
-      url: url,
-      headers: headers,
-      responseType: "stream",
-      timeout: 30000, // 30 second timeout
-      maxRedirects: 5,
-      validateStatus: function (status) {
-        return status >= 200 && status < 400; // Accept 2xx and 3xx status codes
-      },
-    });
+    // Add a small delay to avoid rate limiting
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Make request to original stream URL with retry logic for 403
+    let response;
+    let retryCount = 0;
+    const maxRetries = 2;
+
+    while (retryCount <= maxRetries) {
+      try {
+        response = await axios({
+          method: "GET",
+          url: url,
+          headers: headers,
+          responseType: "stream",
+          timeout: 30000, // 30 second timeout
+          maxRedirects: 10,
+          validateStatus: function (status) {
+            return status >= 200 && status < 400; // Accept 2xx and 3xx status codes
+          },
+          withCredentials: false,
+          decompress: true,
+        });
+        break; // Success, exit retry loop
+      } catch (error) {
+        if (error.response?.status === 403 && retryCount < maxRetries) {
+          retryCount++;
+          // console.log(`403 error, retrying... (${retryCount}/${maxRetries})`);
+          // Wait longer between retries
+          await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+          
+          // Try with different headers on retry
+          if (retryCount === 1) {
+            headers["Referer"] = "https://hianime.to/";
+            headers["Origin"] = "https://hianime.to";
+          }
+          continue;
+        }
+        throw error; // Re-throw if not 403 or max retries reached
+      }
+    }
 
     // Check if this is an M3U8 playlist that needs URL rewriting
     const isM3U8 =
@@ -214,7 +249,7 @@ export const proxyStream = async (req, res) => {
       });
 
       response.data.on("error", (streamError) => {
-        console.error("M3U8 processing error:", streamError.message);
+        // console.error("M3U8 processing error:", streamError.message);
         if (!res.headersSent) {
           res
             .status(500)
@@ -245,7 +280,7 @@ export const proxyStream = async (req, res) => {
 
       // Pipe the stream with error handling
       response.data.on("error", (streamError) => {
-        console.error("Stream piping error:", streamError.message);
+        // console.error("Stream piping error:", streamError.message);
         if (!res.headersSent) {
           res
             .status(500)
@@ -256,12 +291,12 @@ export const proxyStream = async (req, res) => {
       response.data.pipe(res);
     }
   } catch (error) {
-    console.error("Proxy error details:", {
-      message: error.message,
-      code: error.code,
-      response: error.response?.status,
-      url: url,
-    });
+    // console.error("Proxy error details:", {
+    //   message: error.message,
+    //   code: error.code,
+    //   response: error.response?.status,
+    //   url: url,
+    // });
 
     if (error.response) {
       // Forward the error status from the upstream server
@@ -283,7 +318,7 @@ export const proxyStream = async (req, res) => {
   }
 };
 
-const proxyBaseUrl = process.env.SELF_URL || "http://localhost:6789";
+
 
 
 

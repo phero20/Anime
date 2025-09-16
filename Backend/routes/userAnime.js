@@ -8,6 +8,7 @@ import {
   removeFromFavorites,
   removeFromWatchlist,
   addToHistory,
+  getUserHistory
 } from "../controllers/userAnimeController.js";
 
 
@@ -19,5 +20,5 @@ userAnimeRouter.post("/watchlist", verifyToken, addToWatchlist);
 userAnimeRouter.delete("/watchlist/:animeId", verifyToken, removeFromWatchlist);
 userAnimeRouter.get("/anime-lists", verifyToken, getUserAnimeLists);
 userAnimeRouter.post("/history", verifyToken, addToHistory);
-
+userAnimeRouter.get("/history", verifyToken, getUserHistory);
 export default userAnimeRouter;

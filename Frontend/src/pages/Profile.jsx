@@ -23,13 +23,17 @@ import {
   FaUserEdit,
   FaTrashAlt,
   FaExclamationTriangle,
+  FaHistory,
 } from "react-icons/fa";
 import AnimeCards from "../components/AnimeCards";
 import ToastContainer, { showToast } from "../components/Toast";
 import LoadingAnimation from "../components/LoadingAnimation";
 import formgirl from "../assets/formgirl.png";
 import UserAnimeList from "../components/UserAnimeList";
+import EpisodeHistory from "../components/EpisodeHistory";
 import { setShowAuthModel } from '../redux/apifetch/uiSlice';
+import { getUserHistory } from '../redux/apifetch/userAnime';
+
 
 export default function Profile() {
   const user = useSelector(selectUser);
@@ -56,8 +60,12 @@ export default function Profile() {
   useEffect(() => {
     if (user?.token) {
       dispatch(getUserAnimeLists(user.token));
+      dispatch(getUserHistory(user.token));
     }
   }, [dispatch, user?.token]);
+
+
+   const { history } = useSelector((state) => state.userAnime);
 
   const handleEditProfile = () => {
     setIsEditModalOpen(true);
@@ -204,7 +212,7 @@ export default function Profile() {
 
   return (
     <>
-      {/* <ToastContainer /> */}
+     
       <div className="w-full min-h-screen bg-black text-white font-['Crunchyroll_Atyp',_sans-serif]">
         {/* Profile Background Banner with User's Avatar */}
         <div className="relative w-full h-48 md:h-64 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
@@ -297,7 +305,7 @@ export default function Profile() {
               <div className="flex justify-center md:justify-start gap-8">
               <button
                   onClick={() => setActiveTab("favorites")}
-                  className={`pb-4 font-bold text-lg border-b-2 transition-all duration-300 relative ${
+                  className={`pb-2 font-bold text-lg border-b-2 transition-all duration-300 relative ${
                     activeTab === "favorites"
                       ? "text-[#f47521] border-[#f47521]"
                       : "text-gray-400 border-transparent hover:text-white hover:border-gray-600"
@@ -311,7 +319,7 @@ export default function Profile() {
               </button>
               <button
                   onClick={() => setActiveTab("watchlist")}
-                  className={`pb-4 font-bold text-lg border-b-2 transition-all duration-300 relative ${
+                  className={`pb-2 font-bold text-lg border-b-2 transition-all duration-300 relative ${
                     activeTab === "watchlist"
                       ? "text-[#f47521] border-[#f47521]"
                       : "text-gray-400 border-transparent hover:text-white hover:border-gray-600"
@@ -321,6 +329,20 @@ export default function Profile() {
                   Watchlist
                   <span className="ml-2 text-sm font-normal text-gray-500">
                     ({watchlist.length})
+                  </span>
+              </button>
+              <button
+                  onClick={() => setActiveTab("History")}
+                  className={`pb-2 font-bold text-lg border-b-2 transition-all duration-300 relative ${
+                    activeTab === "History"
+                      ? "text-[#f47521] border-[#f47521]"
+                      : "text-gray-400 border-transparent hover:text-white hover:border-gray-600"
+                  }`}
+                >
+                  <FaHistory className="inline mr-2" />
+                  History
+                  <span className="ml-2 text-sm font-normal text-gray-500">
+                    ({history.length})
                   </span>
               </button>
               </div>
@@ -333,6 +355,7 @@ export default function Profile() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
+                className="mb-6"
               >
                 {activeTab === "favorites" ? (
                   <UserAnimeList
@@ -340,11 +363,17 @@ export default function Profile() {
                     isLoading={isListLoading}
                     listType="favorites"
                   />
-                ) : (
+                ) : activeTab === "watchlist" ? (
                   <UserAnimeList
                     data={watchlist}
                     isLoading={isListLoading}
                     listType="watchlist"
+                  />
+                ) : (
+                  <EpisodeHistory
+                    historyData={history}
+                    // name="Your Watch History"
+                    scroll={false}
                   />
                 )}
               </motion.div>

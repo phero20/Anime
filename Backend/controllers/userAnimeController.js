@@ -219,8 +219,12 @@ export const getUserAnimeLists = async (req, res) => {
 
 
 export const addToHistory = async (req, res) => {
-  const { episodeId, server, category, EpisodeImage, animeId, date } = req.body;
 
+    try {
+  const { episodeId, server, episodeNumber,
+    animeName, category, EpisodeImage, animeId, date } = req.body;
+
+  
   let existingEpisode = await Episode.findOne({
     animeId,
     episodeId,
@@ -228,16 +232,22 @@ export const addToHistory = async (req, res) => {
     category,
   });
 
+
+
   if (!existingEpisode) {
+    console.log("Creating new episode with episodeId:", episodeId)
     const newEpisode = new Episode({
       animeId,
       episodeId,
+      episodeNumber,
+      animeName,
       category,
       server,
       EpisodeImage,
-      date: date || new Date().toISOString().split("T")[0],
     });
+    
     existingEpisode = await newEpisode.save();
+    
   }
 
   const episodeData = existingEpisode.toObject();
@@ -246,10 +256,48 @@ export const addToHistory = async (req, res) => {
   if (userId) {
     const user = await User.findById(userId);
     if (user) {
-      user.history.push(existingEpisode._id);
+      user.history.push({
+        episode: existingEpisode._id,
+        watchedAt: new Date()
+      });
       await user.save();
     }
   }
 
+
   return res.json({ success: true, episodeData });
+} catch (error) {
+ 
+  return res.status(500).json({ success: false, message: "Internal server error" });
+}
 };
+
+
+
+export const getUserHistory = async (req, res) => {
+  try {
+    const userId = req.body.userId; 
+    const user = await User.findById(userId).populate('history.episode');
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    // Transform the history to include both episode data and watch date
+    const historyWithDates = user.history.map(historyItem => ({
+      ...historyItem.episode.toObject(),
+      watchedAt: historyItem.watchedAt
+    }));
+
+    res.status(200).json({ success: true, history: historyWithDates });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message || 'Error fetching history' });
+  }
+};
+
+
+
+
+
+
+

@@ -14,12 +14,14 @@ import { MdVideoLibrary } from 'react-icons/md';
 import { AnimatePresence, motion } from 'framer-motion';
 import VideoPlayer from '../components/VideoPlayer';
 import LoadingAnimation from '../components/LoadingAnimation';
-
+import { addToHistory } from '../redux/apifetch/userAnime';
+import {selectUser} from '../redux/apifetch/AuthSlicer';
 
 export default function Episodes() {
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   const { EpisodeImage, EpisodeStreamLinks } = useSelector((state) => state.AnimeData);
-  const { id } = useParams();
+  const { id,name,server,episodeId } = useParams();
   const [selectedEpisode, setSelectedEpisode] = useState(null);
   const [selectedServer, setSelectedServer] = useState({ server: null, type: null });
   const [episodesLoading, setEpisodesLoading] = useState(false);
@@ -67,11 +69,28 @@ export default function Episodes() {
   }, [dispatch, EpisodeImage]);
 
   useEffect(() => {
-    if (currentEpisodes.length > 0 && currentEpisodes[0]?.episodeId) {
-      setSelectedEpisode(currentEpisodes[0]);
-      dispatch(fetchEpisodesServerData(currentEpisodes[0].episodeId));
+    if (currentEpisodes.length > 0) {
+      // If episodeId comes from URL params, find and set that episode
+      if (episodeId) {
+        // Decode the episodeId from URL encoding
+        const decodedEpisodeId = decodeURIComponent(episodeId);
+        const targetEpisode = currentEpisodes.find(ep => ep.episodeId === decodedEpisodeId);
+        console.log("targetEpisode",currentEpisodes,decodedEpisodeId);
+        if (targetEpisode) {
+          setSelectedEpisode(targetEpisode);
+          dispatch(fetchEpisodesServerData(targetEpisode.episodeId));
+        } else {
+          // Fallback to first episode if URL episode not found
+          setSelectedEpisode(currentEpisodes[0]);
+          dispatch(fetchEpisodesServerData(currentEpisodes[0].episodeId));
+        }
+      } else {
+        // Default behavior - select first episode
+        setSelectedEpisode(currentEpisodes[0]);
+        dispatch(fetchEpisodesServerData(currentEpisodes[0].episodeId));
+      }
     }
-  }, [currentEpisodes, dispatch]);
+  }, [currentEpisodes, dispatch, episodeId]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -87,19 +106,48 @@ export default function Episodes() {
     };
   }, [isDropdownOpen]);
 
-  // Reset server loading when server data is received and auto-select first server
+  // Reset server loading when server data is received and auto-select server
   useEffect(() => {
     if (EpisodesServerData) {
       const servers = EpisodesServerData?.data?.data || {};
 
-      // Auto-select first available server (prefer sub over dub)
-      if (!selectedServer.server && servers.sub && servers.sub.length > 0) {
-        setSelectedServer({ server: servers.sub[0], type: 'sub' });
-      } else if (!selectedServer.server && servers.dub && servers.dub.length > 0) {
-        setSelectedServer({ server: servers.dub[0], type: 'dub' });
+      // If server comes from URL params, find and set that server
+      if (server && !selectedServer.server) {
+        let targetServer = null;
+        let serverType = null;
+
+        // Check in sub servers first
+        if (servers.sub) {
+          targetServer = servers.sub.find(s => s.serverName === server);
+          if (targetServer) serverType = 'sub';
+        }
+
+        // If not found in sub, check dub servers
+        if (!targetServer && servers.dub) {
+          targetServer = servers.dub.find(s => s.serverName === server);
+          if (targetServer) serverType = 'dub';
+        }
+
+        if (targetServer && serverType) {
+          setSelectedServer({ server: targetServer, type: serverType });
+        } else {
+          // Fallback to first available server if URL server not found
+          if (servers.sub && servers.sub.length > 0) {
+            setSelectedServer({ server: servers.sub[0], type: 'sub' });
+          } else if (servers.dub && servers.dub.length > 0) {
+            setSelectedServer({ server: servers.dub[0], type: 'dub' });
+          }
+        }
+      } else if (!selectedServer.server) {
+        // Default behavior - auto-select first available server (prefer sub over dub)
+        if (servers.sub && servers.sub.length > 0) {
+          setSelectedServer({ server: servers.sub[0], type: 'sub' });
+        } else if (servers.dub && servers.dub.length > 0) {
+          setSelectedServer({ server: servers.dub[0], type: 'dub' });
+        }
       }
     }
-  }, [EpisodesServerData, selectedServer.server]);
+  }, [EpisodesServerData, selectedServer.server, server]);
 
   // Reset episodes loading when episodes data is received
   useEffect(() => {
@@ -111,9 +159,11 @@ export default function Episodes() {
   // Fetch stream link when episode or server changes
   useEffect(() => {
     let retryCount = 0;
+    let isMounted = true;
+    let historyAdded = false; // Track if history was already added for this combination
     
     async function fetchData() {
-      if (selectedEpisode?.episodeId && selectedServer.server && selectedServer.type) {
+      if (selectedEpisode?.episodeId && selectedServer.server && selectedServer.type && isMounted) {
         setStreamFetchError(null);
         
         const response = await dispatch(fetchEpisodesStreamLink({ 
@@ -122,6 +172,7 @@ export default function Episodes() {
           category: selectedServer.type 
         }));
         
+        if (!isMounted) return; // Exit if component unmounted
         
         if (!response.payload?.success) {
           
@@ -129,7 +180,7 @@ export default function Episodes() {
             retryCount++;
             // Retry after a short delay
             setTimeout(() => {
-              fetchData();
+              if (isMounted) fetchData();
             }, 1000);
           } else {
             // After 4 failed attempts, show error
@@ -138,6 +189,23 @@ export default function Episodes() {
         } else {
           // Success - reset error
           setStreamFetchError(null);
+          
+          // Add to history only ONCE per successful stream fetch
+          if (user?.token && isMounted && !historyAdded) {
+            historyAdded = true; 
+            console.log("history call")// Mark as added to prevent multiple calls
+            dispatch(addToHistory({ 
+              episodeId: selectedEpisode.episodeId, 
+              episodeNumber:selectedEpisode.number,
+              animeName:name,
+              server: selectedServer.server.serverName, 
+              category: selectedServer.type, 
+              EpisodeImage, 
+              animeId: id, 
+              token: user.token 
+            }));
+            console.log("History added for:", selectedEpisode);
+          }
         }
       }
     }
@@ -145,7 +213,12 @@ export default function Episodes() {
     // Reset error when episode or server changes
     setStreamFetchError(null);
     fetchData();
-  }, [selectedEpisode, selectedServer, dispatch]);
+    
+    // Cleanup function to prevent state updates on unmounted component
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedEpisode, selectedServer]);
 
   const handleEpisodeClick = (episode) => {
     setSelectedEpisode(episode);

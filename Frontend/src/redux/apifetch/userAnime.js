@@ -116,13 +116,16 @@ export const getUserAnimeLists = createAsyncThunk(
 
 export const addToHistory = createAsyncThunk(
   'userAnime/addToHistory',
-  async ({ episodeId, server, category, EpisodeImage, animeId, token }) => {
+  async ({ episodeId, server,episodeNumber,animeName, category, EpisodeImage, animeId, token }) => {
     try {
+      console.log("episodeId",episodeId)
       const response = await axios.post(
         `${backendUrl}/api/userAnime/history`,
         {
           episodeId,
           server,
+          episodeNumber,
+          animeName,
           category,
           EpisodeImage,
           animeId,
@@ -134,9 +137,32 @@ export const addToHistory = createAsyncThunk(
           },
         }
       );
+      console.log(response)
       return response.data;
     } catch (error) {
       throw error.response?.data?.message || 'Failed to add to history';
+    }
+  }
+);
+
+
+export const getUserHistory = createAsyncThunk(
+  'userAnime/getUserHistory',
+  async (token) => {
+    try {
+      console.log(token)
+      const response = await axios.get(
+        `${backendUrl}/api/userAnime/history`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log(response)
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.message || 'Failed to fetch history';
     }
   }
 );
@@ -148,6 +174,7 @@ const userAnimeSlice = createSlice({
   initialState: {
     favorites: [],
     watchlist: [],
+    history: [],
     loading: false,
     error: null
   },
@@ -221,6 +248,21 @@ const userAnimeSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
         state.data = null;
+      })
+
+      // Get History
+      .addCase(getUserHistory.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserHistory.fulfilled, (state, action) => {
+        state.loading = false;
+        state.history = action.payload.history || action.payload;
+        state.error = null;
+      })
+      .addCase(getUserHistory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   }
 });
@@ -230,6 +272,7 @@ export const { clearUserAnimeLists } = userAnimeSlice.actions;
 // Selectors
 export const selectFavorites = (state) => state.userAnime.favorites;
 export const selectWatchlist = (state) => state.userAnime.watchlist;
+export const selectHistory = (state) => state.userAnime.history;
 export const selectUserAnimeLoading = (state) => state.userAnime.loading;
 export const selectUserAnimeError = (state) => state.userAnime.error;
 

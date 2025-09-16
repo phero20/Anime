@@ -150,14 +150,14 @@ export default function Search() {
           <div className="absolute inset-0 "></div>
         </div>
         
-        <div className="relative z-10 max-w-6xl mx-auto px-6 pt-16">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 pt-12">
           {/* Search Section */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-white mb-1 tracking-tight">
               Discover <span className="text-[#f47521]">Anime</span>
             </h1>
-            <p className="text-xl text-gray-400 font-light">
-              Search through thousands of anime titles
+            <p className="text-base text-gray-400 font-light">
+              Search through thousands of animes
             </p>
           
             
@@ -167,7 +167,7 @@ export default function Search() {
           {
             isInputFocused && (
               <div className="max-w-2xl text-center mx-auto">
-                <div className="relative text-lg text-gray-500 font-light group">
+                <div className="relative text-sm text-gray-500 font-light group">
                 <div>Press Enter For Full Search Results</div>
                 </div>
               </div>
@@ -188,7 +188,7 @@ export default function Search() {
                   
                   <input
                     type="text"
-                    className="w-full bg-transparent text-white placeholder-gray-400 text-lg font-medium px-16 py-6 rounded-2xl border-0 outline-none focus:ring-0"
+                    className="w-full bg-transparent text-white placeholder-gray-400 text-lg font-medium px-12 py-4 rounded-2xl border-0 outline-none focus:ring-0"
                     placeholder="Search for anime"
                     value={query}
                     onChange={handleInputChange}

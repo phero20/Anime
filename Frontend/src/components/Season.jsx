@@ -137,7 +137,7 @@ export default function Season({ data }) {
                                     onClick={
                                         () => {
                                             navigate(`/episodes/${id || malId || anilistId
-                                                }`)
+                                                }/${name}`)
                                             dispatch(clearEpisodeImage());
                                             dispatch(setEpisodeImage(poster));
                                         }
@@ -275,7 +275,7 @@ export default function Season({ data }) {
                                 <button onClick={
                                     () => {
                                         navigate(`/episodes/${id || malId || anilistId
-                                            }`)
+                                            }/${name}`)
                                         dispatch(clearEpisodeImage());
                                         dispatch(setEpisodeImage(poster));
                                     }
@@ -496,7 +496,7 @@ export default function Season({ data }) {
                                     <button onClick={
                                         () => {
                                             navigate(`/episodes/${id || malId || anilistId
-                                                }`)
+                                                }/${name}`)
                                             dispatch(clearEpisodeImage());
                                             dispatch(setEpisodeImage(poster));
                                         }
@@ -607,12 +607,12 @@ export default function Season({ data }) {
                                     onClick={
                                         () => {
                                             navigate(`/episodes/${id || malId || anilistId
-                                                }`)
+                                                }/${name}`)
                                             dispatch(clearEpisodeImage());
                                             dispatch(setEpisodeImage(poster));
                                         }
                                     }
-                                    className="hover:scale-110 cursor-pointer rounded-full p-3 text-[#f47521] cursor-pointer border border-[#f47521]/50 hover:text-[#f47521] bg-[#f47521]/10 transition-all duration-500"><FaPlay size={25} /></div>  
+                                    className="hover:scale-110 cursor-pointer rounded-full p-3 text-[#f47521] border border-[#f47521]/50 hover:text-[#f47521] bg-[#f47521]/10 transition-all duration-500"><FaPlay size={25} /></div>  
                                       </div>
                                     </div>
                                     <h1 className="text-4xl mt-2 text-center font-black leading-tight text-[#f47521] drop-shadow-lg">
