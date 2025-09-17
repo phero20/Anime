@@ -17,6 +17,10 @@
 
 ---
 
+## 🎮 Demo Features
+
+**Live Demo** : https://anime-frontend-nu.vercel.app
+
 ## ✨ Features & Highlights
 
 ### 🎥 **Video Streaming**
@@ -296,17 +300,17 @@ npm start        # Start production server
 2. Deploy the Backend folder
 3. Ensure MongoDB connection is configured
 
-<!-- ## 🤝 Contributing
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/new-feature`
 3. Commit changes: `git commit -am 'Add new feature'`
 4. Push to branch: `git push origin feature/new-feature`
-5. Submit a Pull Request -->
+5. Submit a Pull Request
 
 
 
-## 🌟 Performance Metrics
+<!-- ## 🌟 Performance Metrics
 
 <div align="center">
 
@@ -314,11 +318,11 @@ npm start        # Start production server
 ![Uptime](https://img.shields.io/badge/Uptime-99.9%25-success?style=for-the-badge)
 ![Response Time](https://img.shields.io/badge/Response_Time-<200ms-blue?style=for-the-badge)
 
-</div>
+</div> -->
 
 ## 🎮 Demo Features
 
-Try these features on the [**Live Demo**](https://anime-frontend-nu.vercel.app):
+
 
 - 🎬 **Stream Episodes** - Watch your favorite anime with HLS streaming
 - 🤖 **AI Chat** - Ask for anime recommendations 
@@ -344,7 +348,7 @@ Try these features on the [**Live Demo**](https://anime-frontend-nu.vercel.app):
 
 **⭐ If you found this project helpful, please give it a star! ⭐**
 
-Made with ❤️ for the anime community
+<!-- Made with ❤️ for the anime community -->
 
 </div>
 
