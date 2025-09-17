@@ -2,7 +2,9 @@
 
 <div align="center">
 
-# 🎌 Anime Streaming Platform
+<img src="Frontend/src/assets/logo.png" alt="Anime Platform Logo" width="80" height="80">
+
+# Anime Streaming Platform
 
 ### A modern, full-stack anime streaming web application built with React and Node.js
 
@@ -17,7 +19,7 @@
 
 ---
 
-## 🎮 Demo Features
+## 🎮 Demo
 
 **Live Demo** : https://anime-frontend-nu.vercel.app
 
