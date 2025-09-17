@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Hls from 'hls.js';
 import Plyr from 'plyr';
 import 'plyr/dist/plyr.css';
 import LoadingAnimation from './LoadingAnimation';
 import { FaPlay, FaExclamationTriangle, FaRedo } from 'react-icons/fa';
+import { addToHistory } from '../redux/apifetch/userAnime';
+import { selectUser } from '../redux/apifetch/AuthSlicer';
 
 const plyrDefaultOptions = {
   controls: [
@@ -37,7 +40,16 @@ const plyrDefaultOptions = {
   disableContextMenu: true
 };
 
-export default function VideoPlayer({ streamData }) {
+export default function VideoPlayer({ 
+  streamData, 
+  selectedEpisode, 
+  selectedServer, 
+  animeName, 
+  animeId, 
+  episodeImage 
+}) {
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   const containerRef = useRef(null);
   const playerRef = useRef(null);
   const hlsRef = useRef(null);
@@ -53,6 +65,12 @@ export default function VideoPlayer({ streamData }) {
   const [availableSubtitles, setAvailableSubtitles] = useState([]);
   const [showControls, setShowControls] = useState(true);
   const [controlsTimeout, setControlsTimeout] = useState(null);
+  const [historyAdded, setHistoryAdded] = useState(false);
+
+  // Reset history flag when episode changes
+  useEffect(() => {
+    setHistoryAdded(false);
+  }, [selectedEpisode?.episodeId]);
 
   const initializePlayer = useCallback(async () => {
     if (!streamData || !containerRef.current) {
@@ -172,7 +190,7 @@ export default function VideoPlayer({ streamData }) {
 
         // Wait for manifest to be parsed and set up quality control
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          console.log('HLS manifest parsed successfully');
+          console.log('successfully');
           
           // Set default quality to 720p if available
           const levels = hls.levels;
@@ -192,7 +210,7 @@ export default function VideoPlayer({ streamData }) {
             
             // Set the quality level (disable auto-switching)
             hls.currentLevel = bestLevel;
-            console.log(`Set default quality to: ${levels[bestLevel].height}p`);
+            console.log(``);
           }
         });
         
@@ -203,7 +221,7 @@ export default function VideoPlayer({ streamData }) {
         });
         
         hls.on(Hls.Events.SUBTITLE_TRACK_LOADED, (event, data) => {
-          console.log('Subtitle track loaded:', data);
+          console.log('');
         });
       } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
         // Native HLS support (Safari)
@@ -246,18 +264,18 @@ export default function VideoPlayer({ streamData }) {
         // Handle quality changes from Plyr settings
         player.on('qualitychange', (event) => {
           const quality = event.detail.quality;
-          console.log('Quality change requested:', quality);
+          console.log('');
           
           if (quality === 'auto') {
             hls.currentLevel = -1; // Auto quality
-            console.log('Quality set to: Auto');
+            console.log('');
           } else {
             // Find the level index for the requested quality
             const levels = hls.levels;
             const levelIndex = levels.findIndex(level => level.height === parseInt(quality));
             if (levelIndex !== -1) {
               hls.currentLevel = levelIndex;
-              console.log(`Quality set to: ${quality}p`);
+              console.log(``);
             }
           }
         });
@@ -266,7 +284,7 @@ export default function VideoPlayer({ streamData }) {
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
           const levels = hls.levels;
           if (levels && levels.length > 0) {
-            console.log('Available quality levels:', levels.map(l => `${l.height}p`));
+            console.log('');
             
             // Set available qualities for custom UI
             const qualities = ['Auto', ...levels.map(level => `${level.height}p`)];
@@ -280,7 +298,7 @@ export default function VideoPlayer({ streamData }) {
               const level720Index = levels.findIndex(level => level.height === 720);
               hls.currentLevel = level720Index;
               setCurrentQuality('720p');
-              console.log('Set default quality to: 720p');
+              console.log('');
             } else {
               setCurrentQuality('Auto');
             }
@@ -290,10 +308,10 @@ export default function VideoPlayer({ streamData }) {
         // Handle subtitle/caption tracks
         hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, () => {
           const subtitleTracks = hls.subtitleTracks;
-          console.log('All subtitle tracks:', subtitleTracks);
+          console.log('');
           
           if (subtitleTracks && subtitleTracks.length > 0) {
-            console.log('Subtitle tracks available:', subtitleTracks.length);
+            console.log('');
             setAvailableSubtitles(subtitleTracks);
             
             // Add subtitle tracks to video element
@@ -313,7 +331,7 @@ export default function VideoPlayer({ streamData }) {
         
         // Handle subtitle track changes
         hls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, (event, data) => {
-          console.log('Subtitle track switched:', data);
+          console.log('');
         });
       }
       
@@ -336,7 +354,7 @@ export default function VideoPlayer({ streamData }) {
       player.on('enterfullscreen', () => {
         if (isMobile && screen.orientation?.lock) {
           screen.orientation.lock('landscape').catch(err => 
-            console.error("Could not lock screen orientation:", err)
+            console.error("")
           );
         }
       });
@@ -361,6 +379,21 @@ export default function VideoPlayer({ streamData }) {
         setIsLoading(false);
         setIsBuffering(false);
         setIsReady(true);
+        
+        // Add to history only once when video successfully starts playing
+        if (user?.token && selectedEpisode && !historyAdded) {
+          setHistoryAdded(true);
+          dispatch(addToHistory({ 
+            episodeId: selectedEpisode.episodeId, 
+            episodeNumber: selectedEpisode.number,
+            animeName: animeName,
+            server: selectedServer?.server?.serverName || 'Unknown', 
+            category: selectedServer?.type || 'Unknown', 
+            EpisodeImage: episodeImage, 
+            animeId: animeId, 
+            token: user.token 
+          }));
+        }
       });
 
       player.on('canplay', () => {
@@ -374,7 +407,7 @@ export default function VideoPlayer({ streamData }) {
       });
 
       player.on('error', (event) => {
-        console.error('Player error:', event);
+        // console.error('Player error:', event);
         setError('Failed to load video. Please try again.');
         setIsLoading(false);
       });
@@ -388,7 +421,7 @@ export default function VideoPlayer({ streamData }) {
       });
 
     } catch (err) {
-      console.error('Error initializing player:', err);
+      // console.error('Error initializing player:', err);
       setError('Failed to initialize video player.');
       setIsLoading(false);
     }
@@ -411,7 +444,6 @@ export default function VideoPlayer({ streamData }) {
       if (levelIndex !== -1) {
         hls.currentLevel = levelIndex;
         setCurrentQuality(quality);
-        console.log(`Quality set to: ${quality}`);
       }
     }
     setShowQualityMenu(false);
@@ -437,7 +469,6 @@ export default function VideoPlayer({ streamData }) {
       }
       
       setCaptionsEnabled(true);
-      console.log('Captions enabled');
     } else {
       // Disable captions
       hls.subtitleTrack = -1; // Disable subtitles
@@ -590,12 +621,12 @@ export default function VideoPlayer({ streamData }) {
       {error && (
         <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center z-20">
           <div className="text-center max-w-md px-6">
-            <FaExclamationTriangle className="text-red-500 mx-auto mb-4" size={48} />
-            <h3 className="text-xl font-semibold text-white mb-3">Playback Error</h3>
+            <FaExclamationTriangle className="text-red-500 mx-auto mb-3" size={48} />
+            <h3 className="text-lg font-semibold text-white mb-3">Playback Error</h3>
             <p className="text-gray-300 mb-6 leading-relaxed">{error}</p>
             <button
               onClick={handleRetry}
-              className="bg-[#f47521] hover:bg-[#ff6600] text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 mx-auto shadow-lg"
+              className="bg-[#f47521] hover:bg-[#ff6600] text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 mx-auto shadow-lg"
             >
               <FaRedo className="text-sm" />
               Try Again {retryCount > 0 && `(${retryCount})`}

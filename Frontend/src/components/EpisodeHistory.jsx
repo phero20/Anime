@@ -74,7 +74,7 @@ export default function EpisodeHistory({ historyData = [], name = "Your Watch Hi
     <div 
     onClick={() => {
       dispatch(setEpisodeImage(item.EpisodeImage));
-      navigate(`/episodes/${item.animeId}/${item.animeName}/${item.server}/${encodeURIComponent(item.episodeId)}`)}}
+      navigate(`/episodes/${item.animeId}/${item.animeName}/${item.server}/${item.category}/${encodeURIComponent(item.episodeId)}`)}}
      key={index}>
       <motion.div
         {...(!scroll ? {
@@ -84,13 +84,13 @@ export default function EpisodeHistory({ historyData = [], name = "Your Watch Hi
           viewport: { once: false },
           transition: { duration: 0.6 }
         } : {})}
-        className={`group cursor-pointer relative overflow-hidden transition-all duration-300 ${scroll ? `${safeData.length === 1 ? "w-[280px] max-w-[280px]" : "min-w-[200px] sm:min-w-[240px] md:min-w-[280px] lg:min-w-[320px] xl:min-w-[360px]"} flex-shrink-0` : "w-full"}`}
+        className={`group cursor-pointer relative overflow-hidden transition-all duration-300 ${scroll ? "w-[230px] h-auto flex-shrink-0" : "w-full h-full"}`}
       >
         {/* Crunchyroll-style Card Container */}
-        <div className="relative overflow-hidden group-hover:border-[#f47521] transition-all duration-500 bg-gray-900/50 rounded-lg border border-gray-800/50">
+        <div className="relative overflow-hidden group-hover:border-[#f47521] transition-all duration-500 bg-gray-900/50 rounded-lg border border-gray-800/50 h-full flex flex-col">
           
           {/* Image Container - Episode thumbnail */}
-          <div className={`relative w-full ${scroll ? 'aspect-[16/8]' : 'aspect-[16/8]'} rounded-t-lg overflow-hidden`}>
+          <div className={`relative w-full ${scroll ? 'aspect-[16/9]' : 'aspect-[16/9]'} rounded-t-lg overflow-hidden`}>
             <img
               src={item.EpisodeImage}
               alt={`Episode ${item.episodeNumber}`}
@@ -98,44 +98,44 @@ export default function EpisodeHistory({ historyData = [], name = "Your Watch Hi
             />
             
             {/* Server Badge */}
-            <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-gray-950/70 backdrop-blur-sm border border-[#f47521]/30">
-              <FaServer className="text-[#f47521]" size={10} />
-              <span className="text-white font-medium">{item.server.toUpperCase()}</span>
+            <div className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 text-xs rounded-md bg-gray-950/70 backdrop-blur-sm border border-[#f47521]/30">
+              <FaServer className="text-[#f47521]" size={8} />
+              <span className="text-white font-medium text-xs">{item.server.toUpperCase()}</span>
             </div>
 
             {/* Category Badge */}
-            <div className="absolute top-3 left-3 px-2 py-1 text-xs rounded-md bg-gray-950/70 backdrop-blur-sm text-[#f47521] border border-[#f47521]/30 font-medium">
+            <div className="absolute top-2 left-2 px-1.5 py-0.5 text-xs rounded-md bg-gray-950/70 backdrop-blur-sm text-[#f47521] border border-[#f47521]/30 font-medium">
               {item.category.toUpperCase()}
             </div>
 
             {/* Hover Overlay */}
             <div className="absolute inset-0 rounded-t-lg flex justify-center items-center bg-gray-950/80 opacity-0 group-hover:opacity-100 transition-all duration-500">
-              <div className="hover:scale-110 rounded-full p-4 text-[#f47521] cursor-pointer border border-[#f47521]/50 bg-[#f47521]/10 transition-all duration-500">
-                <FaPlay className="text-lg" />
+              <div className="hover:scale-110 rounded-full p-2 text-[#f47521] cursor-pointer border border-[#f47521]/50 bg-[#f47521]/10 transition-all duration-500">
+                <FaPlay className="text-sm" />
               </div>
             </div>
           </div>
 
           {/* Content Section */}
-          <div className="p-4 space-y-3">
+          <div className="p-3 space-y-2 flex-1 flex flex-col justify-between">
             {/* Episode Info */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm text-gray-400">
-                <MdVideoLibrary className="text-[#f47521]" size={16} />
-                <span className="text-white font-semibold">Episode {item.episodeNumber}</span>
+            <div className="space-y-1">
+              <div className="flex items-center gap-1 text-xs text-gray-400">
+                <MdVideoLibrary className="text-[#f47521]" size={12} />
+                <span className="text-white font-semibold text-xs">Episode {item.episodeNumber}</span>
               </div>
               
               {/* Anime ID as title */}
-              <h3 className="text-sm font-bold text-white group-hover:text-[#f47521] transition-colors duration-300 line-clamp-2 leading-tight capitalize">
+              <h3 className="text-xs font-bold text-white group-hover:text-[#f47521] transition-colors duration-300 line-clamp-2 leading-tight capitalize h-8 overflow-hidden">
                 {item.animeName}
               </h3>
             </div>
 
             {/* Date and Server Info */}
-            <div className="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-gray-700/50">
-              <div className="flex items-center gap-2">
-                <MdDateRange className="text-[#f47521]" size={14} />
-                <span>{formatDate(item.watchedAt)}</span>
+            <div className="flex items-center justify-between text-xs text-gray-400 pt-1.5 border-t border-gray-700/50">
+              <div className="flex items-center gap-1">
+                <MdDateRange className="text-[#f47521]" size={10} />
+                <span className="text-xs">{formatDate(item.watchedAt)}</span>
               </div>
               
               {/* <div className="flex items-center gap-2">
@@ -212,8 +212,8 @@ export default function EpisodeHistory({ historyData = [], name = "Your Watch Hi
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
-         gap-4 sm:gap-5 md:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5
+         gap-3 sm:gap-4 md:gap-4 items-stretch">
           {safeData.map(renderHistoryCard)}
         </div>
       )}

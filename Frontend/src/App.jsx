@@ -120,7 +120,7 @@ function App() {
                         element={
                             <PageWrapper><Producer /></PageWrapper>
                         } />
-                    <Route  path="/episodes/:id/:name/:server?/:episodeId?"
+                    <Route  path="/episodes/:id/:name/:server?/:category?/:episodeId?"
                         element={
                             <PageWrapper><Episodes /></PageWrapper>
                         } />

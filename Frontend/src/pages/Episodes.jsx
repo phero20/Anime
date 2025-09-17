@@ -21,7 +21,7 @@ export default function Episodes() {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const { EpisodeImage, EpisodeStreamLinks } = useSelector((state) => state.AnimeData);
-  const { id,name,server,episodeId } = useParams();
+  const { id,name,server,category,episodeId } = useParams();
   const [selectedEpisode, setSelectedEpisode] = useState(null);
   const [selectedServer, setSelectedServer] = useState({ server: null, type: null });
   const [episodesLoading, setEpisodesLoading] = useState(false);
@@ -111,31 +111,28 @@ export default function Episodes() {
     if (EpisodesServerData) {
       const servers = EpisodesServerData?.data?.data || {};
 
-      // If server comes from URL params, find and set that server
-      if (server && !selectedServer.server) {
+      // If server and category come from URL params, find and set that specific server
+      if (server && category && !selectedServer.server) {
         let targetServer = null;
-        let serverType = null;
 
-        // Check in sub servers first
-        if (servers.sub) {
-          targetServer = servers.sub.find(s => s.serverName === server);
-          if (targetServer) serverType = 'sub';
+        // Look for the server in the specified category (sub or dub)
+        if (servers[category]) {
+          targetServer = servers[category].find(s => s.serverName === server);
         }
 
-        // If not found in sub, check dub servers
-        if (!targetServer && servers.dub) {
-          targetServer = servers.dub.find(s => s.serverName === server);
-          if (targetServer) serverType = 'dub';
-        }
-
-        if (targetServer && serverType) {
-          setSelectedServer({ server: targetServer, type: serverType });
+        if (targetServer) {
+          setSelectedServer({ server: targetServer, type: category });
         } else {
-          // Fallback to first available server if URL server not found
-          if (servers.sub && servers.sub.length > 0) {
-            setSelectedServer({ server: servers.sub[0], type: 'sub' });
-          } else if (servers.dub && servers.dub.length > 0) {
-            setSelectedServer({ server: servers.dub[0], type: 'dub' });
+          // Fallback to first available server in the specified category
+          if (servers[category] && servers[category].length > 0) {
+            setSelectedServer({ server: servers[category][0], type: category });
+          } else {
+            // If specified category not available, fallback to any available server
+            if (servers.sub && servers.sub.length > 0) {
+              setSelectedServer({ server: servers.sub[0], type: 'sub' });
+            } else if (servers.dub && servers.dub.length > 0) {
+              setSelectedServer({ server: servers.dub[0], type: 'dub' });
+            }
           }
         }
       } else if (!selectedServer.server) {
@@ -147,7 +144,7 @@ export default function Episodes() {
         }
       }
     }
-  }, [EpisodesServerData, selectedServer.server, server]);
+  }, [EpisodesServerData, selectedServer.server, server, category]);
 
   // Reset episodes loading when episodes data is received
   useEffect(() => {
@@ -189,23 +186,6 @@ export default function Episodes() {
         } else {
           // Success - reset error
           setStreamFetchError(null);
-          
-          // Add to history only ONCE per successful stream fetch
-          if (user?.token && isMounted && !historyAdded) {
-            historyAdded = true; 
-            console.log("history call")// Mark as added to prevent multiple calls
-            dispatch(addToHistory({ 
-              episodeId: selectedEpisode.episodeId, 
-              episodeNumber:selectedEpisode.number,
-              animeName:name,
-              server: selectedServer.server.serverName, 
-              category: selectedServer.type, 
-              EpisodeImage, 
-              animeId: id, 
-              token: user.token 
-            }));
-            console.log("History added for:", selectedEpisode);
-          }
         }
       }
     }
@@ -251,9 +231,14 @@ export default function Episodes() {
           {
             selectedServer.server ? (
               <div className="relative">
-                <VideoPlayer streamData={
-                  EpisodeStreamLinks?.data?.data || null
-                } />
+                <VideoPlayer 
+                  streamData={EpisodeStreamLinks?.data?.data || null}
+                  selectedEpisode={selectedEpisode}
+                  selectedServer={selectedServer}
+                  animeName={name}
+                  animeId={id}
+                  episodeImage={EpisodeImage}
+                />
                 {/* Stream Fetch Error Overlay */}
                 {streamFetchError && (
                   <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center z-30">

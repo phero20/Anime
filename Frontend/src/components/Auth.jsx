@@ -64,7 +64,7 @@ export default function Auth({ onClose, showGreeting, setShowGreeting }) {
       setTimeout(() => {
         setShowGreeting(false);
         if (onClose) onClose();
-      }, 2000);
+      }, 3000);
     }
   };
 
