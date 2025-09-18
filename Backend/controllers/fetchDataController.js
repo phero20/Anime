@@ -147,31 +147,125 @@ export const proxyStream = async (req, res) => {
       return res.status(200).end();
     }
 
-    // Try minimal headers first - some CDNs block requests with too many headers
-    const headers = {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-      "Accept": "*/*",
+    // Determine the domain for specific header strategies
+    const urlObj = new URL(url);
+    const domain = urlObj.hostname;
+
+    // Enhanced headers with multiple strategies
+    const getHeadersForDomain = (domain, retryAttempt = 0) => {
+      const baseHeaders = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "*/*",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "video",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "cross-site",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache"
+      };
+
+      // Domain-specific strategies
+      if (domain.includes('fogtwist') || domain.includes('twist')) {
+        if (retryAttempt === 0) {
+          return {
+            ...baseHeaders,
+            "Referer": "https://hianime.to/",
+            "Origin": "https://hianime.to",
+            "Sec-Ch-Ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+            "Sec-Ch-Ua-Mobile": "?0",
+            "Sec-Ch-Ua-Platform": '"Windows"'
+          };
+        } else if (retryAttempt === 1) {
+          return {
+            ...baseHeaders,
+            "Referer": "https://aniwatch.to/",
+            "Origin": "https://aniwatch.to",
+            "X-Requested-With": "XMLHttpRequest"
+          };
+        } else {
+          return {
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "*/*",
+            "Referer": "https://9anime.to/",
+            "Origin": "https://9anime.to"
+          };
+        }
+      } else if (domain.includes('lightningflash') || domain.includes('lightning')) {
+        if (retryAttempt === 0) {
+          // Minimal headers approach - some CDNs block excessive headers
+          return {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "*/*"
+          };
+        } else if (retryAttempt === 1) {
+          // Try with different browser and minimal anime site referer
+          return {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "*/*",
+            "Referer": "https://hianime.to/"
+          };
+        } else if (retryAttempt === 2) {
+          // Try mobile user agent
+          return {
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+            "Accept": "*/*"
+          };
+        } else {
+          // Last resort: curl-like request
+          return {
+            "User-Agent": "curl/7.68.0",
+            "Accept": "*/*"
+          };
+        }
+      } else if (domain.includes('hianime') || domain.includes('aniwatch')) {
+        return {
+          ...baseHeaders,
+          "Referer": "https://hianime.to/",
+          "Origin": "https://hianime.to"
+        };
+      } else {
+        // Generic CDN strategy
+        if (retryAttempt === 0) {
+          return baseHeaders;
+        } else if (retryAttempt === 1) {
+          return {
+            ...baseHeaders,
+            "Referer": "https://hianime.to/",
+            "Origin": "https://hianime.to"
+          };
+        } else {
+          return {
+            "User-Agent": "VLC/3.0.16 LibVLC/3.0.16",
+            "Accept": "*/*"
+          };
+        }
+      }
     };
 
-    // Only add referer if the URL domain suggests it might help
-    if (url.includes('hianime') || url.includes('aniwatch')) {
-      headers["Referer"] = "https://hianime.to/";
-    }
-
     if (req.headers.range) {
-      headers.Range = req.headers.range;
+      // Will be added to headers in the loop
     }
 
-    // Add a small delay to avoid rate limiting
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Add a small delay to avoid rate limiting - longer for intermittent failures
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 500 + 300));
 
-    // Make request to original stream URL with retry logic for 403
+    // Make request to original stream URL with enhanced retry logic
     let response;
     let retryCount = 0;
-    const maxRetries = 2;
+    const maxRetries = 4; // Increased to 4 for lightningflash
 
     while (retryCount <= maxRetries) {
       try {
+        const headers = getHeadersForDomain(domain, retryCount);
+        
+        // Add range header if present
+        if (req.headers.range) {
+          headers.Range = req.headers.range;
+        }
+
         response = await axios({
           method: "GET",
           url: url,
@@ -189,15 +283,12 @@ export const proxyStream = async (req, res) => {
       } catch (error) {
         if (error.response?.status === 403 && retryCount < maxRetries) {
           retryCount++;
-          // console.log(`403 error, retrying... (${retryCount}/${maxRetries})`);
-          // Wait longer between retries
-          await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
-          
-          // Try with different headers on retry
-          if (retryCount === 1) {
-            headers["Referer"] = "https://hianime.to/";
-            headers["Origin"] = "https://hianime.to";
-          }
+          console.log(`403 error on ${domain}, retrying with strategy ${retryCount}... (${retryCount}/${maxRetries})`);
+          // Exponential backoff with jitter for intermittent failures
+          const baseDelay = Math.pow(2, retryCount) * 1000; // 2s, 4s, 8s, 16s
+          const jitter = Math.random() * 1000;
+          const delay = baseDelay + jitter;
+          await new Promise(resolve => setTimeout(resolve, delay));
           continue;
         }
         throw error; // Re-throw if not 403 or max retries reached

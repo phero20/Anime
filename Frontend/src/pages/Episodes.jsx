@@ -530,7 +530,7 @@ export default function Episodes() {
                   window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
                 }}
                 //  data-aos="zoom-in"
-                className={`group flex items-center bg-gray-900/70 rounded-lg border-gray-800 hover:bg-gray-900/85 border hover:ring-2 hover:ring-[#f47521] hover:text-[#f47521] hover:scale-[101%] transition-all duration-300 cursor-pointer h-20 min-h-[80px] transform-gpu will-change-transform` + (selectedEpisode?.episodeId === episode.episodeId ? ' ring-2 ring-[#f47521] text-[#f47521] scale-[101%]' : 'text-white')}
+                className={`relative group flex items-center bg-gray-900/70 rounded-lg border-gray-800 hover:bg-gray-900/85 border hover:ring-2 hover:ring-[#f47521] hover:text-[#f47521] hover:scale-[101%] transition-all duration-300 cursor-pointer h-20 min-h-[80px] transform-gpu will-change-transform` + (selectedEpisode?.episodeId === episode.episodeId ? ' ring-2 ring-[#f47521] text-[#f47521] scale-[101%]' : 'text-white')}
               >
                 {/* Image */}
                 <div className="relative w-24 md:w-28 min-w-[96px] h-full overflow-hidden rounded-lg bg-gray-800" >
@@ -553,6 +553,14 @@ export default function Episodes() {
                  
                     <span className="text-sm truncate">{episode.title}</span>
                   </div>
+                  {
+                     episode.isFiller && (
+                      <div className='text-[10px] font-semibold px-2 py-0.5 rounded-md m-1 md:m-2  border border-[#f47521]/30 bg-[#181818] absolute top-0 right-0 text-[#f47521]'>
+                     FILLER
+                   </div>
+                     )
+                  }
+                  
                 </div>
               </div>
             ))}

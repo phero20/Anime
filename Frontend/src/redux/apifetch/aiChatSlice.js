@@ -28,7 +28,7 @@ export const fetchChatHistory = createAsyncThunk(
 
       return messages;
     } catch (error) {
-      console.error('FetchChatHistory error:', error);
+      // console.error('FetchChatHistory error:', error);
       throw new Error('Failed to fetch chat history');
     }
   }
@@ -38,7 +38,6 @@ export const clearChatHistory = createAsyncThunk(
   'aiChat/clearChatHistory',
   async (token) => {
     try {
-      console.log(token)
       await axios.delete(
         `${backendUrl}/api/ai/history`,
         {
@@ -49,7 +48,7 @@ export const clearChatHistory = createAsyncThunk(
       );
       return true;
     } catch (error) {
-      console.error('ClearChatHistory error:', error);
+      // console.error('ClearChatHistory error:', error);
       throw new Error('Failed to clear chat history');
     }
   }
@@ -77,7 +76,7 @@ export const sendChatMessage = createAsyncThunk(
         throw new Error('Invalid response format from server');
       }
     } catch (error) {
-      console.error('SendChatMessage error:', error);
+      // console.error('SendChatMessage error:', error);
       const errorMessage = error.response?.data?.message || error.message || 'Failed to send message';
       throw new Error(errorMessage);
     }

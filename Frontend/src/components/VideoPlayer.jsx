@@ -66,10 +66,12 @@ export default function VideoPlayer({
   const [showControls, setShowControls] = useState(true);
   const [controlsTimeout, setControlsTimeout] = useState(null);
   const [historyAdded, setHistoryAdded] = useState(false);
+  const historyAddedRef = useRef(false);
 
   // Reset history flag when episode changes
   useEffect(() => {
     setHistoryAdded(false);
+    historyAddedRef.current = false;
   }, [selectedEpisode?.episodeId]);
 
   const initializePlayer = useCallback(async () => {
@@ -375,13 +377,10 @@ export default function VideoPlayer({
         setIsBuffering(true);
       });
 
-      player.on('playing', () => {
-        setIsLoading(false);
-        setIsBuffering(false);
-        setIsReady(true);
-        
-        // Add to history only once when video successfully starts playing
-        if (user?.token && selectedEpisode && !historyAdded) {
+      // Add to history only once when video successfully starts playing
+      const addToHistoryOnce = () => {
+        if (user?.token && selectedEpisode && !historyAddedRef.current) {
+          historyAddedRef.current = true;
           setHistoryAdded(true);
           dispatch(addToHistory({ 
             episodeId: selectedEpisode.episodeId, 
@@ -394,6 +393,13 @@ export default function VideoPlayer({
             token: user.token 
           }));
         }
+      };
+
+      player.on('playing', () => {
+        setIsLoading(false);
+        setIsBuffering(false);
+        setIsReady(true);
+        addToHistoryOnce();
       });
 
       player.on('canplay', () => {
@@ -437,7 +443,7 @@ export default function VideoPlayer({
     if (quality === 'Auto') {
       hls.currentLevel = -1; // Auto quality
       setCurrentQuality('Auto');
-      console.log('Quality set to: Auto');
+      // console.log('Quality set to: Auto');
     } else {
       const targetHeight = parseInt(quality.replace('p', ''));
       const levelIndex = levels.findIndex(level => level.height === targetHeight);
@@ -481,7 +487,7 @@ export default function VideoPlayer({
       }
       
       setCaptionsEnabled(false);
-      console.log('Captions disabled');
+      // console.log('Captions disabled');
     }
   }, [captionsEnabled, availableSubtitles]);
 
@@ -621,9 +627,9 @@ export default function VideoPlayer({
       {error && (
         <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center z-20">
           <div className="text-center max-w-md px-6">
-            <FaExclamationTriangle className="text-red-500 mx-auto mb-3" size={48} />
-            <h3 className="text-lg font-semibold text-white mb-3">Playback Error</h3>
-            <p className="text-gray-300 mb-6 leading-relaxed">{error}</p>
+            <FaExclamationTriangle className="text-red-500 mx-auto mb-1" size={48} />
+            <h3 className="text-lg font-semibold text-white mb-1">Playback Error</h3>
+            <p className="text-gray-300 mb-2 leading-relaxed">{error}</p>
             <button
               onClick={handleRetry}
               className="bg-[#f47521] hover:bg-[#ff6600] text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 mx-auto shadow-lg"
@@ -631,7 +637,7 @@ export default function VideoPlayer({
               <FaRedo className="text-sm" />
               Try Again {retryCount > 0 && `(${retryCount})`}
             </button>
-            <p className="text-gray-400 text-xs mt-4">
+            <p className="text-gray-400 text-xs mt-4 mb-1">
               If the problem persists, try selecting a different server
             </p>
           </div>

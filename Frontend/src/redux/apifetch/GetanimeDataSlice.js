@@ -7,9 +7,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:6789';
 export const fetchAnimeData = createAsyncThunk(
   'AnimeData/fetchAnimeData',
   async () => {
-    console.log("running",backendUrl)
     const response = await axios.get(`${backendUrl}/api/anime/getdata`);
-    console.log(response.data)
     return response.data;
   }
 );
@@ -105,7 +103,7 @@ const saveEpisodeImageToStorage = (image) => {
   try {
     localStorage.setItem('episodeImage', image);
   } catch (error) {
-    console.error('Failed to save episode image to localStorage:', error);
+    // console.error('Failed to save episode image to localStorage:', error);
   }
 };
 
@@ -113,7 +111,7 @@ const getEpisodeImageFromStorage = () => {
   try {
     return localStorage.getItem('episodeImage');
   } catch (error) {
-    console.error('Failed to get episode image from localStorage:', error);
+    // console.error('Failed to get episode image from localStorage:', error);
     return null;
   }
 };
@@ -122,7 +120,7 @@ const clearEpisodeImageFromStorage = () => {
   try {
     localStorage.removeItem('episodeImage');
   } catch (error) {
-    console.error('Failed to clear episode image from localStorage:', error);
+    // console.error('Failed to clear episode image from localStorage:', error);
   }
 };
 

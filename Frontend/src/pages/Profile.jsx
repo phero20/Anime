@@ -153,7 +153,7 @@ export default function Profile() {
         showToast.error(errorMessage);
         setError(errorMessage);
       }
-      console.error("Failed to update profile:", error);
+      // console.error("Failed to update profile:", error);
       setIsUpdatingAccount(false);
     } finally {
       showToast.dismiss(loadingToast);
@@ -190,7 +190,7 @@ export default function Profile() {
       }
     } catch (error) {
       showToast.error(error.message || "Failed to delete account");
-      console.error("Delete failed:", error);
+      // console.error("Delete failed:", error);
     } finally {
       showToast.dismiss(loadingToast);
       setIsDeletingAccount(false);

@@ -8,7 +8,6 @@ export const addToFavorites = createAsyncThunk(
   'userAnime/addToFavorites',
   async ({ token, anime }) => {
     try {
-      console.log('Sending request to add to favorites:', { token, anime });
       const response = await axios.post(
         `${backendUrl}/api/userAnime/favorites`,
         { anime },
@@ -118,7 +117,6 @@ export const addToHistory = createAsyncThunk(
   'userAnime/addToHistory',
   async ({ episodeId, server,episodeNumber,animeName, category, EpisodeImage, animeId, token }) => {
     try {
-      console.log("episodeId",episodeId)
       const response = await axios.post(
         `${backendUrl}/api/userAnime/history`,
         {
@@ -137,7 +135,7 @@ export const addToHistory = createAsyncThunk(
           },
         }
       );
-      console.log(response)
+
       return response.data;
     } catch (error) {
       throw error.response?.data?.message || 'Failed to add to history';
@@ -150,7 +148,7 @@ export const getUserHistory = createAsyncThunk(
   'userAnime/getUserHistory',
   async (token) => {
     try {
-      console.log(token)
+  
       const response = await axios.get(
         `${backendUrl}/api/userAnime/history`,
         {
@@ -159,7 +157,7 @@ export const getUserHistory = createAsyncThunk(
           }
         }
       );
-      console.log(response)
+
       return response.data;
     } catch (error) {
       throw error.response?.data?.message || 'Failed to fetch history';

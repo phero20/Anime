@@ -4,7 +4,6 @@ import ChatMessage from '../models/ChatMessage.js';
 
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-
 export const getGroqChatCompletion = async (req, res) => {
   const { message, history } = req.body;
   const userId = req.body.userId; // Available from verifyToken middleware
@@ -13,7 +12,6 @@ export const getGroqChatCompletion = async (req, res) => {
     return res.status(400).json({ message: "Message is required." });
   }
 
-  // Ensure history messages have required properties
   const validHistory = (history || []).filter(msg => 
     msg && typeof msg === 'object' && 
     msg.role && typeof msg.role === 'string' &&

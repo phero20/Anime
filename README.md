@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="Frontend/src/assets/logo.png" alt="Anime Platform Logo" width="80" height="80">
+<img src="Frontend/src/assets/logo.png" alt="Anime Platform Logo" width="120" height="80">
 
 # Anime Streaming Platform
 

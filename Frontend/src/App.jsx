@@ -85,7 +85,7 @@ function App() {
                 const parsedUser = JSON.parse(userData);
                 dispatch(setUser(parsedUser));
             } catch (error) {
-                console.error('Error parsing user data from localStorage:', error);
+                
                 localStorage.removeItem('user');
             }
         }

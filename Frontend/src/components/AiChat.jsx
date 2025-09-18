@@ -170,6 +170,35 @@ export default function AiChat({ isOpen, onClose }) {
     });
   };
 
+  const formatDateTime = (timestamp) => {
+    const date = new Date(timestamp);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    // Reset time to compare dates only
+    const messageDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const yesterdayDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+    
+    const time = date.toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+    
+    if (messageDate.getTime() === todayDate.getTime()) {
+      return `Today ${time}`;
+    } else if (messageDate.getTime() === yesterdayDate.getTime()) {
+      return `Yesterday ${time}`;
+    } else {
+      const dateStr = date.toLocaleDateString([], { 
+        month: 'short', 
+        day: 'numeric' 
+      });
+      return `${dateStr} ${time}`;
+    }
+  };
+
   
   const formatMessage = (content) => {
     if (!content) return '';
@@ -271,17 +300,19 @@ export default function AiChat({ isOpen, onClose }) {
           const cells = line.split('|').filter(cell => cell.trim());
           if (line.includes('---')) {
             return (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto" key={index}>
                 <div className="inline-block min-w-full align-middle">
                   <div className="overflow-hidden">
                     <table className="min-w-full divide-y divide-gray-700">
-                      <tr key={index} className="border-b border-gray-700">
-                        {cells.map((cell, cellIndex) => (
-                          <th key={cellIndex} className="px-4 py-2 text-[#f47521] whitespace-nowrap text-left text-sm font-semibold" style={{ color: '#f47521' }}>
-                            {cell.replace(/-/g, '')}
-                          </th>
-                        ))}
-                      </tr>
+                      <thead>
+                        <tr key={index} className="border-b border-gray-700">
+                          {cells.map((cell, cellIndex) => (
+                            <th key={cellIndex} className="px-4 py-2 text-[#f47521] whitespace-nowrap text-left text-sm font-semibold" style={{ color: '#f47521' }}>
+                              {cell.replace(/-/g, '')}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
                     </table>
                   </div>
                 </div>
@@ -290,16 +321,18 @@ export default function AiChat({ isOpen, onClose }) {
           }
           return (
             <div key={index} className="overflow-x-auto">
-              <div key={index} className="inline-block min-w-full align-middle">
-                <div key={index} className="overflow-hidden">
-                  <table key={index} className="min-w-full divide-y divide-gray-700">
-                    <tr key={index}>
-                      {cells.map((cell, cellIndex) => (
-                        <td key={cellIndex} className="px-4 py-2 border-b border-gray-700/50 whitespace-normal text-sm">
-                          {formatInlineText(cell.trim())}
-                        </td>
-                      ))}
-                    </tr>
+              <div className="inline-block min-w-full align-middle">
+                <div className="overflow-hidden">
+                  <table className="min-w-full divide-y divide-gray-700">
+                    <tbody>
+                      <tr key={index}>
+                        {cells.map((cell, cellIndex) => (
+                          <td key={cellIndex} className="px-4 py-2 border-b border-gray-700/50 whitespace-normal text-sm">
+                            {formatInlineText(cell.trim())}
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -496,7 +529,7 @@ export default function AiChat({ isOpen, onClose }) {
                             </div>
                             <div className="flex items-center justify-between mt-2">
                               <span className="text-xs opacity-70">
-                                {formatTime(msg.timestamp)}
+                                {formatDateTime(msg.timestamp)}
                               </span>
                               <div className="flex items-center gap-1">
                                 {typingMessageId === msg.id && (
@@ -539,9 +572,9 @@ export default function AiChat({ isOpen, onClose }) {
                         animate={{ opacity: 1, y: 0 }}
                         className="flex gap-3 justify-start"
                       >
-                        <div className="w-8 h-8 bg-[#f47521]/20 rounded-full flex items-center justify-center">
-                          <FaRobot className="text-[#f47521]" size={14} />
-                        </div>
+                         <div className="relative w-7 h-7 bg-gray-700/50 rounded-full overflow-hidden border-2 border-[#f47521]/30 flex items-center justify-center flex-shrink-0">
+                            <img src={formgirl} alt="" className='absolute top-1 left-[.10rem]'/>
+                          </div>
                         <div className="bg-gray-800/60 border border-gray-700/50 rounded-2xl p-4">
                           <div className="flex items-center gap-1">
                             <FaSpinner className="animate-spin text-[#f47521]" size={12} />
