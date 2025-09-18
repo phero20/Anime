@@ -25,8 +25,6 @@ import {useNavigate} from 'react-router-dom';
 import { fetchChatHistory } from './redux/apifetch/aiChatSlice';
 import SparkleEffect from './components/SparkleEffect'
 
-import cursorImage from './assets/cursor.png'; 
-
  
 
 function App() {
