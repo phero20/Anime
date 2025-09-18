@@ -96,7 +96,19 @@
 </p>
 
 ###  AI Chat Assistant
-![AI Chat](https://via.placeholder.com/800x400/1a1a1a/f47521?text=AI+Chat+Assistant)
+<p align="center">
+  <table>
+    <tr>
+      <td valign="top">
+        <img src="Frontend/src/assets/s6.jpg" alt="Anime Platform Logo" width="200">
+      </td>  
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+      <td valign="center">
+        <img src="Frontend/src/assets/s5.png" alt="Anime Platform Logo" width="800">
+      </td>
+    </tr>
+  </table>
+</p>
 
 </div>
 
