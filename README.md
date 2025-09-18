@@ -17,11 +17,14 @@
 
 </div>
 
----
+---  
 
 ## 🎮 Demo
-
-**Live Demo** : https://anime-frontend-nu.vercel.app
+<div>&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+Live Demo : https://anime-frontend-nu.vercel.app
+ <div>&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+ 
+---
 
 ## ✨ Features & Highlights
 
@@ -115,11 +118,11 @@
   <table>
     <tr>
       <td valign="top">
-        <img src="Frontend/src/assets/s9.jpg" alt="Anime Platform Logo" width="200">
+        <img src="Frontend/src/assets/s7.png" alt="Anime Platform Logo" width="500">
       </td>  
     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
       <td valign="center">
-        <img src="Frontend/src/assets/s9.png" alt="Anime Platform Logo" width="800">
+        <img src="Frontend/src/assets/s9.png" alt="Anime Platform Logo" width="500">
       </td>
     </tr>
   </table>
@@ -343,12 +346,12 @@ npm start        # Start production server
 
 ## 🚀 Production Deployment
 
-### **Frontend (Vercel/Netlify)**
+### **Frontend (Vercel)**
 1. Build the frontend: `npm run build`
 2. Deploy the `dist` folder to your hosting platform
 3. Configure environment variables
 
-### **Backend (Railway/Heroku)**
+### **Backend (Vercel)**
 1. Set up environment variables
 2. Deploy the Backend folder
 3. Ensure MongoDB connection is configured
@@ -399,7 +402,7 @@ npm start        # Start production server
 
 <div align="center">
 
-**⭐ If you found this project helpful, please give it a star! ⭐**
+**⭐ If you found Like this project, please give it a star! ⭐**
 
 <!-- Made with ❤️ for the anime community -->
 
