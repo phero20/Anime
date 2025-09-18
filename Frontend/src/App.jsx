@@ -23,6 +23,12 @@ import aigirl from './assets/aigirl.png';
 import { useSelector,useDispatch } from 'react-redux';
 import {useNavigate} from 'react-router-dom';
 import { fetchChatHistory } from './redux/apifetch/aiChatSlice';
+import SparkleEffect from './components/SparkleEffect'
+
+import cursorImage from './assets/cursor.png'; 
+
+ 
+
 function App() {
     const dispatch = useDispatch();
     const location = useLocation();
@@ -93,6 +99,7 @@ function App() {
 
     return (
         <>
+            <SparkleEffect />
             <ToastContainer />
             <Navbar />
             <AnimatePresence mode="wait">
