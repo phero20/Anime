@@ -65,7 +65,7 @@
 
 <div align="center">
 
-### 🏠 Homepage
+### Homepage
 <p align="center">
   <table>
     <tr>
@@ -73,17 +73,29 @@
         <img src="Frontend/src/assets/s2.jpg" alt="Anime Platform Logo" width="200">
       </td>  
     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-      <td valign="top">
-        <img src="Frontend/src/assets/s1.png" alt="Anime Platform Logo" width="600">
+      <td valign="center">
+        <img src="Frontend/src/assets/s1.png" alt="Anime Platform Logo" width="800">
       </td>
     </tr>
   </table>
 </p>
 
-### 🎬 Video Player
-![Video Player](https://via.placeholder.com/800x400/1a1a1a/f47521?text=Video+Player+Interface)
+### Video Player
+<p align="center">
+  <table>
+    <tr>
+      <td valign="top">
+        <img src="Frontend/src/assets/s4.jpg" alt="Anime Platform Logo" width="200">
+      </td>  
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+      <td valign="center">
+        <img src="Frontend/src/assets/s3.png" alt="Anime Platform Logo" width="800">
+      </td>
+    </tr>
+  </table>
+</p>
 
-### 🤖 AI Chat Assistant
+###  AI Chat Assistant
 ![AI Chat](https://via.placeholder.com/800x400/1a1a1a/f47521?text=AI+Chat+Assistant)
 
 </div>
