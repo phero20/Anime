@@ -66,7 +66,7 @@
 <div align="center">
 
 ### 🏠 Homepage
-![Homepage](https://via.placeholder.com/800x400/1a1a1a/f47521?text=Homepage+Preview)
+<img src="Frontend/src/assets/s1.png" alt="Anime Platform Logo" width="130" height="130">
 
 ### 🎬 Video Player
 ![Video Player](https://via.placeholder.com/800x400/1a1a1a/f47521?text=Video+Player+Interface)
