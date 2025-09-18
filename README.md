@@ -110,6 +110,21 @@
   </table>
 </p>
 
+###  More
+<p align="center">
+  <table>
+    <tr>
+      <td valign="top">
+        <img src="Frontend/src/assets/s9.jpg" alt="Anime Platform Logo" width="200">
+      </td>  
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+      <td valign="center">
+        <img src="Frontend/src/assets/s9.png" alt="Anime Platform Logo" width="800">
+      </td>
+    </tr>
+  </table>
+</p>
+
 </div>
 
 ## 🛠️ Technology Stack
