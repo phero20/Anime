@@ -66,7 +66,7 @@
 <div align="center">
 
 ### 🏠 Homepage
-<img src="Frontend/src/assets/s2.jpg" alt="Anime Platform Logo" width="300">
+<img src="Frontend/src/assets/s2.jpg" alt="Anime Platform Logo" width="200"><img src="Frontend/src/assets/s1.png" alt="Anime Platform Logo" width="400">
 
 ### 🎬 Video Player
 ![Video Player](https://via.placeholder.com/800x400/1a1a1a/f47521?text=Video+Player+Interface)
